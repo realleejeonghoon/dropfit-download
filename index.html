@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dropfit — 끌어다 놓으면, 끝.</title>
 <meta name="description" content="이미지를 오브에 끌어다 놓으면 포맷이 원형으로 펼쳐집니다. JPG · PNG · HEIC · TIFF · GIF · BMP 변환을 한 번의 동작으로. macOS 전용 무료 테스트 버전.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#04070d">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Dropfit">
 <meta property="og:title" content="Dropfit — 끌어다 놓으면, 끝.">
 <meta property="og:description" content="이미지를 끌어다 놓으면 원하는 포맷으로. Mac용 무료 테스트 버전을 받아 보세요.">
 <meta property="og:url" content="https://realleejeonghoon.github.io/dropfit-download/">
-<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=2">
+<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=2">
+<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=3">
 
 <link rel="stylesheet" href="fonts/pretendardvariable-dynamic-subset.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -403,6 +403,119 @@
     .side { display: none; }
     .final { padding: 88px 0; }
   }
+
+  /* ---------- Theme: HUD (짙은 유리 패널 + 아이스블루 발광 라인) ---------- */
+  :root {
+    --bg: #04070d; --bg-2: #07101c;
+    --ice: #7fd4ff; --ice-2: #3aa0ff; --ice-dim: rgba(127, 212, 255, .22); --ice-faint: rgba(127, 212, 255, .07);
+    --ink: #e9f5ff; --ink-2: #9db4c9; --ink-3: #6b8399; --line: rgba(127, 212, 255, .16);
+    --blue: #5cc8ff; --blue-hover: #8adaff; --link: #7fd4ff;
+    --grad: linear-gradient(100deg, #d8f3ff 0%, #7fd4ff 45%, #3aa0ff 100%);
+    --glass: linear-gradient(180deg, rgba(127, 212, 255, .07), rgba(127, 212, 255, .02));
+    --glow: 0 0 0 1px var(--ice-dim), inset 0 1px 0 rgba(200, 240, 255, .08), 0 0 24px rgba(58, 160, 255, .06);
+  }
+  body {
+    background-color: var(--bg); color: var(--ink);
+    /* 카본 직조 질감 */
+    background-image:
+      linear-gradient(45deg, rgba(255, 255, 255, .018) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, .018) 75%),
+      linear-gradient(45deg, rgba(255, 255, 255, .018) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, .018) 75%);
+    background-size: 6px 6px; background-position: 0 0, 3px 3px;
+  }
+  ::selection { background: rgba(127, 212, 255, .3); }
+  .nav { background: rgba(4, 7, 13, .72); border-bottom-color: var(--line); }
+  .nav-links { color: var(--ink-2); }
+  .nav-links a:hover { color: var(--ice); }
+  .pill { color: #02121e; font-weight: 600; box-shadow: 0 0 18px rgba(92, 200, 255, .35); }
+  .pill:hover { box-shadow: 0 0 26px rgba(127, 212, 255, .55); }
+  .gray { background-color: var(--bg-2); }
+  .label { color: var(--ice); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .eyebrow span { color: var(--ink-3); }
+  .grad { text-shadow: none; filter: drop-shadow(0 0 18px rgba(58, 160, 255, .45)); }
+  .lede b { color: var(--ink); }
+  .chips { color: var(--ice); font-size: 12px; letter-spacing: .12em; }
+  .chips li { padding: 4px 10px; border-radius: 6px; box-shadow: 0 0 0 1px var(--ice-dim); background: var(--ice-faint); }
+  .chips li::before { display: none; }
+  .notice { background: var(--glass); box-shadow: var(--glow); }
+
+  /* 히어로: 아이콘을 감싸는 동심원 HUD */
+  .hero-art::before { inset: 0; background: radial-gradient(50% 50% at 50% 50%, rgba(58, 160, 255, .18), transparent 70%); }
+  .hud { position: relative; width: 100%; max-width: 460px; aspect-ratio: 1; display: grid; place-items: center; }
+  .rings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .rings .r-thin { fill: none; stroke: var(--ice); stroke-opacity: .3; stroke-width: 1; }
+  .rings .r-tick { fill: none; stroke: var(--ice); stroke-opacity: .55; stroke-width: 6; stroke-dasharray: 1 7; }
+  .rings .r-dash { fill: none; stroke: var(--ice); stroke-opacity: .4; stroke-width: 1; stroke-dasharray: 14 6; transform-origin: 300px 300px; animation: spin 60s linear infinite; }
+  .rings .seg { fill: rgba(127, 212, 255, .06); stroke: var(--ice); stroke-width: 1.3; stroke-opacity: .85; filter: drop-shadow(0 0 4px rgba(127, 212, 255, .6)); }
+  .rings .seg-t { fill: var(--ice); font-size: 13px; font-weight: 600; letter-spacing: .2em; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hud .hero-icon { position: relative; width: 60%; max-width: none; filter: drop-shadow(0 0 30px rgba(58, 160, 255, .35)) drop-shadow(0 16px 30px rgba(0, 0, 0, .6)); }
+
+  /* 데모 */
+  .stage {
+    background:
+      linear-gradient(rgba(127, 212, 255, .05) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(127, 212, 255, .05) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(60% 70% at 50% 50%, rgba(58, 160, 255, .14), transparent 70%),
+      #050b14;
+    box-shadow: var(--glow), 0 40px 80px rgba(0, 0, 0, .5);
+  }
+  .menubar { color: var(--ink-2); background: rgba(127, 212, 255, .05); border-bottom: 1px solid var(--line); }
+  .menubar b { color: var(--ink); }
+  .orb { background: radial-gradient(circle at 50% 35%, #12233a, #060c16 70%); box-shadow: 0 0 0 1px var(--ice-dim), 0 0 30px rgba(58, 160, 255, .35); }
+  .orb::before { background: conic-gradient(from 0deg, var(--ice), var(--ice-2), var(--ice)); filter: drop-shadow(0 0 8px rgba(127, 212, 255, .8)); }
+  .petal { background: rgba(6, 14, 26, .85); color: var(--ice); font-size: 12px; letter-spacing: .12em; box-shadow: 0 0 0 1.3px var(--ice), 0 0 14px rgba(127, 212, 255, .35); }
+  @keyframes target {
+    0%, 42% { background: rgba(6, 14, 26, .85); color: var(--ice); }
+    48%, 58% { background: var(--ice); color: #02121e; box-shadow: 0 0 0 1.3px var(--ice), 0 0 34px rgba(127, 212, 255, .9); }
+    66%, 100% { background: rgba(6, 14, 26, .85); }
+  }
+  .fname { background: var(--ice-2); }
+  .thumb { border-color: #dff4ff; }
+  .result { color: var(--ink-2); }
+  .result b { color: var(--ink); }
+  .result .tag { background: var(--ice); color: #02121e; }
+  .orb .ok circle { fill: var(--ice); }
+
+  /* 단계 / 카드 */
+  .how div { border-top-color: var(--ice-dim); }
+  .how b { background: none; color: var(--ice); -webkit-text-fill-color: var(--ice); text-shadow: 0 0 18px rgba(127, 212, 255, .5); font-weight: 600; }
+  .step { background: var(--glass); box-shadow: var(--glow); }
+  .step .n { background: transparent; color: var(--ice); box-shadow: 0 0 0 1.3px var(--ice), 0 0 10px rgba(127, 212, 255, .4); }
+  .sec-steps li { border-top-color: var(--line); }
+  .sec-steps .k { background: transparent; color: var(--ice); box-shadow: 0 0 0 1.3px var(--ice-dim); }
+
+  /* 시스템 설정 목업: macOS 다크 모드 */
+  .win { background: #1e1e20; color: #e6e6e6; box-shadow: var(--glow), 0 30px 60px rgba(0, 0, 0, .5); }
+  .win-top { background: #2a2a2d; border-bottom-color: #3a3a3d; }
+  .side { background: #232326; color: #c9c9cc; }
+  .side .on { background: #0a64d8; }
+  .pane { background: #1e1e20; }
+  .pane h5 { color: #8e8e93; }
+  .group { background: #2a2a2d; box-shadow: 0 0 0 .5px rgba(255, 255, 255, .08); }
+  .row + .row { border-top-color: #3a3a3d; }
+  .row .t { color: #e6e6e6; }
+  .row.hl { background: rgba(10, 132, 255, .12); }
+  .row.hl .mac-btn { background: #0a84ff; }
+  .radio { color: #c9c9cc; }
+
+  .term { background: var(--glass); box-shadow: var(--glow); }
+  .term code { background: rgba(0, 0, 0, .45); color: var(--ice); box-shadow: 0 0 0 1px var(--line); }
+  .ghost { background: transparent; color: var(--ice); border-color: var(--ice-dim); }
+  .ghost:hover { border-color: var(--ice); box-shadow: 0 0 14px rgba(127, 212, 255, .3); }
+  .faq details { border-bottom-color: var(--line); }
+  .faq summary::after { border-color: var(--ice); }
+  .final-lockup img { filter: drop-shadow(0 0 24px rgba(58, 160, 255, .35)); }
+  footer { background: var(--bg); }
+  footer .wrap { border-top-color: var(--line); }
+  footer a { color: var(--ink-2); }
+  .toast { background: rgba(6, 14, 26, .92); box-shadow: var(--glow); color: var(--ice); }
+
+  @media (max-width: 734px) {
+    .hud { max-width: 220px; }
+    .chips { gap: 6px; letter-spacing: .08em; }
+    .chips li { padding: 3px 7px; font-size: 11px; }
+    .hero-art { place-items: start; }
+  }
 </style>
 </head>
 <body>
@@ -424,7 +537,37 @@
 <header class="hero" id="top">
   <div class="wrap lockup">
     <div class="hero-art">
-      <img class="hero-icon" src="assets/icon-hero.png" width="380" height="380" alt="Dropfit 앱 아이콘">
+      <div class="hud">
+        <svg class="rings" viewBox="0 0 600 600" aria-hidden="true">
+        <defs>
+        <path id="lp0" d="M187.0 78.1A249 249 0 0 1 413.0 78.1"/>
+        <path id="lp1" d="M435.6 91.2A249 249 0 0 1 548.7 287.0"/>
+        <path id="lp2" d="M435.6 508.8A249 249 0 0 0 548.7 313.0"/>
+        <path id="lp3" d="M187.0 521.9A249 249 0 0 0 413.0 521.9"/>
+        <path id="lp4" d="M51.3 313.0A249 249 0 0 0 164.4 508.8"/>
+        <path id="lp5" d="M51.3 287.0A249 249 0 0 1 164.4 91.2"/>
+        </defs>
+        <circle class="r-thin" cx="300" cy="300" r="292"/>
+        <circle class="r-tick" cx="300" cy="300" r="282"/>
+        <path class="seg" d="M179.2 63.0A266 266 0 0 1 420.8 63.0L405.3 93.3A232 232 0 0 0 194.7 93.3Z"/>
+        <text class="seg-t"><textPath href="#lp0" startOffset="50%" text-anchor="middle" dominant-baseline="central">JPG</textPath></text>
+        <path class="seg" d="M444.9 76.9A266 266 0 0 1 565.6 286.1L531.7 287.9A232 232 0 0 0 426.4 105.4Z"/>
+        <text class="seg-t"><textPath href="#lp1" startOffset="50%" text-anchor="middle" dominant-baseline="central">PNG</textPath></text>
+        <path class="seg" d="M565.6 313.9A266 266 0 0 1 444.9 523.1L426.4 494.6A232 232 0 0 0 531.7 312.1Z"/>
+        <text class="seg-t"><textPath href="#lp2" startOffset="50%" text-anchor="middle" dominant-baseline="central">HEIC</textPath></text>
+        <path class="seg" d="M420.8 537.0A266 266 0 0 1 179.2 537.0L194.7 506.7A232 232 0 0 0 405.3 506.7Z"/>
+        <text class="seg-t"><textPath href="#lp3" startOffset="50%" text-anchor="middle" dominant-baseline="central">TIFF</textPath></text>
+        <path class="seg" d="M155.1 523.1A266 266 0 0 1 34.4 313.9L68.3 312.1A232 232 0 0 0 173.6 494.6Z"/>
+        <text class="seg-t"><textPath href="#lp4" startOffset="50%" text-anchor="middle" dominant-baseline="central">GIF</textPath></text>
+        <path class="seg" d="M34.4 286.1A266 266 0 0 1 155.1 76.9L173.6 105.4A232 232 0 0 0 68.3 287.9Z"/>
+        <text class="seg-t"><textPath href="#lp5" startOffset="50%" text-anchor="middle" dominant-baseline="central">BMP</textPath></text>
+        <circle class="r-thin" cx="300" cy="300" r="222"/>
+        <circle class="r-dash" cx="300" cy="300" r="212"/>
+        </svg>
+        
+        
+        <img class="hero-icon" src="assets/icon-hero.png" width="240" height="240" alt="Dropfit 앱 아이콘">
+      </div>
     </div>
     <div class="hero-copy">
       <p class="eyebrow">Dropfit <span>· Mac 이미지 포맷 변환</span></p>
@@ -459,7 +602,7 @@
 <section class="gray block" id="how" aria-labelledby="demo-title">
   <div class="wrap">
     <div class="sec-head">
-    <p class="label reveal">사용법</p>
+    <p class="label reveal">How it works</p>
     <h2 class="sec-title reveal" id="demo-title">포맷 변환을<br class="m"> <span class="nb">단 한 번의 동작으로.</span></h2>
     
     </div>
@@ -476,10 +619,10 @@
           <div class="petal" style="--c:var(--bmp);--x:-111px;--y:-64px">BMP</div>
           <div class="orb">
             <svg class="glyph" viewBox="0 0 44 44" fill="none">
-              <rect x="6" y="9" width="22" height="17" rx="3.5" stroke="rgba(255,255,255,.5)" stroke-width="2.4" transform="rotate(-8 17 17)"/>
-              <rect x="15" y="18" width="23" height="17" rx="3.5" fill="#3a3a46" stroke="#fff" stroke-width="2.4" transform="rotate(5 26 26)"/>
-              <path d="M17 33l6-8 4 5 3-3 6 6z" fill="#40ccbd"/>
-              <circle cx="32.5" cy="22.5" r="2.4" fill="#f5bd45"/>
+              <rect x="6" y="9" width="22" height="17" rx="3.5" stroke="rgba(127,212,255,.5)" stroke-width="2.4" transform="rotate(-8 17 17)"/>
+              <rect x="15" y="18" width="23" height="17" rx="3.5" fill="#0b1a2c" stroke="#bfeaff" stroke-width="2.4" transform="rotate(5 26 26)"/>
+              <path d="M17 33l6-8 4 5 3-3 6 6z" fill="#7fd4ff"/>
+              <circle cx="32.5" cy="22.5" r="2.4" fill="#d8f3ff"/>
             </svg>
             <svg class="ok" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/><path d="M14 22.5l5.5 5.5L30.5 17" fill="none" stroke="#04221f" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
@@ -495,7 +638,7 @@
 <section class="block" aria-labelledby="feat-title">
   <div class="wrap">
     <div class="sec-head">
-      <p class="label reveal">세 단계</p>
+      <p class="label reveal">Steps</p>
       <h2 class="sec-title reveal" id="feat-title">가져가고, 고르고, 놓기.</h2>
     </div>
     <div class="how reveal">
@@ -509,7 +652,7 @@
 <section class="gray block" id="install" aria-labelledby="install-title">
   <div class="wrap">
     <div class="sec-head">
-      <p class="label reveal">설치</p>
+      <p class="label reveal">Install</p>
       <h2 class="sec-title reveal" id="install-title">1분이면 충분합니다.</h2>
     </div>
     <div class="steps">
@@ -523,7 +666,7 @@
 <section class="block" id="security" aria-labelledby="sec-title">
   <div class="wrap">
     <div class="sec-head">
-      <p class="label reveal">처음 한 번만</p>
+      <p class="label reveal">Security</p>
       <h2 class="sec-title reveal" id="sec-title">‘확인되지 않은 개발자’<br>경고가 뜬다면.</h2>
       <p class="sec-sub reveal">테스트 버전이라 Apple 공증 전이어서, <span class="nb">처음 한 번만 나타납니다.</span></p>
     </div>
@@ -570,7 +713,7 @@
 
 <section class="gray block" id="faq" aria-labelledby="faq-title">
   <div class="wrap split">
-    <div class="sec-head"><p class="label reveal">도움말</p><h2 class="sec-title reveal" id="faq-title">자주 묻는 질문</h2></div>
+    <div class="sec-head"><p class="label reveal">FAQ</p><h2 class="sec-title reveal" id="faq-title">자주 묻는 질문</h2></div>
     <div class="faq reveal">
       <details>
         <summary>무료인가요?</summary>
