@@ -4,7 +4,10 @@
 <p align="center">이미지를 끌어다 놓으면, 원하는 포맷으로.</p>
 
 <p align="center">
-  <a href="https://github.com/realleejeonghoon/dropfit-download/releases/latest"><b>⬇︎ 최신 버전 다운로드</b></a>
+  <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 1.1MB)</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.dmg">DMG 버전</a>
+  <br><sub>현재 버전 0.1 (테스트)</sub>
 </p>
 
 ---
@@ -17,7 +20,7 @@
 지원 포맷: **JPG · PNG · HEIC · TIFF · GIF · BMP**
 
 ## 설치
-1. 위 링크에서 **`Dropfit-…(배포용).zip`** 을 받아 더블클릭해 압축을 풉니다.
+1. 위 링크에서 **`Dropfit-macOS.zip`** 을 받아 더블클릭해 압축을 풉니다.
 2. `Dropfit.app`을 **응용 프로그램(Applications)** 폴더로 옮긴 뒤 실행합니다.
 3. "확인되지 않은 개발자" 경고가 뜨면
    **시스템 설정 → 개인정보 보호 및 보안 → [그래도 열기]** 를 누릅니다. (처음 한 번만)
