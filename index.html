@@ -12,12 +12,12 @@
 <meta property="og:title" content="Dropfit — 끌어다 놓으면, 끝.">
 <meta property="og:description" content="이미지를 끌어다 놓으면 원하는 포맷으로. Mac용 무료 테스트 버전을 받아 보세요.">
 <meta property="og:url" content="https://realleejeonghoon.github.io/dropfit-download/">
-<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=4">
+<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=5">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=4">
+<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=5">
 
 <link rel="stylesheet" href="fonts/pretendardvariable-dynamic-subset.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -409,8 +409,8 @@
     --bg: #04070d; --bg-2: #07101c;
     --ice: #7fd4ff; --ice-2: #3aa0ff; --ice-dim: rgba(127, 212, 255, .22); --ice-faint: rgba(127, 212, 255, .07);
     --ink: #e9f5ff; --ink-2: #9db4c9; --ink-3: #6b8399; --line: rgba(127, 212, 255, .16);
-    --blue: #5cc8ff; --blue-hover: #8adaff; --link: #7fd4ff;
-    --grad: linear-gradient(100deg, #d8f3ff 0%, #7fd4ff 45%, #3aa0ff 100%);
+    --blue: #d6f1ff; --blue-hover: #ffffff; --link: #a9e0ff; --hi: #d6f1ff;
+    --grad: linear-gradient(100deg, #d6f1ff 0%, #a9e0ff 100%);
     --glass: linear-gradient(180deg, rgba(127, 212, 255, .07), rgba(127, 212, 255, .02));
     --glow: 0 0 0 1px var(--line), inset 0 1px 0 rgba(200, 240, 255, .05);
   }
@@ -423,11 +423,11 @@
   .nav-links a:hover { color: var(--ice); }
   .pill { color: #02121e; font-weight: 600; }
   .gray { background-color: var(--bg-2); }
-  .label { color: var(--ice); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .label { color: var(--ice); font-size: 12px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; }
   .eyebrow span { color: var(--ink-3); }
   .grad { filter: none; }
   .lede b { color: var(--ink); }
-  .chips { color: var(--ink-2); font-size: 12px; letter-spacing: .1em; gap: 6px 18px; }
+  .chips { color: var(--ink-2); font-size: 12px; font-weight: 500; letter-spacing: .2em; gap: 6px 18px; }
   .chips li { padding: 0; }
   .chips li::before { display: none; }
   .notice { background: var(--glass); box-shadow: var(--glow); }
@@ -448,23 +448,24 @@
   .menubar { color: var(--ink-2); background: rgba(127, 212, 255, .05); border-bottom: 1px solid var(--line); }
   .menubar b { color: var(--ink); }
   .orb { background: radial-gradient(circle at 50% 35%, #0f1d30, #060c16 70%); box-shadow: 0 0 24px rgba(58, 160, 255, .2); }
-  .orb::before { background: var(--ice); padding: 1.5px; opacity: .8; filter: none; }
-  .petal { background: rgba(6, 14, 26, .85); color: var(--ice); font-size: 12px; letter-spacing: .12em; box-shadow: 0 0 0 1px rgba(127, 212, 255, .6); }
+  .orb::before { background: var(--ice); padding: 1px; opacity: .5; filter: none; }
+  .petal { background: rgba(6, 14, 26, .9); color: var(--ice); font-size: 11px; font-weight: 500; letter-spacing: .18em; box-shadow: 0 0 0 1px rgba(127, 212, 255, .35); }
   @keyframes target {
     0%, 42% { background: rgba(6, 14, 26, .85); color: var(--ice); }
-    48%, 58% { background: var(--ice); color: #02121e; box-shadow: 0 0 0 1px var(--ice), 0 0 16px rgba(127, 212, 255, .45); }
+    48%, 58% { background: var(--hi); color: #04121c; box-shadow: 0 0 0 1px var(--hi), 0 0 22px rgba(127, 212, 255, .55); }
     66%, 100% { background: rgba(6, 14, 26, .85); }
   }
-  .fname { background: var(--ice-2); }
-  .thumb { border-color: #dff4ff; }
+  .fname { background: rgba(6, 14, 26, .9); color: var(--hi); box-shadow: 0 0 0 1px var(--line); font-weight: 500; }
+  .thumb { border: 1px solid rgba(214, 241, 255, .7); background: linear-gradient(160deg, #2b4a66 0%, #6f98b8 55%, #b9d6ea 100%); }
+  .thumb::before, .thumb::after { display: none; }
   .result { color: var(--ink-2); }
   .result b { color: var(--ink); }
-  .result .tag { background: var(--ice); color: #02121e; }
-  .orb .ok circle { fill: var(--ice); }
+  .result .tag { background: var(--hi); color: #04121c; font-weight: 600; }
+  .orb .ok circle { fill: var(--hi); }
 
   /* 단계 / 카드 */
   .how div { border-top-color: var(--ice-dim); }
-  .how b { background: none; color: var(--ice); -webkit-text-fill-color: var(--ice); font-weight: 500; font-size: 32px; }
+  .how b { background: none; color: var(--ice); -webkit-text-fill-color: var(--ice); font-weight: 300; font-size: 32px; letter-spacing: .04em; }
   .step { background: var(--glass); box-shadow: var(--glow); }
   .step .n { background: transparent; color: var(--ice); box-shadow: 0 0 0 1px var(--ice-dim); }
   .sec-steps li { border-top-color: var(--line); }
@@ -572,13 +573,11 @@
           <div class="petal" style="--c:var(--gif);--x:-111px;--y:64px">GIF</div>
           <div class="petal" style="--c:var(--bmp);--x:-111px;--y:-64px">BMP</div>
           <div class="orb">
-            <svg class="glyph" viewBox="0 0 44 44" fill="none">
-              <rect x="6" y="9" width="22" height="17" rx="3.5" stroke="rgba(127,212,255,.5)" stroke-width="2.4" transform="rotate(-8 17 17)"/>
-              <rect x="15" y="18" width="23" height="17" rx="3.5" fill="#0b1a2c" stroke="#bfeaff" stroke-width="2.4" transform="rotate(5 26 26)"/>
-              <path d="M17 33l6-8 4 5 3-3 6 6z" fill="#7fd4ff"/>
-              <circle cx="32.5" cy="22.5" r="2.4" fill="#d8f3ff"/>
+            <svg class="glyph" viewBox="0 0 44 44" fill="none" stroke="#d6f1ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 17h-3.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h17a2 2 0 0 0 2-2V19a2 2 0 0 0-2-2H27"/>
+              <path d="M22 10v15M18 21l4 4 4-4"/>
             </svg>
-            <svg class="ok" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/><path d="M14 22.5l5.5 5.5L30.5 17" fill="none" stroke="#04221f" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="ok" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/><path d="M14 22.5l5.5 5.5L30.5 17" fill="none" stroke="#04121c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <div class="file"><div class="thumb"></div><span class="fname">여행.heic</span></div>
           <div class="result"><span class="tag">PNG</span><b>여행.png</b> 저장됨 · 원본은 그대로</div>
