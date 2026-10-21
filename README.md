@@ -7,7 +7,7 @@
   <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 1.1MB)</b></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.dmg">DMG 버전</a>
-  <br><sub>현재 버전 0.1 (테스트)</sub>
+  <br><sub>현재 버전 0.1 (테스트) · 설치 안내 페이지: <a href="https://realleejeonghoon.github.io/dropfit-download/">realleejeonghoon.github.io/dropfit-download</a></sub>
 </p>
 
 ---
