@@ -50,7 +50,7 @@
   a { color: inherit; text-decoration: none; }
   img { display: block; max-width: 100%; }
   b { font-weight: 600; }
-  .wrap { width: min(980px, 100% - 44px); margin: 0 auto; }
+  .wrap { width: min(1040px, 100% - 48px); margin: 0 auto; }
   .nb { white-space: nowrap; }
   br.m { display: none; }
 
@@ -78,39 +78,44 @@
   .more { color: var(--link); font-size: 17px; }
   .more:hover { text-decoration: underline; }
 
-  /* ---------- Hero ---------- */
-  .hero { position: relative; text-align: center; padding: 84px 0 96px; overflow: hidden; isolation: isolate; }
-  .hero::before {
-    content: ""; position: absolute; left: 50%; top: 40px; width: 1100px; height: 640px; transform: translateX(-50%); z-index: -1; pointer-events: none;
+  /* ---------- Hero: 아이콘 + 카피를 하나의 락업으로 ---------- */
+  .hero { position: relative; padding: 96px 0 112px; overflow: hidden; isolation: isolate; }
+  .lockup { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: center; }
+  .hero-art { position: relative; display: grid; place-items: center end; }
+  .hero-art::before {
+    content: ""; position: absolute; inset: -18%; z-index: -1; pointer-events: none;
     background:
-      radial-gradient(32% 42% at 30% 42%, rgba(255, 122, 89, .16), transparent 70%),
-      radial-gradient(32% 42% at 70% 38%, rgba(64, 204, 189, .16), transparent 70%),
-      radial-gradient(40% 48% at 50% 62%, rgba(158, 133, 250, .18), transparent 72%);
+      radial-gradient(38% 38% at 30% 34%, rgba(255, 122, 89, .20), transparent 70%),
+      radial-gradient(38% 38% at 72% 32%, rgba(64, 204, 189, .20), transparent 70%),
+      radial-gradient(44% 44% at 50% 72%, rgba(158, 133, 250, .24), transparent 72%);
   }
   .hero-icon {
-    width: 136px; height: 136px; margin: 0 auto 26px;
-    filter: drop-shadow(0 22px 40px rgba(76, 60, 160, .28));
+    width: 100%; max-width: 380px; height: auto; aspect-ratio: 1;
+    filter: drop-shadow(0 28px 44px rgba(76, 60, 160, .26)) drop-shadow(0 4px 10px rgba(30, 20, 70, .12));
     animation: rise 1.1s var(--ease) both;
   }
-  .eyebrow { font-size: 19px; font-weight: 600; color: var(--ink); margin: 0 0 10px; letter-spacing: -0.01em; animation: rise 1.1s .04s var(--ease) both; }
+  .hero-copy { animation: rise 1.1s .08s var(--ease) both; }
+  .eyebrow { font-size: 21px; font-weight: 600; color: var(--ink); margin: 0 0 12px; letter-spacing: -0.01em; }
+  .eyebrow span { color: var(--ink-3); font-weight: 500; }
   h1 {
-    margin: 0; font-size: clamp(40px, 6.6vw, 80px); line-height: 1.08; font-weight: 700; letter-spacing: -0.04em;
+    margin: 0; font-size: clamp(40px, 6.2vw, 76px); line-height: 1.12; font-weight: 700; letter-spacing: -0.022em;
     color: var(--ink);
-    animation: rise 1.1s .08s var(--ease) both;
   }
-  .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+  .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
   .lede {
-    margin: 24px auto 0; max-width: 640px; font-size: clamp(18px, 2.1vw, 22px); line-height: 1.5;
-    color: var(--ink-2); font-weight: 400; letter-spacing: -0.012em;
-    animation: rise 1.1s .16s var(--ease) both;
+    margin: 22px 0 0; max-width: 30em; font-size: clamp(17px, 1.7vw, 20px); line-height: 1.6;
+    color: var(--ink-2); font-weight: 400; letter-spacing: -0.01em;
   }
   .lede b { color: var(--ink); font-weight: 600; }
-  .cta { margin-top: 38px; display: flex; flex-direction: column; align-items: center; gap: 16px; animation: rise 1.1s .24s var(--ease) both; }
+  .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 22px 0 0; padding: 0; font-size: 14px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; }
+  .chips li { display: inline-flex; align-items: center; gap: 6px; }
+  .chips li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .cta { margin-top: 34px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
   .cta-meta { font-size: 13px; color: var(--ink-3); margin: 0; }
-  .cta-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .cta-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
 
   .notice {
-    display: none; margin: 28px auto 0; max-width: 420px; padding: 16px 20px; border-radius: 18px;
+    display: none; margin: 28px 0 0; max-width: 420px; padding: 16px 20px; border-radius: 18px;
     background: var(--paper); font-size: 15px; color: var(--ink-2); line-height: 1.55; text-align: left;
   }
   .notice strong { color: var(--ink); display: block; margin-bottom: 2px; }
@@ -124,14 +129,15 @@
   /* ---------- Sections ---------- */
   .gray { background: var(--paper); }
   .block { padding: 112px 0; }
-  .center-t { text-align: center; }
+  .sec-head { max-width: 720px; }
+  .sec-head + * { margin-top: 56px !important; }
   .label { font-size: 17px; font-weight: 600; color: var(--ink-3); margin: 0 0 10px; letter-spacing: -0.01em; }
-  .sec-title { font-size: clamp(32px, 4.8vw, 52px); line-height: 1.12; font-weight: 700; letter-spacing: -0.035em; margin: 0; }
-  .sec-sub { margin: 18px auto 0; max-width: 620px; font-size: clamp(17px, 1.9vw, 20px); color: var(--ink-2); font-weight: 400; line-height: 1.55; }
+  .sec-title { font-size: clamp(30px, 4.4vw, 48px); line-height: 1.18; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+  .sec-sub { margin: 16px 0 0; max-width: 34em; font-size: clamp(17px, 1.9vw, 20px); color: var(--ink-2); font-weight: 400; line-height: 1.55; }
 
   /* ---------- Demo ---------- */
   .stage {
-    position: relative; margin: 56px auto 0; width: min(780px, 100%); aspect-ratio: 16 / 10;
+    position: relative; margin: 56px 0 0; width: 100%; aspect-ratio: 16 / 9;
     border-radius: 24px; overflow: hidden;
     background:
       radial-gradient(55% 70% at 20% 20%, rgba(255, 179, 140, .55), transparent 70%),
@@ -246,7 +252,7 @@
   /* ---------- How / features ---------- */
   .how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; }
   .how div { padding-top: 24px; border-top: 1px solid var(--line); }
-  .how b { display: block; font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-bottom: 14px;
+  .how b { display: block; font-size: 40px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; margin-bottom: 14px;
     background: linear-gradient(120deg, var(--a), var(--b)); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .how h3 { margin: 0 0 8px; font-size: 21px; letter-spacing: -0.02em; line-height: 1.3; }
   .how p { margin: 0; font-size: 16px; color: var(--ink-2); line-height: 1.6; }
@@ -268,7 +274,7 @@
   .step h3 { margin: 0 0 10px; font-size: 21px; letter-spacing: -0.02em; line-height: 1.3; }
   .step p { margin: 0; font-size: 16px; color: var(--ink-2); line-height: 1.6; }
   .step code, .faq code { font-family: var(--mono); font-size: .86em; background: rgba(0, 0, 0, .05); padding: 1px 6px; border-radius: 6px; color: var(--ink); white-space: nowrap; }
-  .req { margin: 28px 0 0; text-align: center; font-size: 14px; color: var(--ink-3); }
+  .req { margin: 24px 0 0; font-size: 14px; color: var(--ink-3); }
 
   /* ---------- Security ---------- */
   .sec-grid { display: grid; grid-template-columns: 1fr 1.08fr; gap: 56px; align-items: center; margin-top: 64px; }
@@ -325,7 +331,10 @@
   .ghost:hover { border-color: var(--link); }
 
   /* ---------- FAQ ---------- */
-  .faq { max-width: 760px; margin: 48px auto 0; }
+  .split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: start; }
+  .split .sec-head + * { margin-top: 0 !important; }
+  .split .sec-head { position: sticky; top: 96px; padding-top: 14px; }
+  .faq { margin: 0; }
   .faq details { border-bottom: 1px solid var(--line); }
   .faq summary {
     list-style: none; cursor: pointer; padding: 22px 36px 22px 0; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; position: relative;
@@ -338,14 +347,12 @@
   .faq details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; }
   .faq details p { margin: -6px 0 22px; color: var(--ink-2); font-size: 16px; line-height: 1.6; }
 
-  /* ---------- Final CTA / footer ---------- */
-  .final { text-align: center; padding: 112px 0 120px; position: relative; overflow: hidden; isolation: isolate; }
-  .final::before {
-    content: ""; position: absolute; left: 50%; top: 50%; width: 900px; height: 420px; transform: translate(-50%, -50%); z-index: -1;
-    background: radial-gradient(50% 50% at 50% 50%, rgba(158, 133, 250, .14), transparent 70%);
-  }
-  .final img { width: 88px; height: 88px; margin: 0 auto 24px; filter: drop-shadow(0 14px 26px rgba(76, 60, 160, .25)); }
-  .final h2 { margin: 0 0 30px; }
+  /* ---------- Final CTA: 히어로 락업의 축소판 ---------- */
+  .final { padding: 120px 0; }
+  .final-lockup { display: flex; align-items: center; justify-content: center; gap: 40px; }
+  .final-lockup img { width: 136px; height: 136px; flex: none; filter: drop-shadow(0 18px 30px rgba(76, 60, 160, .24)); }
+  .final-lockup h2 { margin: 0 0 20px; }
+  .final-lockup .cta-row { justify-content: flex-start; }
   footer { background: var(--paper); color: var(--ink-3); font-size: 12px; padding: 20px 0 32px; }
   footer .wrap { display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 16px; }
   footer a { color: #424245; }
@@ -365,6 +372,9 @@
   @media (max-width: 900px) {
     .features { grid-template-columns: repeat(2, 1fr); }
     .sec-grid { grid-template-columns: 1fr; gap: 40px; }
+    .lockup { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 40px; }
+    .split { grid-template-columns: 1fr; gap: 40px; }
+    .split .sec-head { position: static; }
     .formats { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 734px) {
@@ -373,11 +383,16 @@
     br.m { display: inline; }
     .nav-links { display: none; }
     .nav .wrap { justify-content: space-between; }
-    .hero { padding: 56px 0 72px; }
-    .hero-icon { width: 112px; height: 112px; margin-bottom: 22px; }
-    .eyebrow { font-size: 17px; }
-    h1 { font-size: clamp(38px, 11vw, 48px); }
+    .hero { padding: 48px 0 72px; }
+    .lockup { grid-template-columns: 1fr; gap: 28px; }
+    .hero-art { place-items: start; }
+    .hero-art::before { inset: -40% -20% -40% -30%; }
+    .hero-icon { width: 112px; }
+    .eyebrow { font-size: 17px; margin-bottom: 8px; }
+    h1 { font-size: clamp(38px, 11vw, 46px); }
     .lede { font-size: 17px; }
+    .final-lockup { flex-direction: column; align-items: flex-start; gap: 24px; }
+    .final-lockup img { width: 96px; height: 96px; }
     .block { padding: 80px 0; }
     .steps, .how { grid-template-columns: 1fr; }
     .how { gap: 28px; }
@@ -385,7 +400,7 @@
     .stage { border-radius: 18px; aspect-ratio: 4 / 3.4; }
     .win-body { grid-template-columns: 1fr; }
     .side { display: none; }
-    .final { padding: 88px 0 96px; }
+    .final { padding: 88px 0; }
   }
 </style>
 </head>
@@ -406,37 +421,45 @@
 </nav>
 
 <header class="hero" id="top">
-  <div class="wrap">
-    <img class="hero-icon" src="assets/icon-512.png" width="148" height="148" alt="Dropfit 앱 아이콘">
-    <p class="eyebrow">Dropfit</p>
-    <h1>끌어다 놓으면,<br class="m"> <span class="grad">끝.</span></h1>
-    <p class="lede">이미지를 오브 위로 가져가면 <b class="nb">포맷이 원형으로 펼쳐집니다.</b><br class="d"> <span class="nb">원하는 곳에 놓기만 하세요.</span> <span class="nb">메뉴도, 저장 창도 없습니다.</span></p>
-
-    <div class="cta">
-      <div class="cta-row mac-only">
-        <a class="pill lg" href="Dropfit-macOS.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg>
-          Mac용 다운로드
-        </a>
-        <a class="more" href="Dropfit-macOS.dmg" download>DMG로 받기 ›</a>
-      </div>
-      <div class="cta-row copy-only">
-        <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
-      </div>
-      <p class="cta-meta"><span class="nb">버전 0.1 테스트 · 1.1MB</span> · <span class="nb">macOS 14 Sonoma 이상</span> · <span class="nb">Apple Silicon / Intel</span></p>
+  <div class="wrap lockup">
+    <div class="hero-art">
+      <img class="hero-icon" src="assets/icon-hero.png" width="380" height="380" alt="Dropfit 앱 아이콘">
     </div>
+    <div class="hero-copy">
+      <p class="eyebrow">Dropfit <span>· Mac용 이미지 변환</span></p>
+      <h1>끌어다 놓으면,<br><span class="grad">끝.</span></h1>
+      <p class="lede">이미지를 오브 위로 가져가면 <b class="nb">포맷이 원형으로 펼쳐집니다.</b> <span class="nb">원하는 곳에 놓기만 하세요.</span></p>
+      <ul class="chips" aria-label="지원 포맷">
+        <li style="--c:var(--jpg)">JPG</li><li style="--c:var(--png)">PNG</li><li style="--c:var(--heic)">HEIC</li><li style="--c:var(--tiff)">TIFF</li><li style="--c:var(--gif)">GIF</li><li style="--c:var(--bmp)">BMP</li>
+      </ul>
 
-    <div class="notice" role="note">
-      <strong>Dropfit은 Mac 전용 앱입니다.</strong>
-      링크를 복사해 카카오톡 ‘나와의 채팅’ 등으로 보낸 뒤, Mac에서 열어 다운로드해 주세요.
+      <div class="cta">
+        <div class="cta-row mac-only">
+          <a class="pill lg" href="Dropfit-macOS.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg>
+            Mac용 다운로드
+          </a>
+          <a class="more" href="Dropfit-macOS.dmg" download>DMG로 받기 ›</a>
+        </div>
+        <div class="cta-row copy-only">
+          <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
+        </div>
+        <p class="cta-meta"><span class="nb">버전 0.1 테스트 · 1.1MB</span> · <span class="nb">macOS 14 Sonoma 이상</span> · <span class="nb">Apple Silicon / Intel</span></p>
+      </div>
+
+      <div class="notice" role="note">
+        <strong>Dropfit은 Mac 전용 앱입니다.</strong>
+        링크를 복사해 카카오톡 ‘나와의 채팅’ 등으로 보낸 뒤, Mac에서 열어 다운로드해 주세요.
+      </div>
     </div>
   </div>
 </header>
 
 <section class="gray block" id="how" aria-labelledby="demo-title">
   <div class="wrap">
-    <div class="center-t">
-    <h2 class="sec-title reveal" id="demo-title">포맷 변환을<br>단 한 번의 동작으로.</h2>
+    <div class="sec-head">
+    <p class="label reveal">사용법</p>
+    <h2 class="sec-title reveal" id="demo-title">포맷 변환을<br class="m"> <span class="nb">단 한 번의 동작으로.</span></h2>
     <p class="sec-sub reveal">앱을 열고, 파일을 고르고, 포맷을 찾고, 저장 위치를 정하는 일.<br class="d"> Dropfit에서는 드래그 한 번이면 됩니다.</p>
     </div>
 
@@ -478,8 +501,8 @@
 
 <section class="block" aria-labelledby="feat-title">
   <div class="wrap">
-    <div class="center-t">
-      <p class="label reveal">사용법</p>
+    <div class="sec-head">
+      <p class="label reveal">세 단계</p>
       <h2 class="sec-title reveal" id="feat-title">가져가고, 고르고, 놓기.</h2>
     </div>
     <div class="how reveal">
@@ -511,7 +534,7 @@
 
 <section class="gray block" id="install" aria-labelledby="install-title">
   <div class="wrap">
-    <div class="center-t">
+    <div class="sec-head">
       <p class="label reveal">설치</p>
       <h2 class="sec-title reveal" id="install-title">1분이면 충분합니다.</h2>
     </div>
@@ -526,7 +549,7 @@
 
 <section class="block" id="security" aria-labelledby="sec-title">
   <div class="wrap">
-    <div class="center-t">
+    <div class="sec-head">
       <p class="label reveal">처음 한 번만</p>
       <h2 class="sec-title reveal" id="sec-title">‘확인되지 않은 개발자’<br>경고가 뜬다면.</h2>
       <p class="sec-sub reveal">테스트 버전이라 아직 Apple 공증을 받지 않았기 때문입니다.<br class="d"> 앱은 인터넷에 연결하지 않으며, 한 번 허용하면 다시 묻지 않습니다.</p>
@@ -573,8 +596,8 @@
 </section>
 
 <section class="gray block" id="faq" aria-labelledby="faq-title">
-  <div class="wrap">
-    <div class="center-t"><h2 class="sec-title reveal" id="faq-title">자주 묻는 질문</h2></div>
+  <div class="wrap split">
+    <div class="sec-head"><p class="label reveal">도움말</p><h2 class="sec-title reveal" id="faq-title">자주 묻는 질문</h2></div>
     <div class="faq reveal">
       <details>
         <summary>무료인가요?</summary>
@@ -605,15 +628,17 @@
 </section>
 
 <section class="final">
-  <div class="wrap">
-    <img class="reveal" src="assets/icon-256.png" alt="">
-    <h2 class="sec-title reveal">지금 바로 써 보세요.</h2>
-    <div class="cta-row reveal mac-only">
-      <a class="pill lg" href="Dropfit-macOS.zip" download>Mac용 다운로드</a>
-      <a class="more" href="Dropfit-macOS.dmg" download>DMG로 받기 ›</a>
-    </div>
-    <div class="cta-row reveal copy-only">
-      <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
+  <div class="wrap final-lockup">
+    <img class="reveal" src="assets/icon-hero.png" width="136" height="136" alt="">
+    <div class="reveal">
+      <h2 class="sec-title">지금 바로 써 보세요.</h2>
+      <div class="cta-row mac-only">
+        <a class="pill lg" href="Dropfit-macOS.zip" download>Mac용 다운로드</a>
+        <a class="more" href="Dropfit-macOS.dmg" download>DMG로 받기 ›</a>
+      </div>
+      <div class="cta-row copy-only">
+        <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
+      </div>
     </div>
   </div>
 </section>
