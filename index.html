@@ -12,12 +12,12 @@
 <meta property="og:title" content="Dropfit — 끌어다 놓으면, 끝.">
 <meta property="og:description" content="이미지를 끌어다 놓으면 원하는 포맷으로. Mac용 무료 테스트 버전을 받아 보세요.">
 <meta property="og:url" content="https://realleejeonghoon.github.io/dropfit-download/">
-<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=3">
+<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=4">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=3">
+<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=4">
 
 <link rel="stylesheet" href="fonts/pretendardvariable-dynamic-subset.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -416,11 +416,6 @@
   }
   body {
     background-color: var(--bg); color: var(--ink);
-    /* 카본 직조 질감 */
-    background-image:
-      linear-gradient(45deg, rgba(255, 255, 255, .018) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, .018) 75%),
-      linear-gradient(45deg, rgba(255, 255, 255, .018) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, .018) 75%);
-    background-size: 6px 6px; background-position: 0 0, 3px 3px;
   }
   ::selection { background: rgba(127, 212, 255, .3); }
   .nav { background: rgba(4, 7, 13, .72); border-bottom-color: var(--line); }
@@ -438,17 +433,9 @@
   .chips li::before { display: none; }
   .notice { background: var(--glass); box-shadow: var(--glow); }
 
-  /* 히어로: 아이콘을 감싸는 동심원 HUD */
-  .hero-art::before { inset: 0; background: radial-gradient(50% 50% at 50% 50%, rgba(58, 160, 255, .18), transparent 70%); }
-  .hud { position: relative; width: 100%; max-width: 460px; aspect-ratio: 1; display: grid; place-items: center; }
-  .rings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  .rings .r-thin { fill: none; stroke: var(--ice); stroke-opacity: .3; stroke-width: 1; }
-  .rings .r-tick { fill: none; stroke: var(--ice); stroke-opacity: .55; stroke-width: 6; stroke-dasharray: 1 7; }
-  .rings .r-dash { fill: none; stroke: var(--ice); stroke-opacity: .4; stroke-width: 1; stroke-dasharray: 14 6; transform-origin: 300px 300px; animation: spin 60s linear infinite; }
-  .rings .seg { fill: rgba(127, 212, 255, .06); stroke: var(--ice); stroke-width: 1.3; stroke-opacity: .85; filter: drop-shadow(0 0 4px rgba(127, 212, 255, .6)); }
-  .rings .seg-t { fill: var(--ice); font-size: 13px; font-weight: 600; letter-spacing: .2em; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .hud .hero-icon { position: relative; width: 60%; max-width: none; filter: drop-shadow(0 0 30px rgba(58, 160, 255, .35)) drop-shadow(0 16px 30px rgba(0, 0, 0, .6)); }
+  /* 히어로 */
+  .hero-art::before { inset: -6%; background: radial-gradient(50% 50% at 50% 50%, rgba(58, 160, 255, .22), transparent 70%); }
+  .hero-icon { filter: drop-shadow(0 0 36px rgba(58, 160, 255, .35)) drop-shadow(0 18px 32px rgba(0, 0, 0, .6)); }
 
   /* 데모 */
   .stage {
@@ -511,10 +498,9 @@
   .toast { background: rgba(6, 14, 26, .92); box-shadow: var(--glow); color: var(--ice); }
 
   @media (max-width: 734px) {
-    .hud { max-width: 220px; }
     .chips { gap: 6px; letter-spacing: .08em; }
     .chips li { padding: 3px 7px; font-size: 11px; }
-    .hero-art { place-items: start; }
+    .hero-art::before { inset: auto; left: -40px; top: -40px; width: 192px; height: 192px; }
   }
 </style>
 </head>
@@ -537,37 +523,7 @@
 <header class="hero" id="top">
   <div class="wrap lockup">
     <div class="hero-art">
-      <div class="hud">
-        <svg class="rings" viewBox="0 0 600 600" aria-hidden="true">
-        <defs>
-        <path id="lp0" d="M187.0 78.1A249 249 0 0 1 413.0 78.1"/>
-        <path id="lp1" d="M435.6 91.2A249 249 0 0 1 548.7 287.0"/>
-        <path id="lp2" d="M435.6 508.8A249 249 0 0 0 548.7 313.0"/>
-        <path id="lp3" d="M187.0 521.9A249 249 0 0 0 413.0 521.9"/>
-        <path id="lp4" d="M51.3 313.0A249 249 0 0 0 164.4 508.8"/>
-        <path id="lp5" d="M51.3 287.0A249 249 0 0 1 164.4 91.2"/>
-        </defs>
-        <circle class="r-thin" cx="300" cy="300" r="292"/>
-        <circle class="r-tick" cx="300" cy="300" r="282"/>
-        <path class="seg" d="M179.2 63.0A266 266 0 0 1 420.8 63.0L405.3 93.3A232 232 0 0 0 194.7 93.3Z"/>
-        <text class="seg-t"><textPath href="#lp0" startOffset="50%" text-anchor="middle" dominant-baseline="central">JPG</textPath></text>
-        <path class="seg" d="M444.9 76.9A266 266 0 0 1 565.6 286.1L531.7 287.9A232 232 0 0 0 426.4 105.4Z"/>
-        <text class="seg-t"><textPath href="#lp1" startOffset="50%" text-anchor="middle" dominant-baseline="central">PNG</textPath></text>
-        <path class="seg" d="M565.6 313.9A266 266 0 0 1 444.9 523.1L426.4 494.6A232 232 0 0 0 531.7 312.1Z"/>
-        <text class="seg-t"><textPath href="#lp2" startOffset="50%" text-anchor="middle" dominant-baseline="central">HEIC</textPath></text>
-        <path class="seg" d="M420.8 537.0A266 266 0 0 1 179.2 537.0L194.7 506.7A232 232 0 0 0 405.3 506.7Z"/>
-        <text class="seg-t"><textPath href="#lp3" startOffset="50%" text-anchor="middle" dominant-baseline="central">TIFF</textPath></text>
-        <path class="seg" d="M155.1 523.1A266 266 0 0 1 34.4 313.9L68.3 312.1A232 232 0 0 0 173.6 494.6Z"/>
-        <text class="seg-t"><textPath href="#lp4" startOffset="50%" text-anchor="middle" dominant-baseline="central">GIF</textPath></text>
-        <path class="seg" d="M34.4 286.1A266 266 0 0 1 155.1 76.9L173.6 105.4A232 232 0 0 0 68.3 287.9Z"/>
-        <text class="seg-t"><textPath href="#lp5" startOffset="50%" text-anchor="middle" dominant-baseline="central">BMP</textPath></text>
-        <circle class="r-thin" cx="300" cy="300" r="222"/>
-        <circle class="r-dash" cx="300" cy="300" r="212"/>
-        </svg>
-        
-        
-        <img class="hero-icon" src="assets/icon-hero.png" width="240" height="240" alt="Dropfit 앱 아이콘">
-      </div>
+      <img class="hero-icon" src="assets/icon-hero.png" width="380" height="380" alt="Dropfit 앱 아이콘">
     </div>
     <div class="hero-copy">
       <p class="eyebrow">Dropfit <span>· Mac 이미지 포맷 변환</span></p>
