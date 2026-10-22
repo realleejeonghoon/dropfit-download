@@ -592,6 +592,8 @@
   .term .tx p { margin: 0 0 8px; font-size: 15px; color: var(--ink-2); }
   .term code { display: inline-block; font-family: var(--mono); font-size: 14px; color: var(--ink); background: #fff; padding: 6px 10px; border-radius: 8px; word-break: break-all; }
   .term code::before { content: "$ "; color: var(--ink-3); }
+  .sum { margin: 14px 4px 0; font-size: 11px; line-height: 1.6; color: var(--ink-3); letter-spacing: 0; }
+  .sum code { font-family: var(--mono); font-size: 10.5px; word-break: break-all; }
   .ghost {
     font: inherit; font-size: 14px; color: var(--link); background: #fff; border: 1px solid var(--line); border-radius: 980px;
     padding: 8px 16px; cursor: pointer; transition: border-color .2s; white-space: nowrap;
@@ -928,6 +930,7 @@
       </div>
       <button class="ghost" type="button" data-copy="#cmd">명령어 복사</button>
     </div>
+    <p class="sum reveal">받은 zip이 원본인지 확인하는 SHA-256 지문 · <code>3491cee697b73c761f79daa544d2a6abc511ee282fe7f54550c3f5d6338c9629</code></p>
   </div>
 </section>
 
