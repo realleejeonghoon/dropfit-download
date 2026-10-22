@@ -173,11 +173,7 @@
   .dfile.src { transform: translate(var(--fx), -64px); }
   .dfile.src span { animation-name: selected; }
   .dfile.out { transform: translate(var(--fx), 34px); opacity: 0; animation-name: outFile; }
-  .dfile.out .ph { position: relative; background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); }
-  .dfile.out span { animation-name: outSel; }
-  .dfile.out .ph::after { content: ""; position: absolute; inset: -6px; border-radius: 7px; box-shadow: 0 0 0 1.5px var(--sky-deep); opacity: 0; animation: outPulse 8s var(--ease) infinite; }
-  .fly { width: 60px; height: 45px; left: -30px; top: -22.5px; border-radius: 3px; border: 2px solid #fff; z-index: 3; opacity: 0; animation-name: fly;
-    background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); box-shadow: 0 6px 16px rgba(29, 45, 70, .18); }
+  .dfile.out .ph { background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); }
 
   /* 링 뒤 흰 베일 (HUDBackdrop) */
   .veil { width: 262px; height: 262px; left: -131px; top: -131px; border-radius: 50%; opacity: 0; animation-name: ringFade;
@@ -258,11 +254,11 @@
     64%, 100%{ transform: scale(1); }
   }
   @keyframes glyph { 0%, 23% { opacity: 1; } 25%, 84% { opacity: 0; } 88%, 100% { opacity: 1; } }
-  @keyframes thumb { 0%, 23% { opacity: 0; } 25%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
+  @keyframes thumb { 0%, 23% { opacity: 0; } 26%, 58% { opacity: 1; } 61%, 100% { opacity: 0; } }
   @keyframes thumbVeil { 0%, 44% { opacity: .12; } 46%, 100% { opacity: .62; } }
-  @keyframes olabel { 0%, 44% { opacity: 0; } 46%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
-  @keyframes spin { 0%, 59% { opacity: 0; transform: rotate(0); } 60%, 65% { opacity: 1; } 66%, 100% { opacity: 0; transform: rotate(900deg); } }
-  @keyframes done { 0%, 65% { opacity: 0; transform: translate(-50%, -50%) scale(.85); } 68%, 82% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 86%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
+  @keyframes olabel { 0%, 44% { opacity: 0; } 46%, 58% { opacity: 1; } 61%, 100% { opacity: 0; } }
+  @keyframes spin { 0%, 59% { opacity: 0; transform: rotate(0); } 62%, 64% { opacity: 1; } 67%, 100% { opacity: 0; transform: rotate(900deg); } }
+  @keyframes done { 0%, 65% { opacity: 0; transform: translate(-50%, -50%) scale(.85); } 69%, 82% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 86%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
   @keyframes burst { 0%, 66% { opacity: 0; transform: scale(1); } 66.5% { opacity: .8; transform: scale(1); } 78%, 100% { opacity: 0; transform: scale(1.4); } }
   @keyframes iris {
     0%, 24%  { opacity: 0; transform: scale(.86) rotate(-8deg); }
@@ -276,17 +272,8 @@
   @keyframes segText { 0%, 44% { fill: var(--sky-text); fill-opacity: .8; } 46%, 60% { fill: #fff; fill-opacity: 1; } 61.5%, 100% { fill: var(--sky-text); fill-opacity: .8; } }
   @keyframes hint1 { 0%, 27% { opacity: 0; } 30%, 44% { opacity: 1; } 45%, 100% { opacity: 0; } }
   @keyframes hint2 { 0%, 44% { opacity: 0; } 46%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
-  /* 완료 → 오브에서 새 파일이 날아가 원본 옆에 놓이고, 선택 표시로 "새로 생겼다"를 알린다 */
-  @keyframes outFile { 0%, 72.9% { opacity: 0; transform: translate(var(--fx), 34px); } 73% { opacity: 1; transform: translate(var(--fx), 34px) scale(1.05); } 76%, 96.5% { opacity: 1; transform: translate(var(--fx), 34px) scale(1); } 98%, 100% { opacity: 0; transform: translate(var(--fx), 34px); } }
-  @keyframes outSel { 0%, 72.9% { background: transparent; color: #1d1d1f; } 73%, 90% { background: #2f6fd6; color: #fff; } 92%, 100% { background: transparent; color: #1d1d1f; } }
-  @keyframes outPulse { 0%, 73% { opacity: 0; transform: scale(1); } 73.5% { opacity: .9; transform: scale(1); } 81%, 100% { opacity: 0; transform: scale(1.35); } }
-  @keyframes fly {
-    0%, 66%  { opacity: 0; transform: translate(26px, 2px) scale(.35); }
-    67.5%    { opacity: 1; transform: translate(40px, -2px) scale(.45); }
-    70%      { transform: translate(calc(var(--fx) * .55), -22px) scale(.75); }
-    73%      { opacity: 1; transform: translate(var(--fx), 18px) scale(1); }
-    73.1%, 100% { opacity: 0; transform: translate(var(--fx), 18px) scale(1); }
-  }
+  /* 완료되면 새 파일이 원본 옆 제자리에 부드럽게 나타난다 (실제 Finder처럼 이동 없이) */
+  @keyframes outFile { 0%, 66% { opacity: 0; transform: translate(var(--fx), 34px) scale(.96); } 74%, 94% { opacity: 1; transform: translate(var(--fx), 34px) scale(1); } 99%, 100% { opacity: 0; transform: translate(var(--fx), 34px) scale(1); } }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; }
@@ -516,7 +503,6 @@
         <div class="scale" id="demoScale">
           <div class="dfile src"><div class="ph"></div><span>여행.heic</span></div>
           <div class="dfile out"><div class="ph"></div><span>여행.png</span></div>
-          <div class="fly"></div>
           <div class="veil"></div>
           <svg class="ring" viewBox="-130 -130 260 260">
             <defs>
