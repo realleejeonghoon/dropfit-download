@@ -498,7 +498,7 @@
 <section class="demo-top" id="how" aria-label="Dropfit 시연">
   <div class="wrap">
     <div class="stage" aria-label="HEIC 사진을 오브에 끌어와 PNG로 변환하는 애니메이션">
-      <div class="menubar" aria-hidden="true"><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="sp">화 10:21</span></div>
+      <div class="menubar" aria-hidden="true"><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="sp" id="demoDate">10월 22일 (목)</span></div>
       <div class="center" aria-hidden="true">
         <div class="scale" id="demoScale">
           <div class="dfile src"><div class="ph"></div><span>여행.heic</span></div>
@@ -746,6 +746,10 @@
       }, { rootMargin: '0px 0px -8% 0px' });
       els.forEach(function (el) { io.observe(el); });
     } else { els.forEach(function (el) { el.classList.add('in'); }); }
+
+    // 데모 메뉴 막대: macOS 형식으로 오늘 날짜 표시 (예: 10월 22일 (목))
+    var d = new Date(), dateEl = document.getElementById('demoDate');
+    if (dateEl) dateEl.textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + '일월화수목금토'.charAt(d.getDay()) + ')';
 
     // 데모를 스테이지 크기에 맞춰 축소
     var stage = document.querySelector('.stage'), scale = document.getElementById('demoScale');
