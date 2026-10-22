@@ -173,7 +173,11 @@
   .dfile.src { transform: translate(var(--fx), -64px); }
   .dfile.src span { animation-name: selected; }
   .dfile.out { transform: translate(var(--fx), 34px); opacity: 0; animation-name: outFile; }
-  .dfile.out .ph { background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); }
+  .dfile.out .ph { position: relative; background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); }
+  .dfile.out span { animation-name: outSel; }
+  .dfile.out .ph::after { content: ""; position: absolute; inset: -6px; border-radius: 7px; box-shadow: 0 0 0 1.5px var(--sky-deep); opacity: 0; animation: outPulse 8s var(--ease) infinite; }
+  .fly { width: 60px; height: 45px; left: -30px; top: -22.5px; border-radius: 3px; border: 2px solid #fff; z-index: 3; opacity: 0; animation-name: fly;
+    background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); box-shadow: 0 6px 16px rgba(29, 45, 70, .18); }
 
   /* 링 뒤 흰 베일 (HUDBackdrop) */
   .veil { width: 262px; height: 262px; left: -131px; top: -131px; border-radius: 50%; opacity: 0; animation-name: ringFade;
@@ -240,9 +244,9 @@
     34%  { transform: translate(-2px, 2px); }
     45%  { transform: translate(80px, -46px); }
     58%  { transform: translate(80px, -46px); opacity: 1; }
-    78%  { transform: translate(120px, 30px); opacity: 1; }
-    86%  { transform: translate(140px, 46px); opacity: 0; }
-    100% { transform: translate(140px, 46px); opacity: 0; }
+    68%  { transform: translate(20px, 96px); opacity: 1; }
+    74%  { transform: translate(10px, 110px); opacity: 0; }
+    100% { transform: translate(10px, 110px); opacity: 0; }
   }
   @keyframes dragImg { 0%, 10% { opacity: 0; } 12%, 57% { opacity: .62; } 59%, 100% { opacity: 0; transform: scale(.6); } }
   @keyframes selected { 0%, 8% { background: transparent; color: #1d1d1f; } 9%, 60% { background: #2f6fd6; color: #fff; } 62%, 100% { background: transparent; color: #1d1d1f; } }
@@ -272,7 +276,17 @@
   @keyframes segText { 0%, 44% { fill: var(--sky-text); fill-opacity: .8; } 46%, 60% { fill: #fff; fill-opacity: 1; } 61.5%, 100% { fill: var(--sky-text); fill-opacity: .8; } }
   @keyframes hint1 { 0%, 27% { opacity: 0; } 30%, 44% { opacity: 1; } 45%, 100% { opacity: 0; } }
   @keyframes hint2 { 0%, 44% { opacity: 0; } 46%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
-  @keyframes outFile { 0%, 68% { opacity: 0; transform: translate(var(--fx), 34px) scale(.85); } 72%, 92% { opacity: 1; transform: translate(var(--fx), 34px) scale(1); } 97%, 100% { opacity: 0; transform: translate(var(--fx), 34px) scale(1); } }
+  /* 완료 → 오브에서 새 파일이 날아가 원본 옆에 놓이고, 선택 표시로 "새로 생겼다"를 알린다 */
+  @keyframes outFile { 0%, 72.9% { opacity: 0; transform: translate(var(--fx), 34px); } 73% { opacity: 1; transform: translate(var(--fx), 34px) scale(1.05); } 76%, 96.5% { opacity: 1; transform: translate(var(--fx), 34px) scale(1); } 98%, 100% { opacity: 0; transform: translate(var(--fx), 34px); } }
+  @keyframes outSel { 0%, 72.9% { background: transparent; color: #1d1d1f; } 73%, 90% { background: #2f6fd6; color: #fff; } 92%, 100% { background: transparent; color: #1d1d1f; } }
+  @keyframes outPulse { 0%, 73% { opacity: 0; transform: scale(1); } 73.5% { opacity: .9; transform: scale(1); } 81%, 100% { opacity: 0; transform: scale(1.35); } }
+  @keyframes fly {
+    0%, 66%  { opacity: 0; transform: translate(26px, 2px) scale(.35); }
+    67.5%    { opacity: 1; transform: translate(40px, -2px) scale(.45); }
+    70%      { transform: translate(calc(var(--fx) * .55), -22px) scale(.75); }
+    73%      { opacity: 1; transform: translate(var(--fx), 18px) scale(1); }
+    73.1%, 100% { opacity: 0; transform: translate(var(--fx), 18px) scale(1); }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; }
@@ -502,6 +516,7 @@
         <div class="scale" id="demoScale">
           <div class="dfile src"><div class="ph"></div><span>여행.heic</span></div>
           <div class="dfile out"><div class="ph"></div><span>여행.png</span></div>
+          <div class="fly"></div>
           <div class="veil"></div>
           <svg class="ring" viewBox="-130 -130 260 260">
             <defs>
