@@ -149,8 +149,8 @@
     box-shadow: 0 0 0 1px rgba(60, 96, 138, .08), 0 30px 70px rgba(60, 96, 138, .12), 0 6px 18px rgba(60, 96, 138, .06);
   }
   .menubar {
-    position: absolute; inset: 0 0 auto; height: 26px; display: flex; align-items: center; gap: 16px;
-    padding: 0 14px; font-size: 12px; color: rgba(29, 29, 31, .7); z-index: 5;
+    position: absolute; inset: 0 0 auto; height: calc(24px * var(--s, 1)); display: flex; align-items: center; gap: calc(18px * var(--s, 1));
+    padding: 0 calc(16px * var(--s, 1)); font-size: calc(13px * var(--s, 1)); color: rgba(29, 29, 31, .7); z-index: 5;
     background: rgba(255, 255, 255, .6); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(60, 96, 138, .06);
   }
@@ -243,12 +243,12 @@
   .fan.c .seg:not(.target):not(.off) text { animation-name: dimTC; }
   .orb .olabel.b { animation-name: olabelB; }
   .orb .olabel.c { animation-name: olabelC; }
-  .cap { position: absolute; left: 0; right: 0; top: 44px; text-align: center; font-size: 13px; letter-spacing: .02em; color: var(--sky-text); pointer-events: none; }
+  .cap { position: absolute; left: 0; right: 0; top: 44px; text-align: center; font-size: 12px; letter-spacing: .04em; color: var(--sky-text); pointer-events: none; }
   .cap span { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; opacity: 0;
     animation-duration: 16s; animation-iteration-count: infinite; animation-timing-function: var(--ease); }
   .cap .b { animation-name: capB; }
   .cap .c { animation-name: capC; }
-  @media (max-width: 734px) { .cap { top: 36px; font-size: 11px; } }
+  @media (max-width: 734px) { .cap { top: 30px; font-size: 10.5px; } }
   /* 타임라인: 장면 ①은 0–50%, ②·③은 50–100% */
   @keyframes cursor {
     0% { transform: translate(calc(var(--fx) + 52px), -20px); opacity: 0; }
@@ -700,7 +700,7 @@
   footer a { color: var(--ink-2); }
   /* 시연을 첫 화면 맨 위에 */
   .demo-top { padding: 40px 0 0; }
-  .demo-top .stage { margin: 0; aspect-ratio: 2 / 1; animation: rise 1.1s var(--ease) both; }
+  .demo-top .stage { margin: 0; aspect-ratio: 16 / 10; animation: rise 1.1s var(--ease) both; }
   @media (max-width: 734px) { .demo-top .stage { aspect-ratio: 4 / 3.4; } }
   .demo-top + .hero { padding-top: 72px; }
   @media (max-width: 734px) { .demo-top { padding-top: 20px; } .demo-top + .hero { padding-top: 40px; } }
@@ -999,7 +999,8 @@
     var stage = document.querySelector('.stage'), center = stage.querySelector('.center');
     function fit() {
       var w = stage.clientWidth, h = stage.clientHeight;
-      var sc = Math.min(1.5, h / 330, w / (w < 600 ? 450 : 600));
+      // 실제 화면 비례: 데스크톱은 스테이지 = MacBook 화면 너비(1512pt), 모바일은 그 일부를 확대해 보여 줌
+      var sc = w < 600 ? w / 700 : w / 1512;
       stage.style.setProperty('--s', sc.toFixed(3));
       // 가장자리·모서리 장면에서 오브가 놓일 자리 (스테이지 오른쪽·아래 끝에서 44pt 안쪽)
       stage.style.setProperty('--ex', ((w - center.offsetLeft) / sc - 44).toFixed(1) + 'px');
