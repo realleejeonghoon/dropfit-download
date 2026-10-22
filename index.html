@@ -999,8 +999,8 @@
     var stage = document.querySelector('.stage'), center = stage.querySelector('.center');
     function fit() {
       var w = stage.clientWidth, h = stage.clientHeight;
-      // 실제 화면 비례: 데스크톱은 스테이지 = MacBook 화면 너비(1512pt), 모바일은 그 일부를 확대해 보여 줌
-      var sc = w < 600 ? w / 700 : w / 1512;
+      // 화면 비례: 데스크톱은 스테이지 폭 = 1080pt(앱이 실제 크기에 가깝게 보임), 모바일은 화면 일부를 확대
+      var sc = w < 600 ? w / 540 : w / 1080;
       stage.style.setProperty('--s', sc.toFixed(3));
       // 가장자리·모서리 장면에서 오브가 놓일 자리 (스테이지 오른쪽·아래 끝에서 44pt 안쪽)
       stage.style.setProperty('--ex', ((w - center.offsetLeft) / sc - 44).toFixed(1) + 'px');
