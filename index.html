@@ -137,104 +137,150 @@
   .sec-title { font-size: clamp(30px, 4.2vw, 46px); line-height: 1.24; font-weight: 700; letter-spacing: -0.028em; margin: 0; }
   .sec-sub { margin: 16px 0 0; max-width: 34em; font-size: clamp(17px, 1.9vw, 20px); color: var(--ink-2); font-weight: 400; line-height: 1.55; }
 
-  /* ---------- Demo: 앱의 원형 메뉴(링 세그먼트)를 그대로 옮김 ---------- */
+  /* ---------- Demo: 실제 앱(OrbViews.swift)의 치수·색·모션을 그대로 옮김 ----------
+     8초 한 바퀴: 바탕화면 파일을 끌어 → 오브 위(썸네일 + 링 펼침) → PNG 칸 → 놓기 → 진행 → 완료 → 새 파일 */
   .stage {
     position: relative; margin: 56px 0 0; width: 100%; aspect-ratio: 16 / 9;
     border-radius: 24px; overflow: hidden;
     background:
-      radial-gradient(70% 80% at 50% 45%, rgba(255, 255, 255, .85), transparent 70%),
-      linear-gradient(180deg, #eef1f5 0%, #dfe4eb 100%);
+      radial-gradient(70% 80% at 45% 45%, rgba(255, 255, 255, .8), transparent 70%),
+      linear-gradient(180deg, #eef1f5 0%, #dde3ea 100%);
     box-shadow: 0 0 0 1px rgba(60, 96, 138, .08), 0 30px 70px rgba(60, 96, 138, .12), 0 6px 18px rgba(60, 96, 138, .06);
   }
   .menubar {
     position: absolute; inset: 0 0 auto; height: 26px; display: flex; align-items: center; gap: 16px;
-    padding: 0 14px; font-size: 12px; color: rgba(29, 29, 31, .7);
+    padding: 0 14px; font-size: 12px; color: rgba(29, 29, 31, .7); z-index: 5;
     background: rgba(255, 255, 255, .6); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(60, 96, 138, .06);
   }
   .menubar b { color: var(--ink); }
   .menubar .sp { margin-left: auto; }
-  .center { position: absolute; left: 50%; top: 53%; width: 0; height: 0; }
-  /* 데모 크기는 스테이지 높이에 맞춰 축소 */
-  .scale { position: absolute; left: 0; top: 0; transform: scale(var(--s, 1)); }
+  .center { position: absolute; left: 44%; top: 54%; width: 0; height: 0; }
+  /* 데모 크기는 스테이지에 맞춰 조절 (기준 단위 = 앱의 pt) */
+  .scale { --fx: 210px; position: absolute; left: 0; top: 0; transform: scale(var(--s, 1)); }
+  @media (max-width: 734px) { .scale { --fx: 150px; } .center { left: 40%; } }
+  .scale > * { position: absolute; }
+  .scale, .scale * { animation-duration: 8s; animation-iteration-count: infinite; animation-timing-function: var(--ease); }
 
-  .ring {
-    position: absolute; left: -130px; top: -130px; width: 260px; height: 260px; overflow: visible;
-    opacity: 0; animation: ring 7s var(--ease) infinite;
-    filter: drop-shadow(0 2px 5px rgba(29, 45, 70, .1));
-  }
-  .seg path { fill: url(#segFill); stroke: rgba(255, 255, 255, .7); stroke-width: .8; }
-  .seg text { fill: var(--sky-text); fill-opacity: .82; font-size: 10.5px; font-weight: 500; letter-spacing: .16em; text-anchor: middle; }
-  .seg.off path { opacity: .45; }
-  .seg.off text { fill-opacity: .32; }
-  .seg .on { fill: url(#segOn); stroke: rgba(255, 255, 255, .95); opacity: 0; animation: segOn 7s var(--ease) infinite; }
-  .seg.target text { animation: segText 7s var(--ease) infinite; }
-
-  .orb {
-    position: absolute; width: 84px; height: 84px; left: -42px; top: -42px; border-radius: 50%;
-    background: linear-gradient(180deg, var(--mist), var(--mist-low));
-    box-shadow: 0 0 0 .8px rgba(255, 255, 255, .85), 0 3px 10px rgba(29, 45, 70, .16);
-    display: grid; place-items: center; z-index: 2;
-    animation: orb 7s var(--ease) infinite;
-  }
-  .orb svg { grid-area: 1 / 1; }
-  .orb .glyph { width: 46px; height: 46px; animation: glyph 7s var(--ease) infinite; }
-  .orb .ok { width: 40px; height: 40px; opacity: 0; animation: ok 7s var(--ease) infinite; }
-
-  .file {
-    position: absolute; left: -44px; top: -54px; width: 88px; opacity: 0;
-    animation: file 7s var(--ease) infinite; text-align: center; z-index: 3;
-  }
-  .thumb {
-    width: 72px; height: 56px; margin: 0 auto; border-radius: 8px; border: 2.5px solid #fff;
+  /* 바탕화면 파일 아이콘 (Finder 스타일) */
+  .dfile { width: 84px; left: -42px; top: -40px; text-align: center; font-size: 11px; line-height: 1.25; color: #1d1d1f; }
+  .dfile .ph {
+    width: 60px; height: 45px; margin: 0 auto 4px; border-radius: 3px; border: 2px solid #fff;
     background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%);
-    box-shadow: 0 10px 22px rgba(29, 45, 70, .2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
   }
-  .fname {
-    margin-top: 6px; display: inline-block; font-size: 11px; color: var(--sky-text); background: rgba(255, 255, 255, .92);
-    padding: 1px 8px; border-radius: 980px; box-shadow: 0 0 0 .6px rgba(60, 96, 138, .15);
-  }
-  .result {
-    position: absolute; left: -130px; top: 60px; width: 260px; text-align: center; font-size: 13px; color: var(--ink-2);
-    opacity: 0; animation: result 7s var(--ease) infinite;
-  }
-  .result b { color: var(--ink); font-weight: 600; }
-  .result .tag { display: inline-block; margin-right: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: .08em; color: #fff; background: var(--sky-deep); border-radius: 5px; padding: 1px 6px; }
+  .dfile span { display: inline-block; padding: 1px 6px; border-radius: 4px; }
+  .dfile.src { transform: translate(var(--fx), -64px); }
+  .dfile.src span { animation-name: selected; }
+  .dfile.out { transform: translate(var(--fx), 34px); opacity: 0; animation-name: outFile; }
+  .dfile.out .ph { background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); }
 
-  @keyframes file {
-    0%   { opacity: 0; transform: translate(-300px, 60px) rotate(-8deg); }
-    4%   { opacity: 1; }
-    20%  { transform: translate(-6px, -4px) rotate(-4deg); }
-    30%  { transform: translate(-6px, -4px) rotate(-4deg); }
-    46%  { opacity: 1; transform: translate(76px, -40px) rotate(0) scale(.86); }
-    56%  { opacity: 1; transform: translate(76px, -40px) scale(.86); }
-    62%  { opacity: 0; transform: translate(76px, -40px) scale(.25); }
-    100% { opacity: 0; transform: translate(76px, -40px) scale(.25); }
+  /* 링 뒤 흰 베일 (HUDBackdrop) */
+  .veil { width: 262px; height: 262px; left: -131px; top: -131px; border-radius: 50%; opacity: 0; animation-name: ringFade;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, .5), rgba(255, 255, 255, .25) 60%, transparent); }
+
+  /* 포맷 링: 두께 54, 중심 반지름 74, 칸 사이 평행 간격 4 */
+  .ring { width: 260px; height: 260px; left: -130px; top: -130px; overflow: visible; opacity: 0; animation-name: iris;
+    filter: drop-shadow(0 1.5px 4px rgba(0, 0, 0, .09)); }
+  .seg path { fill: url(#segFill); stroke: rgba(255, 255, 255, .55); stroke-width: .8; fill-opacity: .92; }
+  .seg text { fill: var(--sky-text); fill-opacity: .8; font-size: 11.5px; font-weight: 500; letter-spacing: 1.8px; text-anchor: middle; }
+  .seg:not(.target):not(.off) path { animation-name: dimFill; }
+  .seg:not(.target):not(.off) text { animation-name: dimText; }
+  .seg.off path { fill-opacity: .4; stroke-opacity: .55; }
+  .seg.off text { fill-opacity: .3; }
+  .seg .on { fill: url(#segOn); stroke: rgba(255, 255, 255, .95); stroke-width: 1; opacity: 0; animation-name: segOn; }
+  .seg.target text { animation-name: segText; }
+
+  /* 오브: 지름 60 */
+  .orb {
+    width: 60px; height: 60px; left: -30px; top: -30px; border-radius: 50%; z-index: 2;
+    background: linear-gradient(180deg, var(--mist), var(--mist-low));
+    box-shadow: 0 0 0 .8px rgba(255, 255, 255, .8), 0 2.5px 14px rgba(0, 0, 0, .14);
+    animation-name: orb;
   }
+  .orb > * { position: absolute; left: 50%; top: 50%; }
+  .orb .glyph { width: 46px; height: 46px; margin: -23px 0 0 -23px; animation-name: glyph; }
+  .orb .thumb {
+    width: 50px; height: 50px; margin: -25px 0 0 -25px; border-radius: 50%; opacity: 0; animation-name: thumb;
+    background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%);
+    box-shadow: inset 0 0 0 .6px rgba(255, 255, 255, .7);
+  }
+  .orb .thumb::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #fff; opacity: .12; animation: thumbVeil 8s var(--ease) infinite; }
+  .orb .olabel { transform: translate(-50%, -50%); font-size: 12px; font-weight: 600; letter-spacing: 1.6px; color: var(--sky-text); opacity: 0; animation-name: olabel; }
+  .orb .spin { width: 28px; height: 28px; margin: -14px 0 0 -14px; opacity: 0; animation-name: spin; }
+  .orb .done { transform: translate(-50%, -50%); text-align: center; color: var(--sky-deep); opacity: 0; animation-name: done; }
+  .orb .done svg { display: block; width: 18px; height: 18px; margin: 0 auto 1px; }
+  .orb .done b { display: block; font-size: 10px; font-weight: 600; letter-spacing: 1px; line-height: 1; }
+  .orb .burst { width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; box-shadow: 0 0 0 1px #fff; opacity: 0; animation-name: burst; }
+
+  /* 안내 문구 (HintLabel): 링 바깥 + 22 */
+  .hint { left: 0; top: 123px; transform: translate(-50%, -50%); white-space: nowrap; }
+  .hint span {
+    position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); padding: 4.5px 11px; border-radius: 980px;
+    font-size: 10.5px; letter-spacing: .6px; color: var(--sky-text); background: rgba(238, 239, 242, .92);
+    box-shadow: 0 0 0 .6px rgba(255, 255, 255, .7), 0 1.5px 10px rgba(0, 0, 0, .08); opacity: 0;
+  }
+  .hint .h1 { animation-name: hint1; color: rgba(60, 96, 138, .8); }
+  .hint .h2 { animation-name: hint2; }
+
+  /* 커서 + 끌려가는 파일 */
+  .cursor { left: 0; top: 0; z-index: 4; animation-name: cursor; }
+  .cursor .arrow { position: absolute; left: -1px; top: -1px; width: 17px; height: 24px; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .3)); }
+  .cursor .drag { position: absolute; left: 8px; top: 12px; width: 60px; opacity: 0; animation-name: dragImg; text-align: center; font-size: 11px; }
+  .cursor .drag .ph { width: 60px; height: 45px; border-radius: 3px; border: 2px solid #fff; background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%); }
+  .cursor .drag span { display: inline-block; margin-top: 4px; padding: 1px 6px; border-radius: 4px; background: #2f6fd6; color: #fff; white-space: nowrap; }
+
+  /* 타임라인 (%, 8초 기준). 펼침: 칸마다 0.045초 간격 */
+  @keyframes cursor {
+    0%   { transform: translate(calc(var(--fx) + 52px), -20px); opacity: 0; }
+    3%   { opacity: 1; }
+    7%   { transform: translate(calc(var(--fx) + 4px), -82px); }
+    10%  { transform: translate(calc(var(--fx) + 4px), -82px); }
+    24%  { transform: translate(4px, -4px); }
+    34%  { transform: translate(-2px, 2px); }
+    45%  { transform: translate(80px, -46px); }
+    58%  { transform: translate(80px, -46px); opacity: 1; }
+    78%  { transform: translate(120px, 30px); opacity: 1; }
+    86%  { transform: translate(140px, 46px); opacity: 0; }
+    100% { transform: translate(140px, 46px); opacity: 0; }
+  }
+  @keyframes dragImg { 0%, 10% { opacity: 0; } 12%, 57% { opacity: .62; } 59%, 100% { opacity: 0; transform: scale(.6); } }
+  @keyframes selected { 0%, 8% { background: transparent; color: #1d1d1f; } 9%, 60% { background: #2f6fd6; color: #fff; } 62%, 100% { background: transparent; color: #1d1d1f; } }
   @keyframes orb {
-    0%, 14%  { transform: scale(1); }
-    20%, 58% { transform: scale(1.03); }
-    66%      { transform: scale(1); }
-    70%      { transform: scale(1.05); }
-    76%, 100%{ transform: scale(1); }
+    0%, 22%  { transform: scale(1); }
+    25%, 44% { transform: scale(1.02); }
+    46%, 58% { transform: scale(.98); }
+    61%      { transform: scale(1.06); }
+    64%, 100%{ transform: scale(1); }
   }
-  @keyframes ring {
-    0%, 20%   { opacity: 0; transform: scale(.88) rotate(-8deg); }
-    30%, 58%  { opacity: 1; transform: none; }
-    66%, 100% { opacity: 0; transform: scale(.94); }
+  @keyframes glyph { 0%, 23% { opacity: 1; } 25%, 84% { opacity: 0; } 88%, 100% { opacity: 1; } }
+  @keyframes thumb { 0%, 23% { opacity: 0; } 25%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
+  @keyframes thumbVeil { 0%, 44% { opacity: .12; } 46%, 100% { opacity: .62; } }
+  @keyframes olabel { 0%, 44% { opacity: 0; } 46%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
+  @keyframes spin { 0%, 59% { opacity: 0; transform: rotate(0); } 60%, 65% { opacity: 1; } 66%, 100% { opacity: 0; transform: rotate(900deg); } }
+  @keyframes done { 0%, 65% { opacity: 0; transform: translate(-50%, -50%) scale(.85); } 68%, 82% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 86%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
+  @keyframes burst { 0%, 66% { opacity: 0; transform: scale(1); } 66.5% { opacity: .8; transform: scale(1); } 78%, 100% { opacity: 0; transform: scale(1.4); } }
+  @keyframes iris {
+    0%, 24%  { opacity: 0; transform: scale(.86) rotate(-8deg); }
+    31%, 58% { opacity: 1; transform: none; }
+    61.5%, 100% { opacity: 0; transform: none; }
   }
-  @keyframes segOn { 0%, 42% { opacity: 0; } 47%, 60% { opacity: 1; } 66%, 100% { opacity: 0; } }
-  @keyframes segText { 0%, 42% { fill: var(--sky-text); fill-opacity: .82; } 47%, 60% { fill: #fff; fill-opacity: 1; } 66%, 100% { fill: var(--sky-text); fill-opacity: .82; } }
-  @keyframes glyph { 0%, 64% { opacity: 1; } 68%, 88% { opacity: 0; } 94%, 100% { opacity: 1; } }
-  @keyframes ok { 0%, 64% { opacity: 0; transform: scale(.7); } 70%, 88% { opacity: 1; transform: scale(1); } 94%, 100% { opacity: 0; } }
-  @keyframes result { 0%, 66% { opacity: 0; transform: translateY(8px); } 72%, 88% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; } }
+  @keyframes ringFade { 0%, 24% { opacity: 0; } 30%, 58% { opacity: 1; } 61.5%, 100% { opacity: 0; } }
+  @keyframes dimFill { 0%, 44% { fill-opacity: .92; stroke-opacity: 1; } 46%, 100% { fill-opacity: .78; stroke-opacity: .7; } }
+  @keyframes dimText { 0%, 44% { fill-opacity: .8; } 46%, 100% { fill-opacity: .5; } }
+  @keyframes segOn { 0%, 44% { opacity: 0; } 46%, 60% { opacity: 1; } 61.5%, 100% { opacity: 0; } }
+  @keyframes segText { 0%, 44% { fill: var(--sky-text); fill-opacity: .8; } 46%, 60% { fill: #fff; fill-opacity: 1; } 61.5%, 100% { fill: var(--sky-text); fill-opacity: .8; } }
+  @keyframes hint1 { 0%, 27% { opacity: 0; } 30%, 44% { opacity: 1; } 45%, 100% { opacity: 0; } }
+  @keyframes hint2 { 0%, 44% { opacity: 0; } 46%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
+  @keyframes outFile { 0%, 68% { opacity: 0; transform: translate(var(--fx), 34px) scale(.85); } 72%, 92% { opacity: 1; transform: translate(var(--fx), 34px) scale(1); } 97%, 100% { opacity: 0; transform: translate(var(--fx), 34px) scale(1); } }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; }
-    .ring { opacity: 1; }
-    .seg .on { opacity: 1; }
+    .ring, .veil, .seg .on, .orb .thumb, .orb .olabel, .hint .h2 { opacity: 1; }
+    .orb .thumb::after { opacity: .62; }
+    .orb .glyph { opacity: 0; }
     .seg.target text { fill: #fff; fill-opacity: 1; }
-    .file { opacity: 1; transform: translate(76px, -40px) scale(.86); }
+    .cursor { transform: translate(80px, -46px); }
     .reveal { opacity: 1 !important; transform: none !important; }
   }
 
@@ -454,28 +500,38 @@
       <div class="menubar" aria-hidden="true"><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="sp">화 10:21</span></div>
       <div class="center" aria-hidden="true">
         <div class="scale" id="demoScale">
+          <div class="dfile src"><div class="ph"></div><span>여행.heic</span></div>
+          <div class="dfile out"><div class="ph"></div><span>여행.png</span></div>
+          <div class="veil"></div>
           <svg class="ring" viewBox="-130 -130 260 260">
             <defs>
               <linearGradient id="segFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cee2f4"/><stop offset="1" stop-color="#a8c6e4"/></linearGradient>
               <linearGradient id="segOn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#608ab4"/><stop offset="1" stop-color="#4a6f96"/></linearGradient>
             </defs>
-            <g class="seg"><path d="M-56.08 -101.54A116 116 0 0 1 56.08 -101.54L28.08 -53.03A60 60 0 0 0 -28.08 -53.03Z"/><text transform="translate(0.00 -88.00) rotate(0)" dy="0.35em">JPG</text></g>
-            <g class="seg target"><path d="M59.89 -99.34A116 116 0 0 1 115.98 -2.20L59.96 -2.20A60 60 0 0 0 31.88 -50.83Z"/><path class="on" d="M59.89 -99.34A116 116 0 0 1 115.98 -2.20L59.96 -2.20A60 60 0 0 0 31.88 -50.83Z"/><text transform="translate(76.21 -44.00) rotate(60)" dy="0.35em">PNG</text></g>
-            <g class="seg off"><path d="M115.98 2.20A116 116 0 0 1 59.89 99.34L31.88 50.83A60 60 0 0 0 59.96 2.20Z"/><text transform="translate(76.21 44.00) rotate(300)" dy="0.35em">HEIC</text></g>
-            <g class="seg"><path d="M56.08 101.54A116 116 0 0 1 -56.08 101.54L-28.08 53.03A60 60 0 0 0 28.08 53.03Z"/><text transform="translate(0.00 88.00) rotate(360)" dy="0.35em">TIFF</text></g>
-            <g class="seg"><path d="M-59.89 99.34A116 116 0 0 1 -115.98 2.20L-59.96 2.20A60 60 0 0 0 -31.88 50.83Z"/><text transform="translate(-76.21 44.00) rotate(420)" dy="0.35em">GIF</text></g>
-            <g class="seg"><path d="M-115.98 -2.20A116 116 0 0 1 -59.89 -99.34L-31.88 -50.83A60 60 0 0 0 -59.96 -2.20Z"/><text transform="translate(-76.21 -44.00) rotate(300)" dy="0.35em">BMP</text></g>
+            <g class="seg" style="--i:0"><path d="M-48.76 -88.45A101 101 0 0 1 48.76 -88.45L21.75 -41.67A47 47 0 0 0 -21.75 -41.67Z"/><text transform="translate(0.00 -74.00) rotate(0)" dy="0.36em">JPG</text></g>
+            <g class="seg target" style="--i:1"><path d="M52.22 -86.45A101 101 0 0 1 100.98 -2.00L46.96 -2.00A47 47 0 0 0 25.21 -39.67Z"/><path class="on" d="M52.22 -86.45A101 101 0 0 1 100.98 -2.00L46.96 -2.00A47 47 0 0 0 25.21 -39.67Z"/><text transform="translate(64.09 -37.00) rotate(60)" dy="0.36em">PNG</text></g>
+            <g class="seg off" style="--i:2"><path d="M100.98 2.00A101 101 0 0 1 52.22 86.45L25.21 39.67A47 47 0 0 0 46.96 2.00Z"/><text transform="translate(64.09 37.00) rotate(300)" dy="0.36em">HEIC</text></g>
+            <g class="seg" style="--i:3"><path d="M48.76 88.45A101 101 0 0 1 -48.76 88.45L-21.75 41.67A47 47 0 0 0 21.75 41.67Z"/><text transform="translate(0.00 74.00) rotate(0)" dy="0.36em">TIFF</text></g>
+            <g class="seg" style="--i:4"><path d="M-52.22 86.45A101 101 0 0 1 -100.98 2.00L-46.96 2.00A47 47 0 0 0 -25.21 39.67Z"/><text transform="translate(-64.09 37.00) rotate(60)" dy="0.36em">GIF</text></g>
+            <g class="seg" style="--i:5"><path d="M-100.98 -2.00A101 101 0 0 1 -52.22 -86.45L-25.21 -39.67A47 47 0 0 0 -46.96 -2.00Z"/><text transform="translate(-64.09 -37.00) rotate(300)" dy="0.36em">BMP</text></g>
           </svg>
           <div class="orb">
             <svg class="glyph" viewBox="0 0 46 46">
               <defs><linearGradient id="apple" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bad4ee"/><stop offset="1" stop-color="#8eb2d8"/></linearGradient></defs>
-              <path fill="url(#apple)" d="M23 14.2C20 11.6 15.6 10.9 12.6 13.1 9.2 15.6 8.4 20.6 9.4 26.2 10.5 32.4 13.4 37.6 17.4 37.6 19.6 37.6 20.8 36.8 23 36.8S26.4 37.6 28.6 37.6C32.6 37.6 35.5 32.4 36.6 26.2 37.6 20.6 36.8 15.6 33.4 13.1 30.4 10.9 26 11.6 23 14.2Z"/>
-              <path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.6 8.6C21.2 6.6 23.4 6.6 23.8 9.4 24.1 12 24.2 18 24.1 25.4M21.2 22.6 24.1 25.6 27 22.6"/>
+              <path fill="url(#apple)" d="M23.00 15.79C29.69 8.26 42.65 9.10 42.65 22.90C42.65 37.11 37.64 45.90 30.95 45.90C27.60 45.90 25.51 44.64 23.00 44.64C20.49 44.64 18.40 45.90 15.05 45.90C8.36 45.90 3.35 37.11 3.35 22.90C3.35 9.10 16.31 8.26 23.00 15.79Z"/>
+              <path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M16.73 3.66C20.91 -1.36 23.84 2.82 23.00 29.59M20.37 26.95L23.00 29.59L25.63 26.95"/>
             </svg>
-            <svg class="ok" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#608ab4"/><path d="M12.5 20.5l5 5 10-10.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="thumb"></div>
+            <span class="olabel">PNG</span>
+            <svg class="spin" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13.2" fill="none" stroke="#608ab4" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="56.4 100" transform="rotate(-90 14 14)"/></svg>
+            <div class="done"><svg viewBox="0 0 18 18"><path d="M3.5 9.5l3.6 3.6L14.6 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><b>PNG</b></div>
+            <div class="burst"></div>
           </div>
-          <div class="file"><div class="thumb"></div><span class="fname">여행.heic</span></div>
-          <div class="result"><span class="tag">PNG</span><b>여행.png</b> 저장됨 · 원본은 그대로</div>
+          <div class="hint"><span class="h1">포맷 위에 놓으세요</span><span class="h2">PNG로 변환 · 무손실</span></div>
+          <div class="cursor">
+            <div class="drag"><div class="ph"></div><span>여행.heic</span></div>
+            <svg class="arrow" viewBox="0 0 17 24"><path d="M1.5 1.5v17.2l4.3-4.2 2.9 6.8 3-1.3-2.9-6.7h6z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          </div>
         </div>
       </div>
     </div>
@@ -692,7 +748,7 @@
 
     // 데모를 스테이지 크기에 맞춰 축소
     var stage = document.querySelector('.stage'), scale = document.getElementById('demoScale');
-    function fit() { scale.style.setProperty('--s', Math.min(1.4, stage.clientHeight / 370).toFixed(3)); }
+    function fit() { scale.style.setProperty('--s', Math.min(1.5, stage.clientHeight / 330, stage.clientWidth / (stage.clientWidth < 600 ? 450 : 600)).toFixed(3)); }
     fit(); window.addEventListener('resize', fit);
   })();
 </script>
