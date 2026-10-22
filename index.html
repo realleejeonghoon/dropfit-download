@@ -137,9 +137,8 @@
   .sec-title { font-size: clamp(30px, 4.2vw, 46px); line-height: 1.24; font-weight: 700; letter-spacing: -0.028em; margin: 0; }
   .sec-sub { margin: 16px 0 0; max-width: 34em; font-size: clamp(17px, 1.9vw, 20px); color: var(--ink-2); font-weight: 400; line-height: 1.55; }
 
-  /* ---------- Demo: 실제 앱(OrbViews.swift)의 치수·색·모션을 그대로 옮김 ----------
-     16초 한 바퀴: ① 화면 가운데 — 파일 끌기 → 링 → PNG 칸 → 놓기 → 완료 → 새 파일
-     ② 화면 가장자리 — 반원(안 2 + 밖 4)  ③ 화면 모서리 — 사분원(1 + 2 + 3). 칸 배치는 OrbModel.make와 같음 */
+  /* ---------- Demo: 실제 앱(0.3.2 소스)의 치수·색·모션을 demo.js가 그대로 재현 ----------
+     ① 사진 1장 ② 여러 장(끌어서 선택, 진행률) ③ 폴더 48장 ④ 화면 모서리(사분원) */
   .stage {
     position: relative; margin: 56px 0 0; width: 100%; aspect-ratio: 16 / 9;
     border-radius: 24px; overflow: hidden;
@@ -156,372 +155,77 @@
   }
   .menubar b { color: var(--ink); }
   .menubar .sp { margin-left: auto; }
-  .center { position: absolute; left: 44%; top: 54%; width: 0; height: 0; }
-  /* 데모 크기는 스테이지에 맞춰 조절 (기준 단위 = 앱의 pt) */
-  .scale { --fx: 210px; position: absolute; left: 0; top: 0; transform: scale(var(--s, 1)); }
-  @media (max-width: 734px) { .scale { --fx: 150px; } .center { left: 40%; } }
-  .scale > * { position: absolute; }
-  .scale, .scale * { animation-duration: 16s; animation-iteration-count: infinite; animation-timing-function: var(--ease); }
-  /* 바탕화면 파일 아이콘 (Finder 스타일) */
-  .dfile { width: 84px; left: -42px; top: -40px; text-align: center; font-size: 11px; line-height: 1.25; color: #1d1d1f; }
-  .dfile .ph {
-    width: 60px; height: 45px; margin: 0 auto 4px; border-radius: 3px; border: 2px solid #fff;
-    background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
-  }
-  .dfile span { display: inline-block; padding: 1px 6px; border-radius: 4px; }
-  .dfile.src { transform: translate(var(--fx), -64px); }
-  .dfile.src span { animation-name: selected; }
-  .dfile.out { transform: translate(var(--fx), 34px); opacity: 0; animation-name: outFile; }
-  .dfile.out .ph { background: linear-gradient(170deg, #d6e6f4 0%, #a8c6e4 55%, #eedfcf 100%); }
-  /* 링 뒤 흰 베일 (HUDBackdrop) */
-  .veil { width: 262px; height: 262px; left: -131px; top: -131px; border-radius: 50%; opacity: 0; animation-name: ringFade;
-    background: radial-gradient(closest-side, rgba(255, 255, 255, .5), rgba(255, 255, 255, .25) 60%, transparent); }
-  /* 포맷 링: 두께 54, 중심 반지름 74, 칸 사이 평행 간격 4 */
-  .ring { width: 260px; height: 260px; left: -130px; top: -130px; overflow: visible; opacity: 0; animation-name: iris;
-    filter: drop-shadow(0 1.5px 4px rgba(0, 0, 0, .09)); }
-  .seg path { fill: url(#segFill); stroke: rgba(255, 255, 255, .55); stroke-width: .8; fill-opacity: .92; }
-  .seg text { fill: var(--sky-text); fill-opacity: .8; font-size: 11.5px; font-weight: 500; letter-spacing: 1.8px; text-anchor: middle; }
-  .seg:not(.target):not(.off) path { animation-name: dimFill; }
-  .seg:not(.target):not(.off) text { animation-name: dimText; }
-  .seg.off path { fill-opacity: .4; stroke-opacity: .55; }
-  .seg.off text { fill-opacity: .3; }
-  .seg .on { fill: url(#segOn); stroke: rgba(255, 255, 255, .95); stroke-width: 1; opacity: 0; animation-name: segOn; }
-  .seg.target text { animation-name: segText; }
-  /* 오브: 지름 60 */
-  .orb {
-    width: 60px; height: 60px; left: -30px; top: -30px; border-radius: 50%; z-index: 2;
-    background: linear-gradient(180deg, var(--mist), var(--mist-low));
-    box-shadow: 0 0 0 .8px rgba(255, 255, 255, .8), 0 2.5px 14px rgba(0, 0, 0, .14);
-    animation-name: orb;
-  }
-  .orb > * { position: absolute; left: 50%; top: 50%; }
-  .orb .glyph { width: 46px; height: 46px; margin: -23px 0 0 -23px; animation-name: glyph; }
-  .orb .thumb {
-    width: 50px; height: 50px; margin: -25px 0 0 -25px; border-radius: 50%; opacity: 0; animation-name: thumb;
-    background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%);
-    box-shadow: inset 0 0 0 .6px rgba(255, 255, 255, .7);
-  }
-  .orb .thumb::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #fff; opacity: .12; animation: thumbVeil 16s var(--ease) infinite; }
-  .orb .olabel { transform: translate(-50%, -50%); font-size: 12px; font-weight: 600; letter-spacing: 1.6px; color: var(--sky-text); opacity: 0; animation-name: olabel; }
-  .orb .spin { width: 28px; height: 28px; margin: -14px 0 0 -14px; opacity: 0; animation-name: spin; }
-  .orb .done { transform: translate(-50%, -50%); text-align: center; color: var(--sky-deep); opacity: 0; animation-name: done; }
-  .orb .done svg { display: block; width: 18px; height: 18px; margin: 0 auto 1px; }
-  .orb .done b { display: block; font-size: 10px; font-weight: 600; letter-spacing: 1px; line-height: 1; }
-  .orb .burst { width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; box-shadow: 0 0 0 1px #fff; opacity: 0; animation-name: burst; }
-  /* 안내 문구 (HintLabel): 링 바깥 + 22 */
-  .hint { left: 0; top: 123px; transform: translate(-50%, -50%); white-space: nowrap; }
-  .hint span {
-    position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); padding: 4.5px 11px; border-radius: 980px;
-    font-size: 10.5px; letter-spacing: .6px; color: var(--sky-text); background: rgba(238, 239, 242, .92);
-    box-shadow: 0 0 0 .6px rgba(255, 255, 255, .7), 0 1.5px 10px rgba(0, 0, 0, .08); opacity: 0;
-  }
-  .hint .h1 { animation-name: hint1; color: rgba(60, 96, 138, .8); }
-  .hint .h2 { animation-name: hint2; }
-  /* 커서 + 끌려가는 파일 */
-  .cursor { left: 0; top: 0; z-index: 4; animation-name: cursor; }
-  .cursor .arrow { position: absolute; left: -1px; top: -1px; width: 17px; height: 24px; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .3)); }
-  .cursor .drag { position: absolute; left: 8px; top: 12px; width: 60px; opacity: 0; animation-name: dragImg; text-align: center; font-size: 11px; }
-  .cursor .drag .ph { width: 60px; height: 45px; border-radius: 3px; border: 2px solid #fff; background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%); }
-  .cursor .drag span { display: inline-block; margin-top: 4px; padding: 1px 6px; border-radius: 4px; background: #2f6fd6; color: #fff; white-space: nowrap; }
-
-  /* 가장자리·모서리 장면: 오브가 옮겨 가면 메뉴가 반원·사분원으로 바뀐다 */
-  .dfile.src { animation-name: srcFile; }
-  .fan svg { position: absolute; overflow: visible; opacity: 0; filter: drop-shadow(0 1.5px 4px rgba(0, 0, 0, .09));
-    animation-duration: 16s; animation-iteration-count: infinite; animation-timing-function: var(--ease); }
-  .fan.b { transform: translate(var(--ex), 0); }
-  .fan.c { transform: translate(var(--ex), var(--ey)); }
-  .fan.b svg { animation-name: fanB; }
-  .fan.c svg { animation-name: fanC; }
-  .fan.b .seg .on { animation-name: onB; }
-  .fan.c .seg .on { animation-name: onC; }
-  .fan.b .seg.target text { animation-name: txB; }
-  .fan.c .seg.target text { animation-name: txC; }
-  .fan.b .seg:not(.target):not(.off) path { animation-name: dimFB; }
-  .fan.b .seg:not(.target):not(.off) text { animation-name: dimTB; }
-  .fan.c .seg:not(.target):not(.off) path { animation-name: dimFC; }
-  .fan.c .seg:not(.target):not(.off) text { animation-name: dimTC; }
-  .orb .olabel.b { animation-name: olabelB; }
-  .orb .olabel.c { animation-name: olabelC; }
-  .cap { position: absolute; left: 0; right: 0; top: 44px; text-align: center; font-size: 12px; letter-spacing: .04em; color: var(--sky-text); pointer-events: none; }
-  .cap span { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; opacity: 0;
-    animation-duration: 16s; animation-iteration-count: infinite; animation-timing-function: var(--ease); }
-  .cap .b { animation-name: capB; }
-  .cap .c { animation-name: capC; }
-
   /* 바탕화면: 짙은 하늘 + 사막 언덕 (macOS 기본 배경 분위기) */
   .demo-top .stage { background: #0d2259; }
   .wall { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .demo-top .menubar { background: rgba(8, 16, 46, .42); color: rgba(255, 255, 255, .86); border-bottom: 0; }
   .demo-top .menubar b { color: #fff; }
-  .demo-top .dfile { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); }
-  .demo-top .cursor .drag span { text-shadow: none; }
-  .demo-top .cap { color: rgba(255, 255, 255, .82); text-shadow: 0 1px 3px rgba(0, 0, 0, .35); }
-  .demo-top .dfile.src span { animation-name: selectedW; }
-  .demo-top .veil { display: none; }
-  @keyframes selectedW { 0%, 4% { background: transparent; } 4.5%, 30% { background: #2f6fd6; } 31%, 50%, 100% { background: transparent; } }
-  @media (max-width: 734px) { .cap { top: 30px; font-size: 10.5px; } }
-  /* 타임라인: 장면 ①은 0–50%, ②·③은 50–100% */
-  @keyframes cursor {
-    0% { transform: translate(calc(var(--fx) + 52px), -20px); opacity: 0; }
-    1.5% { opacity: 1; }
-    3.5% { transform: translate(calc(var(--fx) + 4px), -82px); }
-    5% { transform: translate(calc(var(--fx) + 4px), -82px); }
-    12% { transform: translate(4px, -4px); }
-    17% { transform: translate(-2px, 2px); }
-    22.5% { transform: translate(80px, -46px); }
-    29% { transform: translate(80px, -46px); opacity: 1; }
-    34% { transform: translate(20px, 96px); opacity: 1; }
-    37% { transform: translate(10px, 110px); opacity: 0; }
-    55% { transform: translate(calc(var(--ex) - 260px), 40px); opacity: 0; }
-    56.25% { opacity: 1; }
-    60% { transform: translate(calc(var(--ex) - 4px), -4px); }
-    62.5% { transform: translate(calc(var(--ex) - 8px), 2px); }
-    65.938% { transform: translate(calc(var(--ex) + -134.9px), 55.8718px); }
-    70.938% { transform: translate(calc(var(--ex) + -134.9px), 55.8718px); opacity: 1; }
-    74.688% { transform: translate(calc(var(--ex) - 210px), 60px); opacity: 0; }
-    80% { transform: translate(calc(var(--ex) - 300px), calc(var(--ey) - 150px)); opacity: 0; }
-    81.25% { opacity: 1; }
-    85% { transform: translate(calc(var(--ex) - 4px), calc(var(--ey) - 4px)); }
-    87.5% { transform: translate(calc(var(--ex) - 8px), calc(var(--ey) - 2px)); }
-    90.938% { transform: translate(calc(var(--ex) + -144.2px), calc(var(--ey) + -144.2px)); }
-    95.625% { transform: translate(calc(var(--ex) + -144.2px), calc(var(--ey) + -144.2px)); opacity: 1; }
-    99.375% { transform: translate(calc(var(--ex) - 240px), calc(var(--ey) - 170px)); opacity: 0; }
-    100% { transform: translate(calc(var(--fx) + 52px), -20px); opacity: 0; }
-  }
-  @keyframes dragImg {
-    0% { opacity: 0; transform: none; }
-    5% { opacity: 0; }
-    6% { opacity: .62; }
-    28.5% { opacity: .62; transform: none; }
-    29.5% { opacity: 0; transform: scale(.6); }
-    55.625% { opacity: 0; transform: none; }
-    56.563% { opacity: .62; }
-    74.688% { opacity: .62; }
-    75% { opacity: 0; }
-    80.625% { opacity: 0; }
-    81.562% { opacity: .62; }
-    99.688% { opacity: .62; }
-    100% { opacity: 0; transform: none; }
-  }
-  @keyframes orb {
-    0% { transform: translate(0px, 0px) scale(1); }
-    11% { transform: translate(0px, 0px) scale(1); }
-    12.5% { transform: translate(0px, 0px) scale(1.02); }
-    22% { transform: translate(0px, 0px) scale(1.02); }
-    23% { transform: translate(0px, 0px) scale(0.98); }
-    29% { transform: translate(0px, 0px) scale(0.98); }
-    30.5% { transform: translate(0px, 0px) scale(1.06); }
-    32% { transform: translate(0px, 0px) scale(1); }
-    50% { transform: translate(0px, 0px) scale(1); }
-    55% { transform: translate(var(--ex), 0px) scale(1); }
-    59.688% { transform: translate(var(--ex), 0px) scale(1); }
-    60.938% { transform: translate(var(--ex), 0px) scale(1.02); }
-    65.625% { transform: translate(var(--ex), 0px) scale(1.02); }
-    66.562% { transform: translate(var(--ex), 0px) scale(0.98); }
-    71.562% { transform: translate(var(--ex), 0px) scale(0.98); }
-    73.125% { transform: translate(var(--ex), 0px) scale(1); }
-    75% { transform: translate(var(--ex), 0px) scale(1); }
-    80% { transform: translate(var(--ex), var(--ey)) scale(1); }
-    84.688% { transform: translate(var(--ex), var(--ey)) scale(1); }
-    85.938% { transform: translate(var(--ex), var(--ey)) scale(1.02); }
-    90.625% { transform: translate(var(--ex), var(--ey)) scale(1.02); }
-    91.562% { transform: translate(var(--ex), var(--ey)) scale(0.98); }
-    95.312% { transform: translate(var(--ex), var(--ey)) scale(0.98); }
-    96.562% { transform: translate(var(--ex), var(--ey)) scale(1); }
-    100% { transform: translate(0px, 0px) scale(1); }
-  }
-  @keyframes glyph {
-    0% { opacity: 1; }
-    11.5% { opacity: 1; }
-    12.5% { opacity: 0; }
-    42% { opacity: 0; }
-    44% { opacity: 1; }
-    59.375% { opacity: 1; }
-    60.312% { opacity: 0; }
-    71.875% { opacity: 0; }
-    73.438% { opacity: 1; }
-    84.375% { opacity: 1; }
-    85.312% { opacity: 0; }
-    95.625% { opacity: 0; }
-    97.188% { opacity: 1; }
-    100% { opacity: 1; }
-  }
-  @keyframes thumb {
-    0% { opacity: 0; }
-    11.5% { opacity: 0; }
-    13% { opacity: 1; }
-    29% { opacity: 1; }
-    30.5% { opacity: 0; }
-    59.688% { opacity: 0; }
-    60.938% { opacity: 1; }
-    71.562% { opacity: 1; }
-    73.125% { opacity: 0; }
-    84.688% { opacity: 0; }
-    85.938% { opacity: 1; }
-    95.312% { opacity: 1; }
-    96.875% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @keyframes thumbVeil {
-    0% { opacity: 0.12; }
-    22% { opacity: 0.12; }
-    23% { opacity: 0.62; }
-    58.75% { opacity: 0.62; }
-    59.375% { opacity: 0.12; }
-    65.625% { opacity: 0.12; }
-    66.562% { opacity: 0.62; }
-    83.75% { opacity: 0.62; }
-    84.375% { opacity: 0.12; }
-    90.625% { opacity: 0.12; }
-    91.562% { opacity: 0.62; }
-    100% { opacity: 0.62; }
-  }
-  @keyframes olabelB {
-    0% { opacity: 0; }
-    65.938% { opacity: 0; }
-    66.562% { opacity: 1; }
-    71.562% { opacity: 1; }
-    72.812% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @keyframes olabelC {
-    0% { opacity: 0; }
-    90.938% { opacity: 0; }
-    91.562% { opacity: 1; }
-    95.312% { opacity: 1; }
-    96.562% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @keyframes fanB {
-    0% { opacity: 0; transform: scale(.86) rotate(-8deg); }
-    60.312% { opacity: 0; transform: scale(.86) rotate(-8deg); }
-    63.75% { opacity: 1; transform: none; }
-    71.562% { opacity: 1; transform: none; }
-    73.438% { opacity: 0; transform: none; }
-    100% { opacity: 0; transform: none; }
-  }
-  @keyframes fanC {
-    0% { opacity: 0; transform: scale(.86) rotate(-8deg); }
-    85.312% { opacity: 0; transform: scale(.86) rotate(-8deg); }
-    88.75% { opacity: 1; transform: none; }
-    95.625% { opacity: 1; transform: none; }
-    97.5% { opacity: 0; transform: none; }
-    100% { opacity: 0; transform: none; }
-  }
-  @keyframes onB {
-    0% { opacity: 0; }
-    65.938% { opacity: 0; }
-    66.562% { opacity: 1; }
-    71.562% { opacity: 1; }
-    72.812% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @keyframes onC {
-    0% { opacity: 0; }
-    90.938% { opacity: 0; }
-    91.562% { opacity: 1; }
-    95.312% { opacity: 1; }
-    96.562% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @keyframes txB {
-    0% { fill: var(--sky-text); fill-opacity: .8; }
-    65.938% { fill: var(--sky-text); fill-opacity: .8; }
-    66.562% { fill: #fff; fill-opacity: 1; }
-    71.562% { fill: #fff; fill-opacity: 1; }
-    72.812% { fill: var(--sky-text); fill-opacity: .8; }
-    100% { fill: var(--sky-text); fill-opacity: .8; }
-  }
-  @keyframes txC {
-    0% { fill: var(--sky-text); fill-opacity: .8; }
-    90.938% { fill: var(--sky-text); fill-opacity: .8; }
-    91.562% { fill: #fff; fill-opacity: 1; }
-    95.312% { fill: #fff; fill-opacity: 1; }
-    96.562% { fill: var(--sky-text); fill-opacity: .8; }
-    100% { fill: var(--sky-text); fill-opacity: .8; }
-  }
-  @keyframes dimFB {
-    0% { fill-opacity: 0.92; }
-    65.938% { fill-opacity: 0.92; }
-    66.562% { fill-opacity: 0.78; }
-    71.562% { fill-opacity: 0.78; }
-    72.812% { fill-opacity: 0.92; }
-    100% { fill-opacity: 0.92; }
-  }
-  @keyframes dimTB {
-    0% { fill-opacity: 0.8; }
-    65.938% { fill-opacity: 0.8; }
-    66.562% { fill-opacity: 0.5; }
-    71.562% { fill-opacity: 0.5; }
-    72.812% { fill-opacity: 0.8; }
-    100% { fill-opacity: 0.8; }
-  }
-  @keyframes dimFC {
-    0% { fill-opacity: 0.92; }
-    90.938% { fill-opacity: 0.92; }
-    91.562% { fill-opacity: 0.78; }
-    95.312% { fill-opacity: 0.78; }
-    96.562% { fill-opacity: 0.92; }
-    100% { fill-opacity: 0.92; }
-  }
-  @keyframes dimTC {
-    0% { fill-opacity: 0.8; }
-    90.938% { fill-opacity: 0.8; }
-    91.562% { fill-opacity: 0.5; }
-    95.312% { fill-opacity: 0.5; }
-    96.562% { fill-opacity: 0.8; }
-    100% { fill-opacity: 0.8; }
-  }
-  @keyframes srcFile {
-    0% { opacity: 1; }
-    47.5% { opacity: 1; }
-    49.375% { opacity: 0; }
-    98.125% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-  @keyframes capB {
-    0% { opacity: 0; }
-    52.5% { opacity: 0; }
-    55.625% { opacity: 1; }
-    73.75% { opacity: 1; }
-    76.25% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @keyframes capC {
-    0% { opacity: 0; }
-    76.875% { opacity: 0; }
-    80% { opacity: 1; }
-    96.25% { opacity: 1; }
-    98.75% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @keyframes selected { 0%, 4% { background: transparent; color: #1d1d1f; } 4.5%, 30% { background: #2f6fd6; color: #fff; } 31%, 50%, 100% { background: transparent; color: #1d1d1f; } }
-  @keyframes olabel { 0%, 22% { opacity: 0; } 23%, 29% { opacity: 1; } 30.5%, 50%, 100% { opacity: 0; } }
-  @keyframes spin { 0%, 29.5% { opacity: 0; transform: rotate(0); } 31%, 32% { opacity: 1; } 33.5%, 50%, 100% { opacity: 0; transform: rotate(900deg); } }
-  @keyframes done { 0%, 32.5% { opacity: 0; transform: translate(-50%, -50%) scale(.85); } 34.5%, 41% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 43%, 50%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
-  @keyframes burst { 0%, 33% { opacity: 0; transform: scale(1); } 33.25% { opacity: .8; transform: scale(1); } 39%, 50%, 100% { opacity: 0; transform: scale(1.4); } }
-  @keyframes iris {
-    0%, 12% { opacity: 0; transform: scale(.86) rotate(-8deg); }
-    15.5%, 29% { opacity: 1; transform: none; }
-    30.75%, 50%, 100% { opacity: 0; transform: none; }
-  }
-  @keyframes ringFade { 0%, 12% { opacity: 0; } 15%, 29% { opacity: 1; } 30.75%, 50%, 100% { opacity: 0; } }
-  @keyframes dimFill { 0%, 22% { fill-opacity: .92; stroke-opacity: 1; } 23%, 50%, 100% { fill-opacity: .78; stroke-opacity: .7; } }
-  @keyframes dimText { 0%, 22% { fill-opacity: .8; } 23%, 50%, 100% { fill-opacity: .5; } }
-  @keyframes segOn { 0%, 22% { opacity: 0; } 23%, 30% { opacity: 1; } 30.75%, 50%, 100% { opacity: 0; } }
-  @keyframes segText { 0%, 22% { fill: var(--sky-text); fill-opacity: .8; } 23%, 30% { fill: #fff; fill-opacity: 1; } 30.75%, 50%, 100% { fill: var(--sky-text); fill-opacity: .8; } }
-  @keyframes hint1 { 0%, 13.5% { opacity: 0; } 15%, 22% { opacity: 1; } 22.5%, 50%, 100% { opacity: 0; } }
-  @keyframes hint2 { 0%, 22% { opacity: 0; } 23%, 29% { opacity: 1; } 30%, 50%, 100% { opacity: 0; } }
-  /* 완료되면 새 파일이 원본 옆 제자리에 부드럽게 나타난다 (실제 Finder처럼 이동 없이) */
-  @keyframes outFile { 0%, 33% { opacity: 0; transform: translate(var(--fx), 34px) scale(.96); } 37%, 47% { opacity: 1; transform: translate(var(--fx), 34px) scale(1); } 49.5%, 50%, 100% { opacity: 0; transform: translate(var(--fx), 34px) scale(1); } }
+
+  /* 시연 엔진(demo.js)이 그리는 조각. 단위는 앱의 pt, 무대 폭에 맞춰 통째로 축소한다 */
+  .df-root { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; z-index: 4;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Pretendard Variable", Pretendard, sans-serif; -webkit-font-smoothing: antialiased; }
+  .df-root > *, .df-k > *, .df-layer > *, .df-cards > * { position: absolute; left: 0; top: 0; }
+  .df-layer, .df-cards { inset: 0; }
+  .p0 { background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%); }
+  .p1 { background: linear-gradient(165deg, #efe2d2 0%, #d2b89c 58%, #b9cfe4 100%); }
+  .p2 { background: linear-gradient(175deg, #e2ebf0 0%, #b9cbb7 60%, #e9e3d6 100%); }
+  .p3 { background: linear-gradient(172deg, #f1d8c6 0%, #d6a68f 52%, #8fa9c8 100%); }
+  .p4 { background: linear-gradient(168deg, #e8e4de 0%, #bdb4aa 58%, #d9d1c6 100%); }
+  .p5 { background: linear-gradient(174deg, #efe6da 0%, #c9b29a 56%, #a88c74 100%); }
+  /* 바탕화면 아이콘 (Finder) */
+  .df-file { width: 84px; margin: -40px 0 0 -42px; text-align: center; font-size: 11px; line-height: 1.25; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); opacity: 0; }
+  .df-file .ic { width: 66px; height: 52px; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; border-radius: 5px; }
+  .df-file .ph { width: 60px; height: 45px; border-radius: 3px; border: 2px solid #fff; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0, 0, 0, .18); }
+  .df-folder { display: block; width: 60px; height: auto; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .2)); }
+  .df-file span { display: inline-block; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .df-file.sel .ic { background: rgba(0, 0, 0, .26); }
+  .df-file.sel span { background: #2f6fd6; text-shadow: none; }
+  .df-file.df-ghost { z-index: 6; }
+  .df-cursor { width: 17px; height: 24px; z-index: 8; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .3)); }
+  .df-cursor svg { display: block; width: 100%; height: 100%; }
+  .df-marquee { z-index: 7; border-radius: 1px; background: rgba(255, 255, 255, .14); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55); opacity: 0; }
+  /* 오브 (OrbView): 지름 60, 서리 유리 + 흰 테두리, 끌어오는 동안 그림자가 조금 짙어진다 */
+  .df-orb { width: 60px; height: 60px; z-index: 3; --a: 0; transform-origin: 30px 30px; }
+  .df-orb > * { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .df-orb-body { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(180deg, #eeeff2, #dee0e5);
+    box-shadow: inset 0 0 0 .8px rgba(255, 255, 255, calc(.75 + .15 * var(--a))), 0 2.5px calc(14px + 4px * var(--a)) rgba(0, 0, 0, calc(.14 + .03 * var(--a))); }
+  .df-orb-glyph { width: 46px; height: 46px; }
+  .df-orb-glyph svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .08)); }
+  .df-thumb { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; box-shadow: inset 0 0 0 .6px rgba(255, 255, 255, .7); opacity: 0; }
+  .df-thumb i { position: absolute; inset: 0; border-radius: 50%; background: #fff; }
+  .df-hl { font-size: 12px; font-weight: 600; letter-spacing: 1.6px; padding-left: 1.6px; color: #3c608a; opacity: 0; }
+  .df-badge { left: auto; right: -2px; top: 2px; transform: none; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 9px;
+    background: #608ab4; color: #fff; font: 600 10px/18px ui-rounded, "SF Pro Rounded", -apple-system, sans-serif; text-align: center; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); opacity: 0; }
+  .df-scan, .df-prog { overflow: visible; opacity: 0; }
+  .df-scan { width: 53px; height: 53px; }
+  .df-prog { width: 60px; height: 60px; }
+  .df-plabel { text-align: center; color: #3c608a; line-height: 1; white-space: nowrap; font-family: ui-rounded, "SF Pro Rounded", -apple-system, sans-serif; font-variant-numeric: tabular-nums; opacity: 0; }
+  .df-plabel b { display: block; font-size: 14px; font-weight: 500; }
+  .df-plabel small { display: block; margin-top: 2px; font-size: 8.5px; letter-spacing: .3px; opacity: .62; }
+  .df-spin { width: 28px; height: 28px; opacity: 0; }
+  .df-done { color: #608ab4; text-align: center; opacity: 0; }
+  .df-done svg { display: block; width: 18px; height: 18px; margin: 0 auto 2px; }
+  .df-done b { display: block; font: 600 10px/1 ui-rounded, "SF Pro Rounded", -apple-system, sans-serif; letter-spacing: 1px; white-space: nowrap; }
+  .df-burst { width: 60px; height: 60px; border-radius: 50%; box-shadow: inset 0 0 0 1px #fff; opacity: 0; }
+  /* 포맷 링 (SegmentView): 펄 화이트 칸, 고른 칸만 하늘색. 두께 54, 중심 반지름 74, 간격 4 */
+  .df-ring { overflow: visible; visibility: hidden; }
+  .df-petal { filter: drop-shadow(0 1.5px 2.5px rgba(0, 0, 0, .08)); }
+  .df-seg-t { font-size: 11.5px; font-weight: 500; letter-spacing: 1.4px; fill: #2c2c2e; text-anchor: middle; dominant-baseline: central; }
+  .df-seg-t.on { fill: #fff; }
+  /* 안내 문구 (HintLabel) */
+  .df-hint { z-index: 4; opacity: 0; }
+  .df-hint span { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); white-space: nowrap; padding: 5.5px 12px; border-radius: 99px;
+    font-size: 11px; letter-spacing: .2px; color: #2c2c2e; background: rgba(250, 250, 252, .94); box-shadow: 0 0 0 .6px rgba(255, 255, 255, .8), 0 2px 6px rgba(0, 0, 0, .08); }
+  .df-hint span:first-child { color: rgba(44, 44, 46, .82); }
+  /* 마지막 섹션: 포물선 (사진 카드) */
+  .df-cta { position: relative; width: 100%; max-width: 1080px; margin: -12px auto 0; }
+  .df-card { display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0; will-change: transform, opacity; }
+  .df-card .ph { width: 92px; height: 68px; border-radius: 5px; border: 2.5px solid #fff; box-sizing: border-box; box-shadow: 0 6px 18px rgba(29, 45, 70, .12), 0 1px 3px rgba(29, 45, 70, .1); }
+  .df-card .df-folder { width: 92px; filter: drop-shadow(0 5px 12px rgba(29, 45, 70, .14)); }
+  .df-card span { font-size: 12px; line-height: 1.45; padding: 1px 8px; border-radius: 5px; white-space: nowrap; color: #1d1d1f; background: rgba(255, 255, 255, .94); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .06); }
+  .df-card.new span { background: var(--sky-deep); color: #fff; box-shadow: none; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; }
-    .ring, .veil, .seg .on, .orb .thumb, .orb .olabel, .hint .h2 { opacity: 1; }
-    .orb .thumb::after { opacity: .62; }
-    .orb .glyph { opacity: 0; }
-    .seg.target text { fill: #fff; fill-opacity: 1; }
-    .cursor { transform: translate(80px, -46px); }
     .reveal { opacity: 1 !important; transform: none !important; }
   }
   /* ---------- How / features ---------- */
@@ -708,15 +412,14 @@
   .faq summary::after { border-color: var(--sky-deep); }
   .final-lockup img { filter: none; }
   /* 마지막 다운로드: 아이콘·문장·버튼을 한 축에 */
-  .final { padding: 128px 0 136px; }
+  .final { padding: 96px 0 136px; }
   .final-stack { display: flex; flex-direction: column; align-items: center; text-align: center; }
-  .final-stack img { width: 240px; height: 240px; margin: -24px 0 12px; }
   .final-stack h2 { margin: 0; font-size: clamp(34px, 4.6vw, 52px); line-height: 1.2; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
-  .final-stack .cta-row { justify-content: center; margin: 32px 0 0; }
+  .final-sub { margin: 10px 0 0; font-size: clamp(19px, 2.2vw, 22px); color: var(--ink-2); letter-spacing: -0.01em; }
+  .final-stack .cta-row { justify-content: center; margin: 30px 0 0; }
   .final-stack .cta-meta { margin: 14px 0 0; text-align: center; }
   @media (max-width: 734px) {
     .final { padding: 88px 0 96px; }
-    .final-stack img { width: 176px; height: 176px; margin: -16px 0 6px; }
     .final-stack .cta-row { margin-top: 26px; }
   }
   .toast { background: rgba(255, 255, 255, .92); color: var(--sky-text); box-shadow: 0 0 0 .6px rgba(60, 96, 138, .15), 0 10px 30px rgba(29, 45, 70, .12); }
@@ -748,7 +451,7 @@
 
 <section class="demo-top" id="how" aria-label="Dropfit 시연">
   <div class="wrap">
-    <div class="stage" aria-label="HEIC 사진을 Dropfit에 끌어와 PNG로 변환하는 애니메이션">
+    <div class="stage" id="dfTop" role="img" aria-label="이미지를 Dropfit에 끌어와 포맷을 고르면 변환되는 시연: 사진 1장, 여러 장, 폴더, 화면 모서리">
       <svg class="wall" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="wSky" x1="0" y1="0" x2="0" y2="1">
@@ -774,60 +477,6 @@
         <rect width="1600" height="1000" fill="url(#wVig)"/>
       </svg>
       <div class="menubar" aria-hidden="true"><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="sp" id="demoDate">10월 22일 (목)</span></div>
-      <div class="center" aria-hidden="true">
-        <div class="scale" id="demoScale">
-          <div class="dfile src"><div class="ph"></div><span>여행.heic</span></div>
-          <div class="dfile out"><div class="ph"></div><span>여행.png</span></div>
-          <div class="fan b"><svg viewBox="-165 -165 330 330" style="width:330px;height:330px;left:-165px;top:-165px">
-              <g class="seg"><path d="M-0.00 101.00A101.0 101.0 0 0 1 -100.98 2.00L-46.96 2.00A47.0 47.0 0 0 0 -0.00 47.00Z"/><text transform="translate(-52.33 52.33) rotate(45)" dy="0.36em">JPG</text></g>
-              <g class="seg"><path d="M-100.98 -2.00A101.0 101.0 0 0 1 0.00 -101.00L0.00 -47.00A47.0 47.0 0 0 0 -46.96 -2.00Z"/><text transform="translate(-52.33 -52.33) rotate(315)" dy="0.36em">PNG</text></g>
-              <g class="seg off"><path d="M-0.00 159.00A159.0 159.0 0 0 1 -111.01 113.84L-72.82 75.65A105.0 105.0 0 0 0 -0.00 105.00Z"/><text transform="translate(-50.51 121.95) rotate(23)" dy="0.36em">HEIC</text></g>
-              <g class="seg target"><path d="M-113.84 111.01A159.0 159.0 0 0 1 -158.99 2.00L-104.98 2.00A105.0 105.0 0 0 0 -75.65 72.82Z"/><path class="on" d="M-113.84 111.01A159.0 159.0 0 0 1 -158.99 2.00L-104.98 2.00A105.0 105.0 0 0 0 -75.65 72.82Z"/><text transform="translate(-121.95 50.51) rotate(68)" dy="0.36em">TIFF</text></g>
-              <g class="seg"><path d="M-158.99 -2.00A159.0 159.0 0 0 1 -113.84 -111.01L-75.65 -72.82A105.0 105.0 0 0 0 -104.98 -2.00Z"/><text transform="translate(-121.95 -50.51) rotate(292)" dy="0.36em">GIF</text></g>
-              <g class="seg"><path d="M-111.01 -113.84A159.0 159.0 0 0 1 0.00 -159.00L0.00 -105.00A105.0 105.0 0 0 0 -72.82 -75.65Z"/><text transform="translate(-50.51 -121.95) rotate(338)" dy="0.36em">BMP</text></g>
-          </svg></div>
-          <div class="fan c"><svg viewBox="-223 -223 446 446" style="width:446px;height:446px;left:-223px;top:-223px">
-              <g class="seg"><path d="M-101.00 -0.00A101.0 101.0 0 0 1 0.00 -101.00L0.00 -47.00A47.0 47.0 0 0 0 -47.00 -0.00Z"/><text transform="translate(-52.33 -52.33) rotate(315)" dy="0.36em">JPG</text></g>
-              <g class="seg"><path d="M-159.00 -0.00A159.0 159.0 0 0 1 -113.84 -111.01L-75.65 -72.82A105.0 105.0 0 0 0 -105.00 -0.00Z"/><text transform="translate(-121.95 -50.51) rotate(292)" dy="0.36em">PNG</text></g>
-              <g class="seg off"><path d="M-111.01 -113.84A159.0 159.0 0 0 1 0.00 -159.00L0.00 -105.00A105.0 105.0 0 0 0 -72.82 -75.65Z"/><text transform="translate(-50.51 -121.95) rotate(338)" dy="0.36em">HEIC</text></g>
-              <g class="seg"><path d="M-217.00 -0.00A217.0 217.0 0 0 1 -188.92 -106.76L-142.15 -79.76A163.0 163.0 0 0 0 -163.00 -0.00Z"/><text transform="translate(-183.53 -49.18) rotate(285)" dy="0.36em">TIFF</text></g>
-              <g class="seg target"><path d="M-186.92 -110.23A217.0 217.0 0 0 1 -110.23 -186.92L-83.23 -140.15A163.0 163.0 0 0 0 -140.15 -83.23Z"/><path class="on" d="M-186.92 -110.23A217.0 217.0 0 0 1 -110.23 -186.92L-83.23 -140.15A163.0 163.0 0 0 0 -140.15 -83.23Z"/><text transform="translate(-134.35 -134.35) rotate(315)" dy="0.36em">GIF</text></g>
-              <g class="seg"><path d="M-106.76 -188.92A217.0 217.0 0 0 1 0.00 -217.00L0.00 -163.00A163.0 163.0 0 0 0 -79.76 -142.15Z"/><text transform="translate(-49.18 -183.53) rotate(345)" dy="0.36em">BMP</text></g>
-          </svg></div>
-          <div class="veil"></div>
-          <svg class="ring" viewBox="-130 -130 260 260">
-            <defs>
-              <linearGradient id="segFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cee2f4"/><stop offset="1" stop-color="#a8c6e4"/></linearGradient>
-              <linearGradient id="segOn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#608ab4"/><stop offset="1" stop-color="#4a6f96"/></linearGradient>
-            </defs>
-            <g class="seg" style="--i:0"><path d="M-48.76 -88.45A101 101 0 0 1 48.76 -88.45L21.75 -41.67A47 47 0 0 0 -21.75 -41.67Z"/><text transform="translate(0.00 -74.00) rotate(0)" dy="0.36em">JPG</text></g>
-            <g class="seg target" style="--i:1"><path d="M52.22 -86.45A101 101 0 0 1 100.98 -2.00L46.96 -2.00A47 47 0 0 0 25.21 -39.67Z"/><path class="on" d="M52.22 -86.45A101 101 0 0 1 100.98 -2.00L46.96 -2.00A47 47 0 0 0 25.21 -39.67Z"/><text transform="translate(64.09 -37.00) rotate(60)" dy="0.36em">PNG</text></g>
-            <g class="seg off" style="--i:2"><path d="M100.98 2.00A101 101 0 0 1 52.22 86.45L25.21 39.67A47 47 0 0 0 46.96 2.00Z"/><text transform="translate(64.09 37.00) rotate(300)" dy="0.36em">HEIC</text></g>
-            <g class="seg" style="--i:3"><path d="M48.76 88.45A101 101 0 0 1 -48.76 88.45L-21.75 41.67A47 47 0 0 0 21.75 41.67Z"/><text transform="translate(0.00 74.00) rotate(0)" dy="0.36em">TIFF</text></g>
-            <g class="seg" style="--i:4"><path d="M-52.22 86.45A101 101 0 0 1 -100.98 2.00L-46.96 2.00A47 47 0 0 0 -25.21 39.67Z"/><text transform="translate(-64.09 37.00) rotate(60)" dy="0.36em">GIF</text></g>
-            <g class="seg" style="--i:5"><path d="M-100.98 -2.00A101 101 0 0 1 -52.22 -86.45L-25.21 -39.67A47 47 0 0 0 -46.96 -2.00Z"/><text transform="translate(-64.09 -37.00) rotate(300)" dy="0.36em">BMP</text></g>
-          </svg>
-          <div class="orb">
-            <svg class="glyph" viewBox="0 0 46 46">
-              <defs><linearGradient id="apple" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bad4ee"/><stop offset="1" stop-color="#8eb2d8"/></linearGradient></defs>
-              <path fill="url(#apple)" d="M23.00 15.79C29.69 8.26 42.65 9.10 42.65 22.90C42.65 37.11 37.64 45.90 30.95 45.90C27.60 45.90 25.51 44.64 23.00 44.64C20.49 44.64 18.40 45.90 15.05 45.90C8.36 45.90 3.35 37.11 3.35 22.90C3.35 9.10 16.31 8.26 23.00 15.79Z"/>
-              <path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M16.73 3.66C20.91 -1.36 23.84 2.82 23.00 29.59M20.37 26.95L23.00 29.59L25.63 26.95"/>
-            </svg>
-            <div class="thumb"></div>
-            <span class="olabel">PNG</span>
-            <span class="olabel b">TIFF</span>
-            <span class="olabel c">GIF</span>
-            <svg class="spin" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13.2" fill="none" stroke="#608ab4" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="56.4 100" transform="rotate(-90 14 14)"/></svg>
-            <div class="done"><svg viewBox="0 0 18 18"><path d="M3.5 9.5l3.6 3.6L14.6 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><b>PNG</b></div>
-            <div class="burst"></div>
-          </div>
-          <div class="hint"><span class="h1">포맷 위에 놓으세요</span><span class="h2">PNG로 변환 · 무손실</span></div>
-          <div class="cursor">
-            <div class="drag"><div class="ph"></div><span>여행.heic</span></div>
-            <svg class="arrow" viewBox="0 0 17 24"><path d="M1.5 1.5v17.2l4.3-4.2 2.9 6.8 3-1.3-2.9-6.7h6z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -981,8 +630,9 @@
 
 <section class="final">
   <div class="wrap final-stack">
-    <img class="reveal" src="assets/icon-hero.png" width="240" height="240" alt="">
-    <h2 class="reveal">지금 바로 써 보세요.</h2>
+    <div class="df-cta" id="dfCta" role="img" aria-label="사진이 Dropfit에 들어갔다가 PNG로 변환되어 나오는 애니메이션"></div>
+    <h2 class="reveal">Dropfit</h2>
+    <p class="final-sub reveal">지금 바로 써 보세요.</p>
     <div class="reveal">
       <div class="cta-row mac-only">
         <a class="pill lg" href="Dropfit-macOS.zip" download>
@@ -1049,20 +699,8 @@
     var d = new Date(), dateEl = document.getElementById('demoDate');
     if (dateEl) dateEl.textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + '일월화수목금토'.charAt(d.getDay()) + ')';
 
-    // 데모를 스테이지 크기에 맞춰 축소
-    var stage = document.querySelector('.stage'), center = stage.querySelector('.center');
-    function fit() {
-      var w = stage.clientWidth, h = stage.clientHeight;
-      // 화면 비례: 데스크톱은 스테이지 폭 = 1080pt(앱이 실제 크기에 가깝게 보임), 모바일은 화면 일부를 확대
-      var sc = w < 600 ? w / 540 : w / 1080;
-      stage.style.setProperty('--s', sc.toFixed(3));
-      // 가장자리·모서리 장면에서 오브가 놓일 자리 (스테이지 오른쪽·아래 끝에서 44pt 안쪽)
-      stage.style.setProperty('--ex', ((w - center.offsetLeft) / sc - 44).toFixed(1) + 'px');
-      stage.style.setProperty('--ey', ((h - center.offsetTop) / sc - 44).toFixed(1) + 'px');
-    }
-    window.__demoFit = fit;
-    fit(); window.addEventListener('resize', fit);
   })();
 </script>
+<script src="demo.js?v=1" defer></script>
 </body>
 </html>
