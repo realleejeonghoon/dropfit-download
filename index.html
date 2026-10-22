@@ -248,6 +248,18 @@
     animation-duration: 16s; animation-iteration-count: infinite; animation-timing-function: var(--ease); }
   .cap .b { animation-name: capB; }
   .cap .c { animation-name: capC; }
+
+  /* 바탕화면: 짙은 하늘 + 사막 언덕 (macOS 기본 배경 분위기) */
+  .demo-top .stage { background: #0d2259; }
+  .wall { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .demo-top .menubar { background: rgba(8, 16, 46, .42); color: rgba(255, 255, 255, .86); border-bottom: 0; }
+  .demo-top .menubar b { color: #fff; }
+  .demo-top .dfile { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); }
+  .demo-top .cursor .drag span { text-shadow: none; }
+  .demo-top .cap { color: rgba(255, 255, 255, .82); text-shadow: 0 1px 3px rgba(0, 0, 0, .35); }
+  .demo-top .dfile.src span { animation-name: selectedW; }
+  .demo-top .veil { display: none; }
+  @keyframes selectedW { 0%, 4% { background: transparent; } 4.5%, 30% { background: #2f6fd6; } 31%, 50%, 100% { background: transparent; } }
   @media (max-width: 734px) { .cap { top: 30px; font-size: 10.5px; } }
   /* 타임라인: 장면 ①은 0–50%, ②·③은 50–100% */
   @keyframes cursor {
@@ -725,6 +737,30 @@
 <section class="demo-top" id="how" aria-label="Dropfit 시연">
   <div class="wrap">
     <div class="stage" aria-label="HEIC 사진을 Dropfit에 끌어와 PNG로 변환하는 애니메이션">
+      <svg class="wall" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="wSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#071236"/><stop offset=".38" stop-color="#0c2766"/><stop offset=".62" stop-color="#1b4f9e"/><stop offset=".74" stop-color="#3473bd"/>
+          </linearGradient>
+          <linearGradient id="wLit" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#d0743a"/><stop offset=".55" stop-color="#bb5a26"/><stop offset="1" stop-color="#a8481c"/>
+          </linearGradient>
+          <linearGradient id="wShade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9a4118"/><stop offset="1" stop-color="#7f3412"/>
+          </linearGradient>
+          <radialGradient id="wVig" cx=".5" cy=".55" r=".75">
+            <stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/>
+          </radialGradient>
+          <linearGradient id="wSand" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e6d6b6"/><stop offset="1" stop-color="#d9c7a3"/>
+          </linearGradient>
+        </defs>
+        <rect width="1600" height="1000" fill="url(#wSky)"/>
+        <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 900 600 1250 740 1600 790 L1600 1000 L0 1000 Z" fill="url(#wLit)"/>
+        <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 640 600 560 720 470 900 L0 900 Z" fill="url(#wShade)" opacity=".55"/>
+        <path d="M0 885 C 400 870 900 875 1600 880 L1600 1000 L0 1000 Z" fill="url(#wSand)"/>
+        <rect width="1600" height="1000" fill="url(#wVig)"/>
+      </svg>
       <div class="menubar" aria-hidden="true"><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="sp" id="demoDate">10월 22일 (목)</span></div>
       <div class="cap" aria-hidden="true"><span class="b">화면 가장자리에서는 반원으로</span><span class="c">모서리에서는 사분원으로</span></div>
       <div class="center" aria-hidden="true">
