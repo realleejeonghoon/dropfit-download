@@ -582,7 +582,7 @@
   @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 113, 227, .45); } 50% { box-shadow: 0 0 0 7px rgba(0, 113, 227, 0); } }
   .radio { display: flex; gap: 14px; font-size: 12px; color: #3a3a3c; white-space: nowrap; }
   .radio span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1px solid #b0b0b5; margin-right: 5px; vertical-align: -1px; }
-  .radio span.on::before { border: 3px solid var(--blue); width: 6px; height: 6px; }
+  .radio span.on::before { border: 3px solid var(--sky-deep); width: 6px; height: 6px; }
 
   .term {
     margin-top: 48px; border-radius: 20px; background: var(--paper); padding: 22px 24px;
@@ -665,7 +665,7 @@
     .steps, .how { grid-template-columns: 1fr; }
     .how { gap: 28px; }
     .stage { border-radius: 18px; aspect-ratio: 4 / 3.4; }
-    .win-body { grid-template-columns: 1fr; }
+    .win-body { grid-template-columns: 1fr; min-height: 0; }
     .side { display: none; }
     .final { padding: 88px 0; }
   }
@@ -915,7 +915,7 @@
           <div class="pane">
             <h5>보안</h5>
             <div class="group">
-              <div class="row"><div class="t">다음에서 응용 프로그램 허용<div class="radio" style="margin-top:6px"><span>App Store</span><span class="on">알려진 개발자</span></div></div></div>
+              <div class="row"><div class="t">다음에서 응용 프로그램 허용<div class="radio" style="margin-top:6px"><span>App Store</span><span class="on">App Store 및 알려진 개발자</span></div></div></div>
               <div class="row hl"><div class="t">“Dropfit”이(가) 확인된 개발자가 아니므로 사용이 차단되었습니다.<small>Dropfit.app</small></div><span class="mac-btn">그래도 열기</span></div>
             </div>
           </div>

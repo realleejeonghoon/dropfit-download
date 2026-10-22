@@ -4,18 +4,16 @@
 <p align="center">이미지를 끌어다 놓으면, 원하는 포맷으로.</p>
 
 <p align="center">
-  <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 1.1MB)</b></a>
-  &nbsp;·&nbsp;
-  <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.dmg">DMG 버전</a>
-  <br><sub>현재 버전 0.1 (테스트) · 설치 안내 페이지: <a href="https://realleejeonghoon.github.io/dropfit-download/">realleejeonghoon.github.io/dropfit-download</a></sub>
+  <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 0.6MB)</b></a>
+  <br><sub>현재 버전 0.3.1 (테스트) · 설치 안내 페이지: <a href="https://realleejeonghoon.github.io/dropfit-download/">realleejeonghoon.github.io/dropfit-download</a></sub>
 </p>
 
 ---
 
 ## 이렇게 씁니다
-1. 이미지를 화면의 동그란 **오브** 위로 끌고 옵니다.
+1. 이미지나 폴더를 화면에 떠 있는 **Dropfit** 위로 끌고 옵니다.
 2. 변환할 수 있는 포맷이 **원형으로 펼쳐집니다.**
-3. 원하는 포맷 위에 놓으면 끝. 원본 옆에 새 파일이 생깁니다. (원본은 그대로)
+3. 원하는 포맷 위에 놓으면 끝. 원본 옆에 새 파일이 생깁니다. 폴더는 옆에 ‘폴더명 (포맷)’ 새 폴더로. (원본은 그대로)
 
 지원 포맷: **JPG · PNG · HEIC · TIFF · GIF · BMP**
 
