@@ -869,7 +869,6 @@
       if (email.value && !email.checkValidity()) { note.textContent = '이메일 주소를 다시 확인해 주세요.'; note.className = 'fb-note err'; email.focus(); return; }
       var data = new URLSearchParams(new FormData(fb));
       data.set('version', '0.4');
-      data.set('ua', navigator.userAgent.slice(0, 200));
       btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note';
       fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
         .then(function () { fb.classList.add('sent'); })
