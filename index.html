@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dropfit — 끌어다 놓으면, 끝.</title>
-<meta name="description" content="이미지를 Dropfit에 끌어다 놓으면 포맷이 원형으로 펼쳐집니다. JPG · PNG · HEIC · TIFF · GIF · BMP 변환을 한 번의 동작으로. macOS 전용 무료 테스트 버전.">
+<meta name="description" content="이미지를 Dropfit에 끌어다 놓으면 포맷이 원형으로 펼쳐집니다. JPG · PNG · HEIC · TIFF · GIF · PDF 변환을 한 번의 동작으로. macOS 전용 무료 테스트 버전.">
 <meta name="theme-color" content="#fbfbfd">
 
 <meta property="og:type" content="website">
@@ -176,6 +176,7 @@
   .df-file { width: 84px; margin: -40px 0 0 -42px; text-align: center; font-size: 11px; line-height: 1.25; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); opacity: 0; }
   .df-file .ic { width: 66px; height: 52px; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; border-radius: 5px; }
   .df-file .ph { width: 60px; height: 45px; border-radius: 3px; border: 2px solid #fff; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0, 0, 0, .18); }
+  .df-doc { display: block; width: 40px; height: auto; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .22)); }
   .df-folder { display: block; width: 60px; height: auto; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .2)); }
   .df-file span { display: inline-block; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
   .df-file.sel .ic { background: rgba(0, 0, 0, .26); }
@@ -212,6 +213,8 @@
   .df-petal { filter: drop-shadow(0 1.5px 2.5px rgba(0, 0, 0, .08)); }
   .df-seg-t { font-size: 11.5px; font-weight: 500; letter-spacing: 1.4px; fill: #2c2c2e; text-anchor: middle; dominant-baseline: central; }
   .df-seg-t.on { fill: #fff; }
+  .df-sub-t { font-size: 10.5px; font-weight: 500; letter-spacing: .4px; fill: #2c2c2e; text-anchor: middle; dominant-baseline: central; }
+  .df-sub-t.on { fill: #fff; font-weight: 600; }
   /* 안내 문구 (HintLabel) */
   .df-hint { z-index: 4; opacity: 0; }
   .df-hint span { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); white-space: nowrap; padding: 5.5px 12px; border-radius: 99px;
@@ -221,6 +224,7 @@
   .df-cta { position: relative; width: 100%; max-width: 1080px; margin: -12px auto 0; }
   .df-card { display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0; will-change: transform, opacity; }
   .df-card .ph { width: 92px; height: 68px; border-radius: 5px; border: 2.5px solid #fff; box-sizing: border-box; box-shadow: 0 6px 18px rgba(29, 45, 70, .12), 0 1px 3px rgba(29, 45, 70, .1); }
+  .df-card .df-doc { width: 58px; filter: drop-shadow(0 5px 12px rgba(29, 45, 70, .16)); }
   .df-card .df-folder { width: 92px; filter: drop-shadow(0 5px 12px rgba(29, 45, 70, .14)); }
   .df-card span { font-size: 12px; line-height: 1.45; padding: 1px 8px; border-radius: 5px; white-space: nowrap; color: #1d1d1f; background: rgba(255, 255, 255, .94); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .06); }
   .df-card.new span { background: var(--sky-deep); color: #fff; box-shadow: none; }
@@ -530,7 +534,7 @@
 
 <section class="demo-top" id="how" aria-label="Dropfit 시연">
   <div class="wrap">
-    <div class="stage" id="dfTop" role="img" aria-label="이미지를 Dropfit에 끌어와 포맷을 고르면 변환되는 시연: 사진 1장, 여러 장, 폴더, 화면 모서리">
+    <div class="stage" id="dfTop" role="img" aria-label="이미지를 Dropfit에 끌어와 포맷을 고르면 변환되는 시연: 사진 1장, 여러 장, 폴더, 여러 장을 PDF 하나로, 화면 모서리">
       <svg class="wall" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="wSky" x1="0" y1="0" x2="0" y2="1">
@@ -568,9 +572,9 @@
     <div class="hero-copy">
       <p class="eyebrow">Dropfit <span>· Mac 이미지 포맷 변환</span></p>
       <h1>끌어다 놓으면,<br><span class="grad">끝.</span></h1>
-      <p class="lede">이미지를 Dropfit에 올리고 포맷을 고르면, <span class="nb">바로 변환됩니다.</span><br>한 장도, 수백 장도, <span class="nb">폴더째로도.</span></p>
+      <p class="lede">이미지나 PDF를 Dropfit에 올리고 포맷을 고르면, <span class="nb">바로 변환됩니다.</span><br>한 장도, 수백 장도, <span class="nb">폴더째로도.</span></p>
       <ul class="chips" aria-label="지원 포맷">
-        <li>JPG</li><li>PNG</li><li>HEIC</li><li>TIFF</li><li>GIF</li><li>BMP</li>
+        <li>JPG</li><li>PNG</li><li>HEIC</li><li>TIFF</li><li>GIF</li><li>PDF</li>
       </ul>
 
       <div class="cta">
@@ -584,7 +588,7 @@
         <div class="cta-row copy-only">
           <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
         </div>
-        <p class="cta-meta">v0.3.2 · 0.6MB · macOS 14 이상</p>
+        <p class="cta-meta">v0.4 · 0.6MB · macOS 14 이상</p>
       </div>
 
       <div class="notice" role="note">
@@ -603,7 +607,7 @@
       <h2 class="sec-title reveal" id="feat-title">가져가고, 고르고, 놓기.</h2>
     </div>
     <div class="how reveal">
-      <div><b>01</b><h3>Dropfit으로 가져가기</h3><p>이미지나 폴더를 화면에 떠 있는 Dropfit으로 끌어 옵니다.</p></div>
+      <div><b>01</b><h3>Dropfit으로 가져가기</h3><p>이미지·PDF나 폴더를 화면에 떠 있는 Dropfit으로 끌어 옵니다.</p></div>
       <div><b>02</b><h3>포맷 고르기</h3><p>펼쳐진 포맷 중 하나 위로 가져갑니다.</p></div>
       <div><b>03</b><h3>놓으면 완료</h3><p>원본 옆에 새 파일이 생기고, 원본은 그대로입니다.</p></div>
     </div>
@@ -618,8 +622,8 @@
     </div>
     <div class="steps">
       <div class="step reveal"><div class="n">1</div><h3>다운로드</h3><p>zip 파일을 받아 압축을 풉니다.</p></div>
-      <div class="step reveal"><div class="n">2</div><h3>옮기기</h3><p>Dropfit을 응용 프로그램 폴더로 옮깁니다.</p></div>
-      <div class="step reveal"><div class="n">3</div><h3>실행</h3><p>처음 한 번 경고가 뜨면 <a href="#security">버튼 하나로 해결</a>됩니다.</p></div>
+      <div class="step reveal"><div class="n">2</div><h3>실행</h3><p>처음 한 번 경고가 뜨면 <a href="#security">버튼 하나로 해결</a>됩니다.</p></div>
+      <div class="step reveal"><div class="n">3</div><h3>옮기기</h3><p>“응용 프로그램 폴더로 옮길까요?”에서 <b>옮기기</b>를 누르면 끝입니다.</p></div>
     </div>
   </div>
 </section>
@@ -688,7 +692,7 @@
       <summary>그래도 열리지 않는다면</summary>
       <div class="term">
         <div class="tx">
-          <p>터미널을 열고 아래 한 줄을 붙여 넣으세요. <span class="nb">Dropfit 한 앱에만 적용됩니다.</span></p>
+          <p>Dropfit을 응용 프로그램 폴더로 옮긴 뒤, 터미널에 아래 한 줄을 붙여 넣으세요. <span class="nb">Dropfit 한 앱에만 적용됩니다.</span></p>
           <code id="cmd">xattr -dr com.apple.quarantine /Applications/Dropfit.app</code>
         </div>
         <button class="ghost" type="button" data-copy="#cmd">명령어 복사</button>
@@ -714,6 +718,10 @@
         <p>네, 여러 장을 한꺼번에 올려도 됩니다. 폴더를 올리면 원본 폴더는 그대로 두고, 변환된 이미지만 모은 새 폴더를 만들어 줍니다. 예를 들어 ‘여행’ 폴더를 PNG로 바꾸면 옆에 ‘여행 (PNG)’ 폴더가 생깁니다. 하위 폴더는 제외합니다.</p>
       </details>
       <details>
+        <summary>PDF도 되나요?</summary>
+        <p>네. 사진 여러 장을 PDF 칸에 올리면 바깥에 <b>합치기 · 나누기</b>가 나옵니다. 합치기는 PDF 한 개로, 나누기는 장마다 PDF 한 개씩 만듭니다. 반대로 여러 쪽짜리 PDF를 이미지 칸에 올리면 쪽마다 한 장씩 나누거나, 위아래로 이어 붙여 한 장으로 만듭니다. 칸에 바로 놓으면 PDF는 합치고, 이미지는 쪽마다 나눕니다. 암호가 걸린 PDF는 열 수 없습니다.</p>
+      </details>
+      <details>
         <summary>몇 장까지, 얼마나 큰 사진까지 되나요?</summary>
         <p>장수 제한은 없습니다. 사진 400장이 약 30초에 끝나고, 한 장은 최대 3억 화소까지 변환합니다.</p>
       </details>
@@ -735,7 +743,7 @@
 
 <section class="final">
   <div class="wrap final-stack">
-    <div class="df-cta" id="dfCta" role="img" aria-label="사진이 Dropfit에 들어갔다가 PNG로 변환되어 나오는 애니메이션"></div>
+    <div class="df-cta" id="dfCta" role="img" aria-label="사진과 폴더가 Dropfit에 들어갔다가 PNG로, 또는 PDF 한 개로 합쳐져 나오는 애니메이션"></div>
     <h2 class="reveal">Dropfit</h2>
     <p class="final-sub reveal">지금 바로 써 보세요.</p>
     <div class="reveal">
@@ -749,14 +757,14 @@
       <div class="cta-row copy-only">
         <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
       </div>
-      <p class="cta-meta">무료 · v0.3.2 · macOS 14 이상</p>
+      <p class="cta-meta">무료 · v0.4 · macOS 14 이상</p>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <span>Dropfit 0.3.2 · 테스트 버전</span>
+    <span>Dropfit 0.4 · 테스트 버전</span>
   </div>
 </footer>
 
@@ -826,6 +834,6 @@
 
   })();
 </script>
-<script src="demo.js?v=1" defer></script>
+<script src="demo.js?v=2" defer></script>
 </body>
 </html>
