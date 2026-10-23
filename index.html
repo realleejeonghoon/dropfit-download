@@ -782,6 +782,16 @@
       toast.textContent = msg; toast.classList.add('show');
       clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
     }
+    // 다운로드 수: 버튼을 누를 때 시각·버전만 보낸다 (개인정보 없음). 주소가 비어 있으면 아무것도 하지 않는다
+    var COUNT_URL = '';
+    document.querySelectorAll('a[href="Dropfit-macOS.zip"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (!COUNT_URL) return;
+        var body = new URLSearchParams({ event: 'download', version: '0.4' });
+        try { if (navigator.sendBeacon && navigator.sendBeacon(COUNT_URL, body)) return; } catch (e) {}
+        try { fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: body, keepalive: true }); } catch (e) {}
+      });
+    });
     function copy(text, msg) {
       var done = function () { show(msg); };
       if (navigator.clipboard && window.isSecureContext) {
