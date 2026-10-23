@@ -1,10 +1,12 @@
 /* Dropfit 시연 엔진
-   앱 소스(OrbViews.swift · OrbModel.swift · OrbController.swift, 0.3.2)의 치수·색·애니메이션 곡선을 그대로 옮겼다.
+   앱 소스(OrbViews.swift · OrbModel.swift · OrbController.swift, 0.4)의 치수·색·애니메이션 곡선을 그대로 옮겼다.
    - 링: 두께 54, 첫 줄 중심 반지름 74, 칸 사이 평행 간격 4. 화면 가장자리·모서리에서는 반원·사분원(RadialLayout.make)
    - 펼침: spring(response 0.62, damping 0.92), 칸마다 0.045초 차이, 칸 중심 기준 0.86배·-8°·안쪽 14pt에서 시작
    - 접힘 easeInOut 0.26 · 호버 easeInOut 0.28 · 완료 spring(0.5, 0.85) · 1.8초 뒤 easeInOut 0.4로 대기 상태
    - 여러 장: 오브 테두리가 진행선(easeOut 0.4) + 가운데 퍼센트·장수. 한 장: 스피너
    - 변환 속도: 사진 400장 약 30초(장당 75ms), 놓은 뒤 0.3초 뒤 시작
+   - PDF(0.4): 여러 장을 PDF 칸에 올리면 바깥 6pt에 두께 34의 보조 두 칸(반시계 쪽 '합치기', 시계 쪽 '나누기')이
+     spring(0.62, 0.92)로 0.94배에서 펼쳐지고, 안내는 'N장 → PDF 1개 / N개'. 칸에 바로 놓으면 합치기
    타임라인은 미리 계산해 두고 매 프레임 시각 T의 값을 읽어 그린다(되감기·정지 화면 모두 같은 결과). */
 (function (global) {
   'use strict';
@@ -14,8 +16,9 @@
     skySoft: '#a8c6e4', skyDeep: '#608ab4', skyText: '#3c608a',
     appleTop: '#bad4ee', appleBottom: '#8eb2d8'
   };
-  var M = { orb: 60, thick: 54, ring: 74, minArc: 46, fanArc: 116, gap: 4, pad: 40, panel: 112 };
-  var FORMATS = [['JPG', '범용'], ['PNG', '무손실'], ['HEIC', '고효율'], ['TIFF', '인쇄'], ['GIF', '웹·단순'], ['BMP', '비압축']];
+  var M = { orb: 60, thick: 54, ring: 74, minArc: 46, fanArc: 116, gap: 4, pad: 72, panel: 112, subGap: 6, subThick: 34 };
+  var FORMATS = [['JPG', '범용'], ['PNG', '무손실'], ['HEIC', '고효율'], ['TIFF', '인쇄'], ['GIF', '웹·단순'], ['PDF', '문서']];
+  var PDF = 5;
   var PER_FILE = 0.075;
   var SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -100,11 +103,14 @@
       }
     });
     var outer = rowMid(counts.length - 1) + half;
-    // 안내 문구: 기본은 메뉴 아래 +22, 화면 밖이면 위로, 좌우는 화면 안으로
-    var gap = outer + 22, below = c.y + gap;
-    var hy = below + 12 <= vis.y1 ? below : c.y - gap;
-    var hx = Math.min(Math.max(c.x, vis.x0 + 80), vis.x1 - 80);
-    return { segs: segs, outer: outer, rows: counts.length, hint: { x: hx - c.x, y: hy - c.y } };
+    // 안내 문구: 기본은 메뉴 아래 +22, 화면 밖이면 위로, 좌우는 화면 안으로. 보조 칸이 생길 수 있으면 그 바깥으로
+    function hint(o) {
+      var gap = o + 22, below = c.y + gap;
+      var hy = below + 12 <= vis.y1 ? below : c.y - gap;
+      var hx = Math.min(Math.max(c.x, vis.x0 + 80), vis.x1 - 80);
+      return { x: hx - c.x, y: hy - c.y };
+    }
+    return { segs: segs, outer: outer, rows: counts.length, hint: hint(outer), hintSub: hint(outer + M.subGap + M.subThick) };
   }
   function sectorPath(s) {
     function pt(r, a) { return (r * Math.cos(a)).toFixed(2) + ' ' + (-r * Math.sin(a)).toFixed(2); }
@@ -115,6 +121,17 @@
     return d + 'Z';
   }
   // 포인터 → 칸 판정 (OrbController.hitTest). p는 오브 중심 기준, y 아래 +
+  // armed: 보조 칸을 펼친 칸. 보조 칸 위면 { i, m: 'c' 합치기 | 's' 나누기 }, 칸에서 보조 칸으로 가는 길목은 그 칸
+  function hitSub(L, armed, px, py) {
+    var d = Math.hypot(px, py), th = Math.atan2(-py, px), s = L.segs[armed];
+    var mid = (s.start + s.end) / 2, half = (s.end - s.start) / 2;
+    var delta = Math.atan2(Math.sin(th - mid), Math.cos(th - mid));
+    if (Math.abs(delta) > half + 0.02) return null;
+    var subIn = L.outer + M.subGap;
+    if (d >= subIn - M.subGap / 2 && d < subIn + M.subThick + 24) return { i: armed, m: delta >= 0 ? 'c' : 's' };
+    if (d >= s.inner - M.gap / 2 && d < subIn) return { i: armed, m: null };
+    return null;
+  }
   function hitTest(L, disabled, px, py) {
     var d = Math.hypot(px, py);
     if (d <= M.orb / 2 + 4 || d >= L.outer + 28) return -1;
@@ -149,6 +166,7 @@
     '<path fill="url(#dfApple{u})" d="M23.00 15.79C29.69 8.26 42.65 9.10 42.65 22.90C42.65 37.11 37.64 45.90 30.95 45.90C27.60 45.90 25.51 44.64 23.00 44.64C20.49 44.64 18.40 45.90 15.05 45.90C8.36 45.90 3.35 37.11 3.35 22.90C3.35 9.10 16.31 8.26 23.00 15.79Z"/>' +
     '<path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M16.73 3.66C20.91 -1.36 23.84 2.82 23.00 29.59M20.37 26.95L23.00 29.59L25.63 26.95"/></svg>';
   var FOLDER = '<svg class="df-folder" viewBox="0 0 64 52" aria-hidden="true"><path d="M3 7a3.5 3.5 0 0 1 3.5-3.5h15.2l4.4 4.4h31.4A3.5 3.5 0 0 1 61 11.4v34.1A3.5 3.5 0 0 1 57.5 49h-51A3.5 3.5 0 0 1 3 45.5z" fill="#6aa9de"/><path d="M3 15.5A3.5 3.5 0 0 1 6.5 12h51a3.5 3.5 0 0 1 3.5 3.5v30A3.5 3.5 0 0 1 57.5 49h-51A3.5 3.5 0 0 1 3 45.5z" fill="#8ec4f0"/><path d="M3.5 15.6h57" stroke="rgba(255,255,255,.5)" stroke-width="1"/></svg>';
+  var DOC = '<svg class="df-doc" viewBox="0 0 48 60" aria-hidden="true"><path d="M5 2.5h26.5L45.5 16.5v39A2.5 2.5 0 0 1 43 58H5a2.5 2.5 0 0 1-2.5-2.5v-50.5A2.5 2.5 0 0 1 5 2.5z" fill="#fff"/><path d="M31.5 2.5v11.5a2.5 2.5 0 0 0 2.5 2.5h11.5" fill="#e9ebef"/><path d="M9 24h30M9 29.5h30M9 35h22" stroke="#d6d9df" stroke-width="1.6" stroke-linecap="round"/><rect x="9" y="42" width="21" height="10" rx="2" fill="#db665c"/><text x="19.5" y="49.4" text-anchor="middle" font-size="7" font-weight="700" letter-spacing=".4" fill="#fff" font-family="-apple-system, sans-serif">PDF</text></svg>';
   var CHECK = '<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.6 9.6l3.5 3.5 7.3-8.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ARROW = '<svg viewBox="0 0 17 24" aria-hidden="true"><path d="M1.5 1.5v17.2l4.3-4.2 2.9 6.8 3-1.3-2.9-6.7h6z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>';
   var PHOTOS = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5'];
@@ -257,6 +275,21 @@
       return { s: s, mid: mid, r: r, g: g, base: base, on: on, t1: t1, t2: t2,
         open: new P(0), hover: new P(0), dim: new P(0), off: new P(0) };
     });
+    // 보조 두 칸 (SubChoices): PDF 칸 바깥. 반시계 쪽 절반 '합치기', 시계 쪽 절반 '나누기'
+    var ps = L.segs[PDF], pm = (ps.start + ps.end) / 2, si = L.outer + M.subGap, so = si + M.subThick, g2 = M.gap / 2;
+    var sg = sv('g', { 'class': 'df-sub' }, svg);
+    this.sub = { g: sg, op: new P(0), sc: new P(1), halves: [['c', '합치기', pm, ps.end], ['s', '나누기', ps.start, pm]].map(function (h) {
+      var seg = { start: h[2], end: h[3], inner: si, outer: so, startInset: g2, endInset: g2 };
+      var hg = sv('g', {}, sg), d = sectorPath(seg), mid = (h[2] + h[3]) / 2, r = (si + so) / 2;
+      var base = sv('path', { d: d, fill: 'url(#dfPearl' + u + ')', 'fill-opacity': 0.94, stroke: '#fff', 'stroke-opacity': 0.9, 'stroke-width': 0.8 }, hg);
+      var on = sv('path', { d: d, fill: 'url(#dfSky' + u + ')', 'fill-opacity': 0.97, stroke: '#fff', 'stroke-opacity': 0.95, 'stroke-width': 1, opacity: 0 }, hg);
+      var rot = Math.PI / 2 - mid;
+      if (Math.sin(mid) < -0.05) rot += Math.PI;
+      var tf = 'translate(' + (r * Math.cos(mid)).toFixed(2) + ' ' + (-r * Math.sin(mid)).toFixed(2) + ') rotate(' + (rot * 180 / Math.PI).toFixed(2) + ')';
+      var t1 = sv('text', { transform: tf, 'class': 'df-sub-t' }, hg); t1.textContent = h[1];
+      var t2 = sv('text', { transform: tf, 'class': 'df-sub-t on' }, hg); t2.textContent = h[1];
+      return { m: h[0], g: hg, on: on, t1: t1, t2: t2, hover: new P(0) };
+    }) };
   }
   Ring.prototype.render = function (T) {
     var x = this.orb.x.at(T), y = this.orb.y.at(T), S = this.S, any = false;
@@ -284,6 +317,22 @@
       var to = off ? 0.3 : 0.9 - 0.4 * dm;
       p.t1.setAttribute('fill-opacity', (to * (1 - h)).toFixed(3));
       p.t2.setAttribute('fill-opacity', h.toFixed(3));
+    }
+    var sb = this.sub, so = sb.op.at(T);
+    if (so <= 0.0005) sb.g.style.display = 'none';
+    else {
+      any = true;
+      sb.g.style.display = '';
+      sb.g.setAttribute('opacity', Math.min(1, so).toFixed(3));
+      sb.g.setAttribute('transform', 'scale(' + sb.sc.at(T).toFixed(4) + ')');
+      sb.halves.forEach(function (h) {
+        var k = h.hover.at(T);
+        h.on.setAttribute('opacity', k.toFixed(3));
+        h.t1.setAttribute('fill-opacity', (0.9 * (1 - k)).toFixed(3));
+        h.t2.setAttribute('fill-opacity', k.toFixed(3));
+        // 그림자: 0.08 · 반경 5 · y 1.5 → 올라가면 0.13 · 7 · 2.5
+        h.g.style.filter = 'drop-shadow(0 ' + (1.5 + k).toFixed(2) + 'px ' + (2.5 + k).toFixed(2) + 'px rgba(0,0,0,' + (0.08 + 0.05 * k).toFixed(3) + '))';
+      });
     }
     this.e.style.visibility = any || v > 0.001 ? 'visible' : 'hidden';
   };
@@ -313,7 +362,7 @@
     this.f = f;
     this.op = new P(0); this.sel = new P(0);
     var cls = 'df-file' + (f.folder ? ' folder' : '');
-    var vis = f.folder ? FOLDER : '<div class="ph ' + f.photo + '"></div>';
+    var vis = f.folder ? FOLDER : f.pdf ? DOC : '<div class="ph ' + f.photo + '"></div>';
     this.e = el('div', cls, parent, '<div class="ic">' + vis + '</div><span>' + f.name + '</span>');
     this.e.style.transform = 'translate(' + f.x + 'px,' + f.y + 'px)';
     this.sel0 = -1;
@@ -373,7 +422,9 @@
   // 파일이 오브 창에 들어옴: dragging + 펼침
   App.prototype.enter = function (t, ring, files, disabled) {
     var o = this.orb, n = files.length;
-    this.cur = ring; this.disabled = disabled; this.files = files; this.hovered = -1;
+    this.cur = ring; this.disabled = disabled; this.files = files; this.hovered = -1; this.mode = null; this.armed = -1;
+    this.choices = !!files.choices;   // 이미지 여러 장 → PDF 칸에서 '합치기 · 나누기'를 고를 수 있다
+    ring.sub.op.to(t, 0); ring.sub.halves.forEach(function (h) { h.hover.to(t, 0); });
     o.glyph.to(t, 0); o.photo.to(t, files.photo || 'p0');
     o.thumb.to(t, 1, ease(EO, 0.2), 0.05); o.thumbVeil.to(t, 0.12);
     o.badgeText.to(t, n > 1 ? String(n) : ''); o.badge.to(t, n > 1 ? 1 : 0);
@@ -388,14 +439,31 @@
     ring.veil.to(t, 1, ease(EIO, 0.5));
     if (this.hint) {
       var h = this.hint;
-      h.dx.to(t, ring.L.hint.x); h.dy.to(t, ring.L.hint.y);
+      var hp = this.choices ? ring.L.hintSub : ring.L.hint;
+      h.dx.to(t, hp.x); h.dy.to(t, hp.y);
       h.base.to(t, '포맷 위에 놓으세요'); h.k.to(t, 0);
       h.op.to(t, 1, ease(EIO, 0.4), 0.25);
     }
   };
-  App.prototype.hover = function (t, idx) {
-    if (idx === this.hovered) return;
-    var o = this.orb, ring = this.cur;
+  App.prototype.hover = function (t, idx, mode) {
+    mode = mode || null;
+    if (idx === this.hovered && mode === this.mode) return;
+    var o = this.orb, ring = this.cur, sub = ring.sub;
+    // 칸이 같고 보조 칸만 바뀜: 보조 칸 강조와 안내 숫자만 바꾼다
+    var same = idx === this.hovered;
+    this.mode = mode;
+    var armed = this.choices && idx === PDF ? PDF : -1;
+    if (armed !== this.armed) {
+      this.armed = armed;
+      if (armed >= 0) { sub.sc.to(t, 0.94); sub.sc.to(t, 1, Motion.open); sub.op.to(t, 1, Motion.open); }
+      else sub.op.to(t, 0, Motion.close);
+    }
+    sub.halves.forEach(function (h) { h.hover.to(t, mode === h.m ? 1 : 0, Motion.hover); });
+    if (this.hint && armed >= 0) {
+      var n = this.files.length;
+      this.hint.hov.to(t, n + '장 → PDF ' + ((mode || 'c') === 'c' ? 1 : n) + '개');
+    }
+    if (same) return;
     this.hovered = idx;
     ring.petals.forEach(function (p, i) {
       p.hover.to(t, i === idx ? 1 : 0, Motion.hover);
@@ -406,13 +474,13 @@
     o.hl.to(t, idx >= 0 ? 1 : 0, Motion.hover);
     o.scale.to(t, idx >= 0 ? 0.98 : 1.02, Motion.orb);
     if (this.hint) {
-      if (idx >= 0) this.hint.hov.to(t, FORMATS[idx][0] + '로 변환 · ' + FORMATS[idx][1]);
+      if (idx >= 0 && armed < 0) this.hint.hov.to(t, FORMATS[idx][0] + '로 변환 · ' + FORMATS[idx][1]);
       this.hint.k.to(t, idx >= 0 ? 1 : 0, Motion.hover);
     }
   };
   // 놓기 → 접기 → 0.3초 뒤 변환 시작 → 장마다 진행 → 완료 → 1.8초 뒤 대기
   // 반환: { start, finish[i], done, idle }
-  App.prototype.drop = function (t, fmt, total) {
+  App.prototype.drop = function (t, fmt, total, outs) {
     var o = this.orb, ring = this.cur, many = total > 1;
     this.hover(t, -1);
     ring.petals.forEach(function (p) { p.open.to(t, 0, Motion.close); });
@@ -437,7 +505,8 @@
     }
     var done = fin[fin.length - 1] + 0.02;
     o.prog.to(done, 0, Motion.done); o.spin.to(done, 0, Motion.done);
-    o.doneText.to(done, many ? fmt + ' ×' + total : fmt);
+    outs = outs || total;   // 합치기는 결과 1개
+    o.doneText.to(done, outs > 1 ? fmt + ' ×' + outs : fmt);
     o.done.to(done, 1, Motion.done);
     o.scan.to(done, 1);
     o.burst.to(done, 1, ease(EO, 0.9));
@@ -533,18 +602,32 @@
         scan(span[0], span[1], function (u, x, y) { if (te === null && Math.abs(x - c.x) < M.panel / 2 && Math.abs(y - c.y) < M.panel / 2) te = u; });
         var meta = sel.map(function (f) { return f.f; });
         var count = opts.count || sel.length;
-        var list = { length: count, photo: meta[0].photo || 'p2' };
+        var list = { length: count, photo: meta[0].photo || 'p2', choices: !!opts.sub };
         app.enter(te, ring, list, disabled);
         wait(0.55);
         // 칸으로: 지나는 칸마다 호버가 바뀐다 (hitTest)
         var s = ring.L.segs[fmt], mid = (s.start + s.end) / 2, r = (s.inner + s.outer) / 2 + 2;
+        function pick(u, x, y) {
+          var h = app.armed >= 0 ? hitSub(ring.L, app.armed, x - c.x, y - c.y) : null;
+          if (h) app.hover(u, h.i, h.m); else app.hover(u, hitTest(ring.L, disabled, x - c.x, y - c.y));
+        }
         var span2 = move(c.x + r * Math.cos(mid), c.y - r * Math.sin(mid), 0.55);
-        scan(span2[0], span2[1], function (u, x, y) { app.hover(u, hitTest(ring.L, disabled, x - c.x, y - c.y)); });
+        scan(span2[0], span2[1], pick);
         if (st.still == null) st.still = t + 0.35;
+        if (opts.sub) {
+          // 보조 칸이 펼쳐지면 바깥으로: '나누기'(PDF 6개)를 지나 '합치기'(PDF 1개)에 놓는다
+          var q = (s.end - s.start) / 4, rs = ring.L.outer + M.subGap + M.subThick / 2;
+          wait(0.55);
+          var sp3 = move(c.x + rs * Math.cos(mid - q), c.y - rs * Math.sin(mid - q), 0.6);
+          scan(sp3[0], sp3[1], pick);
+          wait(0.8);
+          var sp4 = move(c.x + rs * Math.cos(mid + q), c.y - rs * Math.sin(mid + q), 0.5);
+          scan(sp4[0], sp4[1], pick);
+        }
         wait(0.6);
         var td = t;
         gs.forEach(function (g) { g.op.to(td, 0, ease(EO, 0.12)); });
-        return app.drop(td, FORMATS[fmt][0], count);
+        return app.drop(td, FORMATS[fmt][0], count, opts.outs);
       }
 
       /* ① 사진 1장 · 화면 가운데 */
@@ -567,20 +650,24 @@
         many.push(file({ x: col(1 - cc), y: row(rr), photo: PHOTOS[i], name: names[i] + '.heic' }));
         manyOut.push(file({ x: col(1 - cc), y: row(rows2 + rr), photo: PHOTOS[i], name: names[i] + '.png' }));
       }
-      show(many); wait(0.5);
-      var m0 = { x: col(1) - 52, y: row(0) - 52 }, m1 = { x: col(0) + 46, y: row(rows2 - 1) + 44 };
-      move(m0.x, m0.y); wait(0.12);
-      marquee.x0 = m0.x; marquee.y0 = m0.y; marquee.op.to(t, 1);
-      files.forEach(function (f) { f.sel.to(t, 0); });
-      var sp = move(m1.x, m1.y, 0.85);
-      many.forEach(function (f) {
-        var hit = null;
-        scan(sp[0], sp[1], function (u, x, y) {
-          if (hit === null && Math.min(x, m0.x) < f.f.x + 30 && Math.max(x, m0.x) > f.f.x - 30 && Math.min(y, m0.y) < f.f.y + 26 && Math.max(y, m0.y) > f.f.y - 26) hit = u;
+      // 바탕화면을 끌어서 한꺼번에 선택
+      function lasso(list, rowsN) {
+        var m0 = { x: col(1) - 52, y: row(0) - 52 }, m1 = { x: col(0) + 46, y: row(rowsN - 1) + 44 };
+        move(m0.x, m0.y); wait(0.12);
+        marquee.x0 = m0.x; marquee.y0 = m0.y; marquee.op.to(t, 1);
+        files.forEach(function (f) { f.sel.to(t, 0); });
+        var sp = move(m1.x, m1.y, 0.85);
+        list.forEach(function (f) {
+          var hit = null;
+          scan(sp[0], sp[1], function (u, x, y) {
+            if (hit === null && Math.min(x, m0.x) < f.f.x + 30 && Math.max(x, m0.x) > f.f.x - 30 && Math.min(y, m0.y) < f.f.y + 26 && Math.max(y, m0.y) > f.f.y - 26) hit = u;
+          });
+          f.sel.to(hit === null ? t : hit, 1);
         });
-        f.sel.to(hit === null ? t : hit, 1);
-      });
-      wait(0.15); marquee.op.to(t, 0); wait(0.25);
+        wait(0.15); marquee.op.to(t, 0); wait(0.25);
+      }
+      show(many); wait(0.5);
+      lasso(many, rows2);
       var r2 = dragToOrb(many, many[n2 - 2], ringFull, 1, 2);
       manyOut.forEach(function (f, k) { f.op.to(r2.finish[k], 1, ease(EO, 0.35)); });
       t = r2.done; move(home.x + 170, home.y + 110, 0.9);
@@ -597,7 +684,21 @@
       t = r3.idle + 0.3;
       hide([fd, fdOut], t); wait(0.6);
 
-      /* ④ 화면 모서리 · Dropfit을 옮기면 메뉴가 사분원으로 */
+      /* ④ 여러 장 → PDF 칸 → 바깥 '합치기' → PDF 1개 ('1일차 외 5장.pdf') */
+      var days = [], dayNames = ['1일차', '2일차', '3일차', '4일차', '5일차', '6일차'];
+      for (i = 0; i < n2; i++) {
+        days.push(file({ x: col(1 - i % 2), y: row(Math.floor(i / 2)), photo: PHOTOS[(i + 2) % 6], name: dayNames[i] + '.heic' }));
+      }
+      var pdfOut = file({ x: col(0), y: row(rows2), pdf: true, name: '1일차 외 ' + (n2 - 1) + '장.pdf' });
+      show(days); wait(0.5);
+      lasso(days, rows2);
+      var r5 = dragToOrb(days, days[n2 - 2], ringFull, PDF, 2, { sub: true, outs: 1 });
+      pdfOut.op.to(r5.finish[n2 - 1], 1, ease(EO, 0.35));
+      t = r5.done; move(home.x + 170, home.y + 110, 0.9);
+      t = r5.idle + 0.3;
+      hide(days.concat([pdfOut]), t); wait(0.6);
+
+      /* ⑤ 화면 모서리 · Dropfit을 옮기면 메뉴가 사분원으로 */
       var cf = file({ x: col(0), y: row(0), photo: 'p3', name: '노을.heic' });
       var cfOut = file({ x: col(0), y: row(1), photo: 'p3', name: '노을.tiff' });
       show([cf]);
@@ -618,7 +719,7 @@
       hide([cf, cfOut], t);
       move(home.x + 150, home.y + 120, 0.8);
       wait(0.5);
-      st.marks = [r1, r2, r3, r4];
+      st.marks = [r1, r2, r3, r5, r4];
 
       files.forEach(st.add, st); ghosts.forEach(st.add, st);
       st.add(ringFull); st.add(ringCorner); st.add(orb); st.add(app.hint); st.add(marquee); st.add(cursor);
@@ -648,7 +749,7 @@
       var X = mob ? 205 : 340, CS = mob ? 0.8 : 1, ARC = mob ? 130 : 170;
       var sc = [];
       function card(f, out) {
-        var vis = f.folder ? FOLDER : '<div class="ph ' + f.photo + '"></div>';
+        var vis = f.folder ? FOLDER : f.pdf ? DOC : '<div class="ph ' + f.photo + '"></div>';
         var e = el('div', 'df-card' + (out ? ' new' : '') + (f.folder ? ' folder' : ''), cards, '<div class="ic">' + vis + '</div><span>' + f.name + '</span>');
         var o = { e: e, op: new P(0), k: new P(0), from: null, to: null, ctrl: null, base: f.pos, s0: CS };
         o.render = function (T) {
@@ -671,7 +772,7 @@
         o.ctrl = { x: (from.x + to.x) / 2, y: Math.min(from.y, to.y) - ARC };
       }
       var hole = { x: c.x, y: c.y - 4 }, t = 0;
-      function scene(items, outs, fmt, disabled, count, folder) {
+      function scene(items, outs, fmt, disabled, count, folder, sub) {
         var n = items.length;
         var src = items.map(function (f) { return card(f); });
         src.forEach(function (o) { o.op.to(t, 1, ease(EO, 0.5)); });
@@ -684,11 +785,13 @@
           copies.push(o);
         });
         var te = t0 + 0.95;
-        app.enter(te, ring, { length: count, photo: items[0].photo || 'p2' }, disabled);
+        app.enter(te, ring, { length: count, photo: items[0].photo || 'p2', choices: !!sub }, disabled);
         var th = te + 0.8;
         if (st.still == null) st.still = th + 0.35;
         app.hover(th, fmt);
-        var r = app.drop(th + 0.65, FORMATS[fmt][0], count);
+        // PDF: 보조 칸이 펼쳐진 뒤 '합치기'에 놓는다
+        if (sub) { th += 0.7; app.hover(th, fmt, 'c'); }
+        var r = app.drop(th + 0.65, FORMATS[fmt][0], count, outs.length);
         outs.forEach(function (f, i) {
           var o = card(f, true); flight(o, hole, f.pos, CS * 0.4, CS);
           var d = (folder ? r.start : r.finish[Math.round((i + 1) / outs.length * count) - 1]) + 0.05 + i * 0.12;
@@ -707,7 +810,7 @@
         });
       }
       scene(row(['여행'], -1, '.heic'), row(['여행'], 1, '.png'), 1, 2, 1);
-      scene(row(['바다', '사막', '숲'], -1, '.heic'), row(['바다', '사막', '숲'], 1, '.png'), 1, 2, 3);
+      scene(row(['바다', '사막', '숲'], -1, '.heic'), [{ name: '바다 외 2장.pdf', pdf: true, pos: { x: c.x + X, y: c.y + 30 } }], PDF, 2, 3, false, true);
       var fin = [{ name: '여행', folder: true, pos: { x: c.x - X, y: c.y + 30 } }];
       var fout = [{ name: '여행 (PNG)', folder: true, pos: { x: c.x + X, y: c.y + 30 } }];
       scene(fin, fout, 1, 2, 48, true);
