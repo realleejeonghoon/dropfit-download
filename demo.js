@@ -478,10 +478,11 @@
       this.hint.k.to(t, idx >= 0 ? 1 : 0, Motion.hover);
     }
   };
-  // 놓기 → 접기 → 0.3초 뒤 변환 시작 → 장마다 진행 → 완료 → 1.8초 뒤 대기
+  // 놓는 순간 변환 시작 → 접히는 0.3초 동안 가운데는 비워 둠 → 접힘이 끝나면 실제 진행 지점부터 진행선과 %
+  // (이미 끝났으면 진행선 없이 바로 완료) → 1.8초 뒤 대기. 일부러 늦추는 연출 없음 (앱과 같음)
   // 반환: { start, finish[i], done, idle }
   App.prototype.drop = function (t, fmt, total, outs) {
-    var o = this.orb, ring = this.cur, many = total > 1;
+    var o = this.orb, ring = this.cur;
     this.hover(t, -1);
     ring.petals.forEach(function (p) { p.open.to(t, 0, Motion.close); });
     ring.veil.to(t, 0, Motion.close);
@@ -489,22 +490,22 @@
     // dragging → working (hovered가 함께 바뀌어 0.28초 동안 교차)
     o.thumb.to(t, 0, Motion.hover); o.hl.to(t, 0, Motion.hover); o.badge.to(t, 0, Motion.hover);
     o.scale.to(t, 1, Motion.orb);
-    o.scan.to(t, many ? 0 : 1);
-    o.spin.to(t, many ? 0 : 1, Motion.hover);
-    o.trim.to(t, 0); o.pText.to(t, '0%'); o.nText.to(t, '0 / ' + total);
-    o.prog.to(t, many ? 1 : 0, Motion.hover);
-    var start = t + 0.3, fin = [];
-    for (var i = 0; i < total; i++) {
-      var ti = start + PER_FILE * (i + 1);
-      fin.push(ti);
-      if (many) {
-        o.trim.to(ti, (i + 1) / total, ease(EO, 0.4));
-        o.pText.to(ti, Math.floor((i + 1) / total * 100) + '%');
-        o.nText.to(ti, (i + 1) + ' / ' + total);
+    var start = t, shown = t + 0.3, fin = [];
+    for (var i = 0; i < total; i++) fin.push(start + PER_FILE * (i + 1));
+    var last = fin[fin.length - 1];
+    if (total > 1 && last > shown) {
+      // 접힘이 끝난 시점까지 끝난 장 수에서 이어 시작
+      var k = 0; while (k < total && fin[k] <= shown) k++;
+      o.trim.to(shown, k / total); o.pText.to(shown, Math.floor(k / total * 100) + '%'); o.nText.to(shown, k + ' / ' + total);
+      o.prog.to(shown, 1, Motion.hover); o.scan.to(shown, 0);
+      for (i = k; i < total; i++) {
+        o.trim.to(fin[i], (i + 1) / total, ease(EO, 0.4));
+        o.pText.to(fin[i], Math.floor((i + 1) / total * 100) + '%');
+        o.nText.to(fin[i], (i + 1) + ' / ' + total);
       }
     }
-    var done = fin[fin.length - 1] + 0.02;
-    o.prog.to(done, 0, Motion.done); o.spin.to(done, 0, Motion.done);
+    var done = Math.max(last, shown) + 0.02;
+    o.prog.to(done, 0, Motion.done);
     outs = outs || total;   // 합치기는 결과 1개
     o.doneText.to(done, outs > 1 ? fmt + ' ×' + outs : fmt);
     o.done.to(done, 1, Motion.done);
