@@ -423,6 +423,66 @@
     .final-stack .cta-row { margin-top: 26px; }
   }
   .toast { background: rgba(255, 255, 255, .92); color: var(--sky-text); box-shadow: 0 0 0 .6px rgba(60, 96, 138, .15), 0 10px 30px rgba(29, 45, 70, .12); }
+  /* 첫 실행 안내 애니메이션 (12초 반복): ① 경고 창 '완료' ② 설정 '그래도 열기' ③ 암호 → 열림
+     왼쪽 단계 번호가 같은 시각에 함께 켜진다. 커서 목표 좌표는 스크립트가 실제 버튼 위치로 넣는다 */
+  .walk { position: relative; }
+  .walk > * { animation-duration: 12s; animation-iteration-count: infinite; animation-timing-function: cubic-bezier(.45, 0, .2, 1); }
+  .walk .row.hl .mac-btn { animation: wkOpen 12s infinite; }
+  .wk-scrim { position: absolute; inset: 0; border-radius: 14px; background: rgba(20, 24, 32, .18); opacity: 0; animation-name: wkScrim; }
+  .wk-alert { position: absolute; left: 50%; top: 50%; width: 248px; margin-left: -124px; transform: translateY(-50%) scale(.96); box-sizing: border-box;
+    padding: 18px 16px 14px; border-radius: 14px; text-align: center; color: #1d1d1f;
+    background: rgba(246, 246, 248, .97); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .18), 0 20px 50px rgba(20, 24, 40, .22); opacity: 0; }
+  .wk-alert img, .wk-lock { display: block; width: 56px; height: 56px; margin: 0 auto 8px; }
+  .wk-lock { width: 40px; height: 40px; margin-bottom: 10px; }
+  .wk-alert b { display: block; font-size: 13px; letter-spacing: -0.01em; }
+  .wk-alert p { margin: 6px 0 12px; font-size: 11px; line-height: 1.45; color: #3a3a3c; }
+  .wk-btn { display: block; margin-top: 6px; padding: 5px 0; border-radius: 7px; font-size: 12.5px; background: #fff; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .14), 0 .5px 1px rgba(0, 0, 0, .06); }
+  .wk-btn.def { background: #0a84ff; color: #fff; box-shadow: none; }
+  .wk-warn { animation-name: wkWarn; }
+  .wk-pass { animation-name: wkPass; }
+  .wk-field { display: block; height: 24px; margin-bottom: 8px; padding: 0 8px; border-radius: 6px; background: #fff; text-align: left; font-size: 13px; line-height: 24px; letter-spacing: 1px;
+    box-shadow: 0 0 0 1px rgba(10, 132, 255, .55), 0 0 0 3.5px rgba(10, 132, 255, .18); overflow: hidden; }
+  .wk-field i { display: inline-block; font-style: normal; overflow: hidden; vertical-align: top; white-space: nowrap; width: 0; animation: wkType 12s steps(8, end) infinite; }
+  #wkDone { animation: wkPressDone 12s infinite; }
+  #wkOk { animation: wkPressOk 12s infinite; }
+  .wk-done { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.96); display: flex; align-items: center; gap: 12px; white-space: nowrap;
+    padding: 12px 18px 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, .96); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .1), 0 16px 40px rgba(30, 40, 70, .16); opacity: 0; animation-name: wkDoneIn; }
+  .wk-done img { width: 36px; height: 36px; }
+  .wk-done b { display: block; font-size: 14px; letter-spacing: -0.01em; }
+  .wk-done small { display: block; margin-top: 2px; font-size: 12px; color: var(--ink-2); }
+  .wk-cur { position: absolute; left: 0; top: 0; width: 17px; height: 24px; z-index: 3; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .3)); opacity: 0; animation-name: wkCur; }
+  @keyframes wkScrim { 0%, 1% { opacity: 0; } 4%, 20% { opacity: 1; } 24%, 43% { opacity: 0; } 46%, 68% { opacity: 1; } 72%, 100% { opacity: 0; } }
+  @keyframes wkWarn { 0%, 1% { opacity: 0; transform: translateY(-50%) scale(.96); } 5%, 20% { opacity: 1; transform: translateY(-50%) scale(1); } 24%, 100% { opacity: 0; transform: translateY(-50%) scale(.98); } }
+  @keyframes wkPass { 0%, 43% { opacity: 0; transform: translateY(-50%) scale(.96); } 47%, 68% { opacity: 1; transform: translateY(-50%) scale(1); } 72%, 100% { opacity: 0; transform: translateY(-50%) scale(.98); } }
+  @keyframes wkType { 0%, 50% { width: 0; } 60%, 100% { width: 8.5em; } }
+  @keyframes wkPressDone { 0%, 17% { filter: none; } 18%, 19% { filter: brightness(.82); } 20%, 100% { filter: none; } }
+  @keyframes wkPressOk { 0%, 64% { filter: none; } 65%, 66% { filter: brightness(.82); } 67%, 100% { filter: none; } }
+  @keyframes wkOpen { 0%, 24% { filter: none; box-shadow: none; } 28%, 38% { filter: none; box-shadow: 0 0 0 3px rgba(96, 138, 180, .28); } 39%, 40% { filter: brightness(.82); } 41%, 70% { filter: none; box-shadow: none; } }
+  @keyframes wkDoneIn { 0%, 72% { opacity: 0; transform: translate(-50%, -50%) scale(.96); } 76%, 92% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 96%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
+  @keyframes wkCur {
+    0% { opacity: 0; transform: translate(var(--x0), var(--y0)); }
+    4%, 7% { opacity: 1; transform: translate(var(--x0), var(--y0)); }
+    16% { transform: translate(var(--x1), var(--y1)); }
+    18%, 19% { transform: translate(var(--x1), var(--y1)) scale(.9); }
+    20%, 26% { transform: translate(var(--x1), var(--y1)); }
+    37% { transform: translate(var(--x2), var(--y2)); }
+    39%, 40% { transform: translate(var(--x2), var(--y2)) scale(.9); }
+    41%, 52% { opacity: 1; transform: translate(var(--x2), var(--y2)); }
+    63% { transform: translate(var(--x3), var(--y3)); }
+    65%, 66% { transform: translate(var(--x3), var(--y3)) scale(.9); }
+    67%, 70% { opacity: 1; transform: translate(var(--x3), var(--y3)); }
+    84% { opacity: 1; transform: translate(var(--x0), var(--y0)); }
+    90%, 100% { opacity: 0; transform: translate(var(--x0), var(--y0)); }
+  }
+  @media (max-width: 734px) { .walk .win-body { min-height: 300px; } }
+  /* 왼쪽 단계 번호: 지금 보여 주는 단계만 하늘색으로 */
+  .walk-on .sec-steps .k { animation: 12s infinite; }
+  .walk-on .sec-steps li:nth-child(1) .k { animation-name: wkK1; }
+  .walk-on .sec-steps li:nth-child(2) .k { animation-name: wkK2; }
+  .walk-on .sec-steps li:nth-child(3) .k { animation-name: wkK3; }
+  @keyframes wkK1 { 0%, 1%, 24%, 100% { background: transparent; color: var(--sky-deep); } 3%, 22% { background: var(--sky-deep); color: #fff; } }
+  @keyframes wkK2 { 0%, 24%, 45%, 100% { background: transparent; color: var(--sky-deep); } 26%, 43% { background: var(--sky-deep); color: #fff; } }
+  @keyframes wkK3 { 0%, 45%, 94%, 100% { background: transparent; color: var(--sky-deep); } 47%, 92% { background: var(--sky-deep); color: #fff; } }
   /* 첫 실행 안내: 설정 바로 열기 */
   .settings-btn { margin-top: 28px; font-size: 15px; padding: 10px 20px; }
   .step p a, .cta-alt { color: var(--link); }
@@ -558,7 +618,7 @@
       <p class="sec-sub reveal">테스트 버전이라 <span class="nb">처음 한 번만 나타납니다.</span></p>
     </div>
 
-    <div class="sec-grid">
+    <div class="sec-grid walk-on">
       <div class="reveal">
         <ol class="sec-steps">
           <li><span class="k">1</span><div><h4>경고 창 닫기</h4><p>Dropfit을 처음 열면 뜨는 경고에서 <b>완료</b>를 누릅니다.</p></div></li>
@@ -568,25 +628,45 @@
         <a class="pill settings-btn mac-only" href="x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension">개인정보 보호 및 보안 열기</a>
       </div>
 
-      <div class="win reveal" aria-label="시스템 설정의 개인정보 보호 및 보안 화면 예시">
-        <div class="win-top" aria-hidden="true"><i></i><i></i><i></i><span>개인정보 보호 및 보안</span></div>
-        <div class="win-body" aria-hidden="true">
-          <div class="side">
-            <div style="--c:#8e8e93">일반</div>
-            <div style="--c:#0a84ff">손쉬운 사용</div>
-            <div style="--c:#5e5ce6">데스크탑 및 Dock</div>
-            <div style="--c:#34c759">디스플레이</div>
-            <div class="on">개인정보 보호 및 보안</div>
-            <div style="--c:#ff9f0a">Touch ID 및 암호</div>
-          </div>
-          <div class="pane">
-            <h5>보안</h5>
-            <div class="group">
-              <div class="row"><div class="t">다음에서 응용 프로그램 허용<div class="radio" style="margin-top:6px"><span>App Store</span><span class="on">App Store 및 알려진 개발자</span></div></div></div>
-              <div class="row hl"><div class="t">“Dropfit”이(가) 확인된 개발자가 아니므로 사용이 차단되었습니다.<small>Dropfit.app</small></div><span class="mac-btn">그래도 열기</span></div>
+      <div class="walk reveal" id="walk" role="img" aria-label="경고 창에서 완료, 시스템 설정에서 그래도 열기, 암호 입력 순서를 보여 주는 애니메이션">
+        <div class="win">
+          <div class="win-top" aria-hidden="true"><i></i><i></i><i></i><span>개인정보 보호 및 보안</span></div>
+          <div class="win-body" aria-hidden="true">
+            <div class="side">
+              <div style="--c:#8e8e93">일반</div>
+              <div style="--c:#0a84ff">손쉬운 사용</div>
+              <div style="--c:#5e5ce6">데스크탑 및 Dock</div>
+              <div style="--c:#34c759">디스플레이</div>
+              <div class="on">개인정보 보호 및 보안</div>
+              <div style="--c:#ff9f0a">Touch ID 및 암호</div>
+            </div>
+            <div class="pane">
+              <h5>보안</h5>
+              <div class="group">
+                <div class="row"><div class="t">다음에서 응용 프로그램 허용<div class="radio" style="margin-top:6px"><span>App Store</span><span class="on">App Store 및 알려진 개발자</span></div></div></div>
+                <div class="row hl"><div class="t">“Dropfit”이(가) 확인된 개발자가 아니므로 사용이 차단되었습니다.<small>Dropfit.app</small></div><span class="mac-btn" id="wkOpen">그래도 열기</span></div>
+              </div>
             </div>
           </div>
         </div>
+        <div class="wk-scrim" aria-hidden="true"></div>
+        <div class="wk-alert wk-warn" aria-hidden="true">
+          <img src="assets/icon-128.png" width="56" height="56" alt="">
+          <b>“Dropfit”이(가) 열리지 않음</b>
+          <p>Apple은 “Dropfit”에 Mac에 손상을 입히거나 개인정보를 침해할 수 있는 악성 코드가 없음을 확인할 수 없습니다.</p>
+          <span class="wk-btn def" id="wkDone">완료</span>
+          <span class="wk-btn">휴지통으로 이동</span>
+        </div>
+        <div class="wk-alert wk-pass" aria-hidden="true">
+          <svg class="wk-lock" viewBox="0 0 40 40"><rect x="9" y="17" width="22" height="17" rx="3.5" fill="#8e8e93"/><path d="M14 17v-4a6 6 0 0 1 12 0v4" fill="none" stroke="#8e8e93" stroke-width="2.6"/></svg>
+          <b>시스템 설정</b>
+          <p>“Dropfit”을(를) 열려고 합니다. 허용하려면 암호를 입력하십시오.</p>
+          <span class="wk-field" id="wkField"><i>••••••••</i></span>
+          <span class="wk-btn def" id="wkOk">설정 변경</span>
+          <span class="wk-btn">취소</span>
+        </div>
+        <div class="wk-done" aria-hidden="true"><img src="assets/icon-128.png" width="36" height="36" alt=""><div><b>Dropfit이 열렸습니다</b><small>다음부터는 바로 열립니다.</small></div></div>
+        <svg class="wk-cur" viewBox="0 0 17 24" aria-hidden="true"><path d="M1.5 1.5v17.2l4.3-4.2 2.9 6.8 3-1.3-2.9-6.7h6z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
       </div>
     </div>
 
@@ -703,6 +783,25 @@
       }, { rootMargin: '0px 0px -8% 0px' });
       els.forEach(function (el) { io.observe(el); });
     } else { els.forEach(function (el) { el.classList.add('in'); }); }
+
+    // 첫 실행 안내 애니메이션: 커서가 실제 버튼 위치로 가도록 좌표를 넣는다 (애니메이션은 CSS)
+    var walk = document.getElementById('walk');
+    function aim() {
+      if (!walk) return;
+      var r = walk.getBoundingClientRect();
+      function at(id, n) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        // 경고 창은 보이기 전 0.96배라 실제 크기 기준으로 보정하지 않아도 오차가 작다
+        var b = el.getBoundingClientRect();
+        walk.style.setProperty('--x' + n, (b.left - r.left + b.width * 0.55).toFixed(1) + 'px');
+        walk.style.setProperty('--y' + n, (b.top - r.top + b.height * 0.5).toFixed(1) + 'px');
+      }
+      walk.style.setProperty('--x0', (r.width * 0.86).toFixed(1) + 'px');
+      walk.style.setProperty('--y0', (r.height * 0.9).toFixed(1) + 'px');
+      at('wkDone', 1); at('wkOpen', 2); at('wkOk', 3);
+    }
+    aim(); window.addEventListener('resize', aim);
 
     // 데모 메뉴 막대: macOS 형식으로 오늘 날짜 표시 (예: 10월 22일 (목))
     var d = new Date(), dateEl = document.getElementById('demoDate');
