@@ -503,7 +503,9 @@
         o.nText.to(ti, (i + 1) + ' / ' + total);
       }
     }
-    var done = fin[fin.length - 1] + 0.02;
+    // 여러 장이면 100%까지 찬 진행선을 시작부터 최소 1.1초, 오래 걸렸으면 0.45초 더 보여 준 뒤 완료로 (앱과 같음)
+    var last = fin[fin.length - 1];
+    var done = many ? Math.max(last + 0.45, start + 1.1) : last + 0.02;
     o.prog.to(done, 0, Motion.done); o.spin.to(done, 0, Motion.done);
     outs = outs || total;   // 합치기는 결과 1개
     o.doneText.to(done, outs > 1 ? fmt + ' ×' + outs : fmt);
