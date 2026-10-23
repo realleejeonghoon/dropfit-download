@@ -437,6 +437,9 @@
   .final-sub { margin: 10px 0 0; font-size: clamp(19px, 2.2vw, 22px); color: var(--ink-2); letter-spacing: -0.01em; }
   .final-stack .cta-row { justify-content: center; margin: 30px 0 0; }
   .final-stack .cta-meta { margin: 14px 0 0; text-align: center; }
+  .final-stack .pill.lg { justify-content: center; }
+  .final-stack .cta-under { display: inline-block; margin-top: 26px; font-size: 15px; }
+  .final + #feedback { padding-top: 24px; }
   @media (max-width: 734px) {
     .final { padding: 88px 0 96px; }
     .final-stack .cta-row { margin-top: 26px; }
@@ -772,6 +775,27 @@
   </div>
 </section>
 
+<section class="final">
+  <div class="wrap final-stack">
+    <div class="df-cta" id="dfCta" role="img" aria-label="사진과 폴더가 Dropfit에 들어갔다가 PNG로, 또는 PDF 한 개로 합쳐져 나오는 애니메이션"></div>
+    <h2 class="reveal">Dropfit</h2>
+    <p class="final-sub reveal">지금 바로 써 보세요.</p>
+    <div class="reveal">
+      <div class="cta-row mac-only">
+        <a class="pill lg" href="Dropfit-macOS.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg>
+          Mac용 다운로드
+        </a>
+      </div>
+      <div class="cta-row copy-only">
+        <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
+      </div>
+      <p class="cta-meta">무료 · v0.4 · macOS 14 이상</p>
+      <a class="cta-alt cta-under mac-only" href="#security">처음 열 때 경고가 뜬다면 ›</a>
+    </div>
+  </div>
+</section>
+
 <section class="block" id="feedback" aria-labelledby="fb-title">
   <div class="wrap split">
     <div class="sec-head">
@@ -802,27 +826,6 @@
       </div>
       <div class="fb-done" role="status"><b>고맙습니다.</b><p>남겨 주신 이야기를 잘 받았습니다.</p></div>
     </form>
-  </div>
-</section>
-
-<section class="final">
-  <div class="wrap final-stack">
-    <div class="df-cta" id="dfCta" role="img" aria-label="사진과 폴더가 Dropfit에 들어갔다가 PNG로, 또는 PDF 한 개로 합쳐져 나오는 애니메이션"></div>
-    <h2 class="reveal">Dropfit</h2>
-    <p class="final-sub reveal">지금 바로 써 보세요.</p>
-    <div class="reveal">
-      <div class="cta-row mac-only">
-        <a class="pill lg" href="Dropfit-macOS.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg>
-          Mac용 다운로드
-        </a>
-        <a class="cta-alt" href="#security">처음 열 때 경고가 뜬다면 ›</a>
-      </div>
-      <div class="cta-row copy-only">
-        <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
-      </div>
-      <p class="cta-meta">무료 · v0.4 · macOS 14 이상</p>
-    </div>
   </div>
 </section>
 
