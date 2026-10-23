@@ -514,6 +514,35 @@
   @media (max-width: 734px) { .demo-top .stage { aspect-ratio: 4 / 3.4; } }
   .demo-top + .hero { padding-top: 72px; }
   @media (max-width: 734px) { .demo-top { padding-top: 20px; } .demo-top + .hero { padding-top: 40px; } }
+  /* ---------- 피드백 ---------- */
+  .fb { margin: 0; padding: 32px; border-radius: 24px; background: var(--paper); display: grid; gap: 22px; }
+  .fb fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .fb legend, .fb label > span { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 10px; padding: 0; }
+  .fb small { font-weight: 400; color: var(--ink-3); margin-left: 6px; }
+  .rate { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rate input { position: absolute; opacity: 0; pointer-events: none; }
+  .rate label { font-size: 14px; padding: 8px 16px; border-radius: 980px; background: #fff; color: var(--ink-2); cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .14); transition: background .28s var(--ease), color .28s var(--ease), box-shadow .28s var(--ease); }
+  .rate label:hover { color: var(--ink); box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .3); }
+  .rate input:checked + label { background: var(--sky-light); color: var(--sky-text); box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .22); }
+  .rate input:focus-visible + label { outline: 2px solid var(--sky-deep); outline-offset: 2px; }
+  .fb textarea, .fb input[type=email] { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 0; border-radius: 14px;
+    padding: 14px 16px; box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .14); transition: box-shadow .28s var(--ease); }
+  .fb textarea { min-height: 132px; resize: vertical; line-height: 1.55; }
+  .fb textarea::placeholder, .fb input::placeholder { color: var(--ink-3); }
+  .fb textarea:focus, .fb input[type=email]:focus { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(168, 198, 228, .35); }
+  .fb .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .fb-foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .fb-foot .pill { border: 0; font: inherit; font-size: 16px; padding: 11px 26px; cursor: pointer; }
+  .fb-foot .pill[disabled] { opacity: .55; cursor: default; }
+  .fb-note { font-size: 13px; color: var(--ink-3); margin: 0; }
+  .fb-note.err { color: #b4544a; }
+  .fb-done { display: none; text-align: center; padding: 56px 24px; }
+  .fb-done b { display: block; font-size: 21px; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .fb-done p { margin: 0; color: var(--ink-2); font-size: 16px; }
+  .fb.sent > :not(.fb-done) { display: none; }
+  .fb.sent .fb-done { display: block; animation: fbIn .6s var(--ease) both; }
+  @media (max-width: 734px) { .fb { padding: 22px 18px; border-radius: 20px; } .rate { gap: 6px; } .rate label { font-size: 13.5px; padding: 8px 12px; } }
 </style>
 </head>
 <body>
@@ -526,6 +555,7 @@
       <a href="#install">설치</a>
       <a href="#security">보안 경고 해제</a>
       <a href="#faq">자주 묻는 질문</a>
+      <a href="#feedback">피드백</a>
     </div>
     <a class="pill sm mac-only" href="Dropfit-macOS.zip" download>다운로드</a>
     <button class="pill sm copy-only" type="button" data-copy-link>링크 복사</button>
@@ -735,9 +765,42 @@
       </details>
       <details>
         <summary>피드백은 어디로 보내나요?</summary>
-        <p>링크를 보내 준 사람에게 카카오톡으로 알려 주세요.</p>
+        <p>이 페이지 아래 <a href="#feedback">피드백</a> 칸에 남겨 주세요. 바로 전달됩니다.</p>
       </details>
     </div>
+  </div>
+</section>
+
+<section class="block" id="feedback" aria-labelledby="fb-title">
+  <div class="wrap split">
+    <div class="sec-head">
+      <p class="label reveal">Feedback</p>
+      <h2 class="sec-title reveal" id="fb-title">써 보신 소감을<br>들려주세요.</h2>
+      <p class="sec-sub reveal">한 줄이어도 좋습니다. <span class="nb">남겨 주신 이야기는 바로 전달됩니다.</span></p>
+    </div>
+    <form class="fb reveal" id="fbForm" novalidate>
+      <fieldset>
+        <legend>써 보니 어떠셨나요?<small>선택</small></legend>
+        <div class="rate">
+          <input type="radio" name="rating" id="fbR1" value="아쉬워요"><label for="fbR1">아쉬워요</label>
+          <input type="radio" name="rating" id="fbR2" value="괜찮아요"><label for="fbR2">괜찮아요</label>
+          <input type="radio" name="rating" id="fbR3" value="좋아요"><label for="fbR3">좋아요</label>
+          <input type="radio" name="rating" id="fbR4" value="아주 좋아요"><label for="fbR4">아주 좋아요</label>
+        </div>
+      </fieldset>
+      <label><span>하고 싶은 이야기</span>
+        <textarea name="message" id="fbMsg" maxlength="4000" required placeholder="좋았던 점, 불편했던 점, 있었으면 하는 기능 무엇이든 괜찮아요."></textarea>
+      </label>
+      <label><span>답장 받을 이메일<small>선택</small></span>
+        <input type="email" name="email" id="fbEmail" maxlength="200" autocomplete="email" placeholder="name@example.com">
+      </label>
+      <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="fb-foot">
+        <button class="pill" type="submit" id="fbSend">보내기</button>
+        <p class="fb-note" id="fbNote" role="status">이메일을 남기지 않으면 익명으로 전달됩니다.</p>
+      </div>
+      <div class="fb-done" role="status"><b>고맙습니다.</b><p>남겨 주신 이야기를 잘 받았습니다.</p></div>
+    </form>
   </div>
 </section>
 
@@ -791,6 +854,29 @@
         try { if (navigator.sendBeacon && navigator.sendBeacon(COUNT_URL, body)) return; } catch (e) {}
         try { fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: body, keepalive: true }); } catch (e) {}
       });
+    });
+    // 피드백: 같은 Apps Script 주소로 보내면 시트 '피드백' 탭에 한 줄 + 정훈 님 메일 알림
+    var fb = document.getElementById('fbForm');
+    if (fb) fb.addEventListener('input', function () {
+      var note = document.getElementById('fbNote');
+      if (note.className.indexOf('err') >= 0) { note.textContent = '이메일을 남기지 않으면 익명으로 전달됩니다.'; note.className = 'fb-note'; }
+    });
+    if (fb) fb.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var msg = document.getElementById('fbMsg'), note = document.getElementById('fbNote'), btn = document.getElementById('fbSend');
+      var email = document.getElementById('fbEmail');
+      if (!msg.value.trim()) { note.textContent = '하고 싶은 이야기를 한 줄 적어 주세요.'; note.className = 'fb-note err'; msg.focus(); return; }
+      if (email.value && !email.checkValidity()) { note.textContent = '이메일 주소를 다시 확인해 주세요.'; note.className = 'fb-note err'; email.focus(); return; }
+      var data = new URLSearchParams(new FormData(fb));
+      data.set('version', '0.4');
+      data.set('ua', navigator.userAgent.slice(0, 200));
+      btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note';
+      fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
+        .then(function () { fb.classList.add('sent'); })
+        .catch(function () {
+          btn.disabled = false; btn.textContent = '보내기';
+          note.textContent = '전송하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; note.className = 'fb-note err';
+        });
     });
     function copy(text, msg) {
       var done = function () { show(msg); };
