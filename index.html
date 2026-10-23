@@ -253,9 +253,10 @@
   .req { margin: 24px 0 0; font-size: 14px; color: var(--ink-2); line-height: 1.6; }
 
   /* ---------- Security ---------- */
-  .sec-grid { display: grid; grid-template-columns: 1fr 1.08fr; gap: 56px; align-items: center; margin-top: 64px; }
+  .sec-grid > * { min-width: 0; }
+  .sec-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 56px; align-items: center; margin-top: 64px; }
   .sec-steps { list-style: none; margin: 0; padding: 0; }
-  .sec-steps li { display: grid; grid-template-columns: 28px 1fr; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line); }
+  .sec-steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 16px; padding: 20px 0; border-top: 1px solid var(--line); }
   .sec-steps li:first-child { border-top: 0; padding-top: 0; }
   .sec-steps .k { width: 28px; height: 28px; border-radius: 50%; background: var(--paper); display: grid; place-items: center; font-size: 13px; font-weight: 600; }
   .sec-steps h4 { margin: 3px 0 4px; font-size: 18px; letter-spacing: -0.02em; }
@@ -271,7 +272,7 @@
   .win-top i { width: 12px; height: 12px; border-radius: 50%; display: block; }
   .win-top i:nth-child(1) { background: #ff5f57; } .win-top i:nth-child(2) { background: #febc2e; } .win-top i:nth-child(3) { background: #28c840; }
   .win-top span { margin-left: 14px; font-weight: 600; font-size: 13px; }
-  .win-body { display: grid; grid-template-columns: 176px 1fr; min-height: 300px; }
+  .win-body { display: grid; grid-template-columns: 176px minmax(0, 1fr); min-height: 300px; }
   .side { background: #e3e3e6; padding: 12px 8px; font-size: 12px; color: #3a3a3c; }
   .side div { padding: 5px 8px; border-radius: 6px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
   .side div::before { content: ""; width: 16px; height: 16px; border-radius: 4px; background: var(--c, #8e8e93); flex: none; }
@@ -360,7 +361,7 @@
 
   /* ---------- Responsive ---------- */
   @media (max-width: 900px) {
-    .sec-grid { grid-template-columns: 1fr; gap: 40px; }
+    .sec-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
     .lockup { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 40px; }
     .split { grid-template-columns: 1fr; gap: 40px; }
     .split .sec-head { position: static; }
@@ -385,7 +386,7 @@
     .steps, .how { grid-template-columns: 1fr; }
     .how { gap: 28px; }
     .stage { border-radius: 18px; aspect-ratio: 4 / 3.4; }
-    .win-body { grid-template-columns: 1fr; min-height: 0; }
+    .win-body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
     .side { display: none; }
     .final { padding: 88px 0; }
   }
@@ -749,7 +750,7 @@
       </details>
       <details>
         <summary>PDF도 되나요?</summary>
-        <p>네. 사진 여러 장을 PDF 칸에 올리면 바깥에 <b>합치기 · 나누기</b>가 나옵니다. 합치기는 PDF 한 개로, 나누기는 장마다 PDF 한 개씩 만듭니다. 반대로 여러 쪽짜리 PDF를 이미지 칸에 올리면 쪽마다 한 장씩 나누거나, 위아래로 이어 붙여 한 장으로 만듭니다. 칸에 바로 놓으면 PDF는 합치고, 이미지는 쪽마다 나눕니다. 암호가 걸린 PDF는 열 수 없습니다.</p>
+        <p>네. 사진 여러 장을 PDF 칸에 올리면 바깥에 <b>합치기 · 나누기</b>가 나옵니다. 합치기는 PDF 한 권으로, 나누기는 장마다 PDF 한 개씩 만듭니다. 칸에 바로 놓으면 합칩니다. PDF 여러 개나 사진과 PDF가 섞여 있어도 순서대로 한 권이 됩니다. 반대로 PDF를 이미지 칸에 올리면 쪽마다 한 장씩 나옵니다. 암호가 걸린 PDF는 열 수 없습니다.</p>
       </details>
       <details>
         <summary>몇 장까지, 얼마나 큰 사진까지 되나요?</summary>
