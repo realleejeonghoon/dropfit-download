@@ -4,7 +4,7 @@
 <p align="center">이미지를 끌어다 놓으면, 원하는 포맷으로.</p>
 
 <p align="center">
-  <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 0.6MB)</b></a>
+  <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 0.7MB)</b></a>
   <br><sub>현재 버전 0.4 (테스트) · 설치 안내 페이지: <a href="https://realleejeonghoon.github.io/dropfit-download/">realleejeonghoon.github.io/dropfit-download</a></sub>
 </p>
 
@@ -18,10 +18,10 @@
 지원 포맷: **JPG · PNG · HEIC · TIFF · GIF · PDF**
 
 ## 설치
-1. 위 링크에서 **`Dropfit-macOS.zip`** 을 받아 더블클릭해 압축을 풉니다.
-2. `Dropfit.app`을 실행합니다. "확인되지 않은 개발자" 경고가 뜨면
+1. 위 링크에서 받으면 다운로드 폴더에 `Dropfit.app`이 생깁니다. (zip이 보이면 한 번 눌러 풉니다)
+2. Dropfit을 엽니다. "확인되지 않은 개발자" 경고가 뜨면
    **시스템 설정 → 개인정보 보호 및 보안 → [그래도 열기]** 를 누릅니다. (처음 한 번만)
-3. "응용 프로그램 폴더로 옮길까요?"에서 **[옮기기]** 를 누르면 끝입니다.
+3. Dropfit이 응용 프로그램 폴더로 스스로 옮겨 가면 끝입니다.
 
 > 요구 사양: macOS 14 Sonoma 이상 · Apple Silicon / Intel 모두 지원 · iPhone/iPad 미지원
 
