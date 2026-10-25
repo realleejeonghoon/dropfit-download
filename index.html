@@ -160,11 +160,15 @@
   .menubar .mb-ic svg { height: calc(11px * var(--s, 1)); width: auto; }
   .menubar span { white-space: nowrap; }
   @media (max-width: 640px) { .menubar .mb-x { display: none; } }
-  /* 바탕화면: 짙은 하늘 + 사막 언덕 (macOS 기본 배경 분위기) */
-  .demo-top .stage { background: #0d2259; }
+  /* 바탕화면: 펄 화이트 + 오른쪽 아래 옅은 하늘빛 (메뉴가 주인공이 되도록 깨끗하게) */
+  .demo-top .stage { background: #eef0f3; }
   .wall { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .demo-top .menubar { background: rgba(8, 16, 46, .42); color: rgba(255, 255, 255, .86); border-bottom: 0; }
-  .demo-top .menubar b { color: #fff; }
+  .demo-top .menubar { background: rgba(255, 255, 255, .55); color: rgba(29, 29, 31, .78); border-bottom: 0; }
+  .demo-top .menubar b { color: #1d1d1f; }
+  /* 밝은 바탕 위 파일 이름은 macOS 밝은 화면처럼 어두운 글씨 */
+  .demo-top .df-file { color: #1d1d1f; text-shadow: none; }
+  .demo-top .df-file.sel span { color: #fff; }
+  .demo-top .df-file.sel .ic { background: rgba(0, 0, 0, .09); }
 
   /* 시연 엔진(demo.js)이 그리는 조각. 단위는 앱의 pt, 무대 폭에 맞춰 통째로 축소한다 */
   .df-root { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; z-index: 4;
@@ -218,6 +222,8 @@
   .df-burst { width: 60px; height: 60px; border-radius: 50%; box-shadow: inset 0 0 0 1px #fff; opacity: 0; }
   /* 포맷 링 (SegmentView): 펄 화이트 칸, 고른 칸만 하늘색. 두께 54, 중심 반지름 74, 간격 4 */
   .df-ring { overflow: visible; visibility: hidden; }
+  /* 밝은 바탕에서 반투명 메뉴가 묻히지 않도록 은은한 그림자와 머리카락 테두리 */
+  .df-ring { filter: drop-shadow(0 10px 24px rgba(40, 60, 90, .14)) drop-shadow(0 0 .6px rgba(40, 60, 90, .35)); }
   .df-petal { filter: drop-shadow(0 1.5px 2.5px rgba(0, 0, 0, .08)); }
   .df-seg-t { font-size: 11.5px; font-weight: 500; letter-spacing: 1.4px; fill: #2c2c2e; text-anchor: middle; dominant-baseline: central; }
   .df-seg-t.on { fill: #fff; }
@@ -579,33 +585,15 @@
     <div class="stage" id="dfTop" role="img" aria-label="이미지를 Dropfit에 끌어와 포맷을 고르면 변환되는 시연: 사진 1장, 여러 장, 폴더, 여러 장을 PDF 하나로, 화면 모서리">
       <svg class="wall" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
-          <linearGradient id="wSky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#071236"/><stop offset=".38" stop-color="#0c2766"/><stop offset=".62" stop-color="#1b4f9e"/><stop offset=".74" stop-color="#3473bd"/>
+          <linearGradient id="wBase" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f7f8fa"/><stop offset="1" stop-color="#e6e9ee"/>
           </linearGradient>
-          <linearGradient id="wLit" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#d0743a"/><stop offset=".55" stop-color="#bb5a26"/><stop offset="1" stop-color="#a8481c"/>
-          </linearGradient>
-          <linearGradient id="wShade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#9a4118"/><stop offset="1" stop-color="#7f3412"/>
-          </linearGradient>
-          <radialGradient id="wVig" cx=".5" cy=".55" r=".75">
-            <stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/>
+          <radialGradient id="wSky" cx=".85" cy=".9" r=".7">
+            <stop offset="0" stop-color="#d6e4f2" stop-opacity=".9"/><stop offset="1" stop-color="#d6e4f2" stop-opacity="0"/>
           </radialGradient>
-          <filter id="wGrain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .07 0"/></filter>
-          <linearGradient id="wRidge" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#ffd2a6" stop-opacity="0"/><stop offset=".38" stop-color="#ffd2a6" stop-opacity=".55"/><stop offset=".6" stop-color="#ffd2a6" stop-opacity=".15"/><stop offset="1" stop-color="#ffd2a6" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="wSand" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#e6d6b6"/><stop offset="1" stop-color="#d9c7a3"/>
-          </linearGradient>
         </defs>
+        <rect width="1600" height="1000" fill="url(#wBase)"/>
         <rect width="1600" height="1000" fill="url(#wSky)"/>
-        <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 900 600 1250 740 1600 790 L1600 1000 L0 1000 Z" fill="url(#wLit)"/>
-        <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 640 600 560 720 470 900 L0 900 Z" fill="url(#wShade)" opacity=".55"/>
-        <path d="M0 885 C 400 870 900 875 1600 880 L1600 1000 L0 1000 Z" fill="url(#wSand)"/>
-        <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 900 600 1250 740 1600 790" fill="none" stroke="url(#wRidge)" stroke-width="2.5"/>
-        <rect width="1600" height="1000" fill="url(#wVig)"/>
-        <rect width="1600" height="1000" filter="url(#wGrain)"/>
       </svg>
       <div class="menubar" aria-hidden="true"><svg class="mb-apple" viewBox="0 0 14 17"><path fill="currentColor" d="M11.6 9c0-2 1.7-3 1.8-3.1-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8s-1.6-.7-2.7-.7C3.2 4.4 1.9 5.2 1.2 6.5c-1.4 2.5-.4 6.1 1 8.1.7 1 1.5 2.1 2.5 2 1 0 1.4-.6 2.6-.6s1.6.6 2.6.6c1.1 0 1.8-1 2.4-2 .8-1.1 1.1-2.2 1.1-2.3 0 0-2.8-1-2.8-3.3zM9.6 3c.6-.7.9-1.6.8-2.5-.8 0-1.8.5-2.4 1.2-.5.6-1 1.5-.8 2.4.9.1 1.8-.4 2.4-1.1z"/></svg><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="mb-x">이동</span><span class="mb-x">윈도우</span><span class="mb-x">도움말</span><span class="sp mb-ic"><svg viewBox="0 0 24 14"><rect x=".75" y=".75" width="20" height="12.5" rx="3.6" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/><rect x="2.6" y="2.6" width="13" height="8.8" rx="2" fill="currentColor"/><path d="M22.6 5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".55"/></svg></span><span class="mb-ic"><svg viewBox="0 0 18 14"><path d="M9 12.6 6.4 9.9a3.7 3.7 0 0 1 5.2 0zM3.9 7.4a7.3 7.3 0 0 1 10.2 0l-1.3 1.3a5.5 5.5 0 0 0-7.6 0zM1.3 4.8a11 11 0 0 1 15.4 0l-1.3 1.3a9.2 9.2 0 0 0-12.8 0z" fill="currentColor"/></svg></span><span class="mb-ic mb-x"><svg viewBox="0 0 16 14"><rect x=".7" y=".7" width="14.6" height="5.4" rx="2.7" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="12.6" cy="3.4" r="1.6" fill="currentColor"/><rect x=".7" y="7.9" width="14.6" height="5.4" rx="2.7" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="3.4" cy="10.6" r="1.6" fill="currentColor"/></svg></span><span id="demoDate">10월 22일 (목) 오후 3:54</span></div>
     </div>
