@@ -657,7 +657,7 @@
       <h2 class="sec-title reveal" id="install-title">1분이면 충분합니다.</h2>
     </div>
     <div class="steps">
-      <div class="step reveal"><div class="n">1</div><h3>다운로드</h3><p>받으면 다운로드 폴더에 <span class="nb">Dropfit이 바로 생깁니다.</span></p></div>
+      <div class="step reveal"><div class="n">1</div><h3>다운로드</h3><p>받은 zip을 열면 <b>Dropfit</b> 폴더가 생깁니다. <span class="nb">그 안의 Dropfit을 엽니다.</span></p></div>
       <div class="step reveal"><div class="n">2</div><h3>실행</h3><p>처음 한 번 경고가 뜨면 <a href="#security">버튼 하나로 해결</a>됩니다.</p></div>
       <div class="step reveal"><div class="n">3</div><h3>끝</h3><p>Dropfit이 응용 프로그램 폴더로 <span class="nb">스스로 옮겨 갑니다.</span></p></div>
     </div>
@@ -729,7 +729,7 @@
       <div class="term">
         <div class="tx">
           <p>터미널에 아래 한 줄을 붙여 넣은 뒤 Dropfit을 다시 여세요. <span class="nb">Dropfit 한 앱에만 적용됩니다.</span></p>
-          <code id="cmd">xattr -dr com.apple.quarantine ~/Downloads/Dropfit.app /Applications/Dropfit.app 2&gt;/dev/null</code>
+          <code id="cmd">xattr -dr com.apple.quarantine ~/Downloads/Dropfit/Dropfit.app ~/Downloads/Dropfit.app /Applications/Dropfit.app 2&gt;/dev/null</code>
         </div>
         <button class="ghost" type="button" data-copy="#cmd">명령어 복사</button>
       </div>
