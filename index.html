@@ -155,6 +155,11 @@
   }
   .menubar b { color: var(--ink); }
   .menubar .sp { margin-left: auto; }
+  .menubar .mb-apple { width: calc(12px * var(--s, 1)); height: calc(15px * var(--s, 1)); margin-top: calc(-2px * var(--s, 1)); flex: none; }
+  .menubar .mb-ic { display: inline-flex; flex: none; }
+  .menubar .mb-ic svg { height: calc(11px * var(--s, 1)); width: auto; }
+  .menubar span { white-space: nowrap; }
+  @media (max-width: 640px) { .menubar .mb-x { display: none; } }
   /* 바탕화면: 짙은 하늘 + 사막 언덕 (macOS 기본 배경 분위기) */
   .demo-top .stage { background: #0d2259; }
   .wall { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -166,12 +171,13 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Pretendard Variable", Pretendard, sans-serif; -webkit-font-smoothing: antialiased; }
   .df-root > *, .df-k > *, .df-layer > *, .df-cards > * { position: absolute; left: 0; top: 0; }
   .df-layer, .df-cards { inset: 0; }
-  .p0 { background: linear-gradient(170deg, #cfe0f0 0%, #9fbddc 55%, #e9d9c8 100%); }
-  .p1 { background: linear-gradient(165deg, #efe2d2 0%, #d2b89c 58%, #b9cfe4 100%); }
-  .p2 { background: linear-gradient(175deg, #e2ebf0 0%, #b9cbb7 60%, #e9e3d6 100%); }
-  .p3 { background: linear-gradient(172deg, #f1d8c6 0%, #d6a68f 52%, #8fa9c8 100%); }
-  .p4 { background: linear-gradient(168deg, #e8e4de 0%, #bdb4aa 58%, #d9d1c6 100%); }
-  .p5 { background: linear-gradient(174deg, #efe6da 0%, #c9b29a 56%, #a88c74 100%); }
+  /* 사진 썸네일: 하늘·해·지평선이 있는 작은 풍경 (단색 그라데이션보다 실제 사진처럼) */
+  .p0 { background: radial-gradient(circle at 72% 30%, #fff8e6 0 6%, rgba(255, 244, 214, .5) 10%, transparent 26%), linear-gradient(180deg, transparent 58%, #2f6f9a 58%, #4b8db6 74%, #e8d7b8 74%, #dcc6a0 100%), linear-gradient(180deg, #8fbde6 0%, #cfe3f2 58%); }
+  .p1 { background: radial-gradient(ellipse 70% 40% at 30% 100%, #b97a46 0 60%, transparent 61%), radial-gradient(ellipse 90% 45% at 85% 100%, #d59a62 0 60%, transparent 61%), linear-gradient(180deg, #7fa6cf 0%, #c9d8e6 55%, #efdcc2 100%); }
+  .p2 { background: radial-gradient(ellipse 60% 55% at 20% 100%, #3f6b45 0 60%, transparent 61%), radial-gradient(ellipse 70% 60% at 80% 100%, #557f55 0 60%, transparent 61%), radial-gradient(ellipse 50% 70% at 50% 100%, #6f9466 0 60%, transparent 61%), linear-gradient(180deg, #bcd3e2 0%, #e4ece9 100%); }
+  .p3 { background: radial-gradient(circle at 50% 66%, #fff1c8 0 7%, rgba(255, 196, 120, .55) 14%, transparent 32%), linear-gradient(180deg, transparent 66%, #3c3f63 66%, #2b2e4c 100%), linear-gradient(180deg, #46598e 0%, #c27a6e 48%, #f0a868 66%); }
+  .p4 { background: linear-gradient(90deg, transparent 18%, rgba(0, 0, 0, .1) 18% 20%, transparent 20% 80%, rgba(0, 0, 0, .1) 80% 82%, transparent 82%), linear-gradient(180deg, transparent 72%, #8d8378 72%, #a59a8e 100%), linear-gradient(90deg, #cfc5b8 0 18%, #e9e2d8 20% 80%, #c4b9ab 82%); }
+  .p5 { background: radial-gradient(circle at 34% 58%, #f4e9d8 0 13%, #d9c3a3 14% 18%, transparent 19%), radial-gradient(circle at 68% 46%, #6b4a33 0 9%, transparent 10%), linear-gradient(180deg, #b48d6a 0%, #8c6648 100%); }
   /* 바탕화면 아이콘 (Finder) */
   .df-file { width: 84px; margin: -40px 0 0 -42px; text-align: center; font-size: 11px; line-height: 1.25; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); opacity: 0; }
   .df-file .ic { width: 66px; height: 52px; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; border-radius: 5px; }
@@ -184,6 +190,8 @@
   .df-file.df-ghost { z-index: 6; }
   .df-cursor { width: 17px; height: 24px; z-index: 8; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .3)); }
   .df-cursor svg { display: block; width: 100%; height: 100%; }
+  /* 여러 개를 끌 때 macOS가 커서 옆에 붙이는 빨간 개수 배지 */
+  .df-count { z-index: 9; min-width: 18px; height: 18px; margin: 0; padding: 0 5px; box-sizing: border-box; border-radius: 9px; background: #ff3b30; color: #fff; font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); opacity: 0; }
   .df-marquee { z-index: 7; border-radius: 1px; background: rgba(255, 255, 255, .14); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55); opacity: 0; }
   /* 오브 (OrbView): 지름 60, 서리 유리 + 흰 테두리, 끌어오는 동안 그림자가 조금 짙어진다 */
   .df-orb { width: 60px; height: 60px; z-index: 3; --a: 0; transform-origin: 30px 30px; }
@@ -583,6 +591,10 @@
           <radialGradient id="wVig" cx=".5" cy=".55" r=".75">
             <stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/>
           </radialGradient>
+          <filter id="wGrain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .07 0"/></filter>
+          <linearGradient id="wRidge" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ffd2a6" stop-opacity="0"/><stop offset=".38" stop-color="#ffd2a6" stop-opacity=".55"/><stop offset=".6" stop-color="#ffd2a6" stop-opacity=".15"/><stop offset="1" stop-color="#ffd2a6" stop-opacity="0"/>
+          </linearGradient>
           <linearGradient id="wSand" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stop-color="#e6d6b6"/><stop offset="1" stop-color="#d9c7a3"/>
           </linearGradient>
@@ -591,9 +603,11 @@
         <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 900 600 1250 740 1600 790 L1600 1000 L0 1000 Z" fill="url(#wLit)"/>
         <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 640 600 560 720 470 900 L0 900 Z" fill="url(#wShade)" opacity=".55"/>
         <path d="M0 885 C 400 870 900 875 1600 880 L1600 1000 L0 1000 Z" fill="url(#wSand)"/>
+        <path d="M0 610 C 220 590 420 560 600 515 C 640 506 668 506 700 520 C 900 600 1250 740 1600 790" fill="none" stroke="url(#wRidge)" stroke-width="2.5"/>
         <rect width="1600" height="1000" fill="url(#wVig)"/>
+        <rect width="1600" height="1000" filter="url(#wGrain)"/>
       </svg>
-      <div class="menubar" aria-hidden="true"><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="sp" id="demoDate">10월 22일 (목)</span></div>
+      <div class="menubar" aria-hidden="true"><svg class="mb-apple" viewBox="0 0 14 17"><path fill="currentColor" d="M11.6 9c0-2 1.7-3 1.8-3.1-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8s-1.6-.7-2.7-.7C3.2 4.4 1.9 5.2 1.2 6.5c-1.4 2.5-.4 6.1 1 8.1.7 1 1.5 2.1 2.5 2 1 0 1.4-.6 2.6-.6s1.6.6 2.6.6c1.1 0 1.8-1 2.4-2 .8-1.1 1.1-2.2 1.1-2.3 0 0-2.8-1-2.8-3.3zM9.6 3c.6-.7.9-1.6.8-2.5-.8 0-1.8.5-2.4 1.2-.5.6-1 1.5-.8 2.4.9.1 1.8-.4 2.4-1.1z"/></svg><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="mb-x">이동</span><span class="mb-x">윈도우</span><span class="mb-x">도움말</span><span class="sp mb-ic"><svg viewBox="0 0 24 14"><rect x=".75" y=".75" width="20" height="12.5" rx="3.6" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/><rect x="2.6" y="2.6" width="13" height="8.8" rx="2" fill="currentColor"/><path d="M22.6 5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".55"/></svg></span><span class="mb-ic"><svg viewBox="0 0 18 14"><path d="M9 12.6 6.4 9.9a3.7 3.7 0 0 1 5.2 0zM3.9 7.4a7.3 7.3 0 0 1 10.2 0l-1.3 1.3a5.5 5.5 0 0 0-7.6 0zM1.3 4.8a11 11 0 0 1 15.4 0l-1.3 1.3a9.2 9.2 0 0 0-12.8 0z" fill="currentColor"/></svg></span><span class="mb-ic mb-x"><svg viewBox="0 0 16 14"><rect x=".7" y=".7" width="14.6" height="5.4" rx="2.7" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="12.6" cy="3.4" r="1.6" fill="currentColor"/><rect x=".7" y="7.9" width="14.6" height="5.4" rx="2.7" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="3.4" cy="10.6" r="1.6" fill="currentColor"/></svg></span><span id="demoDate">10월 22일 (목) 오후 3:54</span></div>
     </div>
   </div>
 </section>
@@ -927,12 +941,17 @@
     }
     aim(); window.addEventListener('resize', aim);
 
-    // 데모 메뉴 막대: macOS 형식으로 오늘 날짜 표시 (예: 10월 22일 (목))
-    var d = new Date(), dateEl = document.getElementById('demoDate');
-    if (dateEl) dateEl.textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + '일월화수목금토'.charAt(d.getDay()) + ')';
+    // 데모 메뉴 막대: macOS 형식으로 지금 날짜와 시각 표시 (예: 10월 22일 (목) 오후 3:54), 1분마다 갱신
+    var dateEl = document.getElementById('demoDate');
+    function clock() {
+      var d = new Date(), h = d.getHours(), m = d.getMinutes();
+      dateEl.textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + '일월화수목금토'.charAt(d.getDay()) + ') ' +
+        (h < 12 ? '오전 ' : '오후 ') + ((h % 12) || 12) + ':' + (m < 10 ? '0' : '') + m;
+    }
+    if (dateEl) { clock(); setInterval(clock, 30000); }
 
   })();
 </script>
-<script src="demo.js?v=3" defer></script>
+<script src="demo.js?v=4" defer></script>
 </body>
 </html>

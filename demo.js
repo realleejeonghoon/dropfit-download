@@ -389,11 +389,21 @@
   };
   function Cursor(parent) {
     this.x = new P(0); this.y = new P(0); this.op = new P(0);
+    this.count = new P(0); this.countText = new P('');
     this.e = el('div', 'df-cursor', parent, ARROW);
+    this.eCount = el('div', 'df-count', parent);
+    this.n = '';
   }
   Cursor.prototype.render = function (T) {
+    var x = this.x.at(T), y = this.y.at(T), c = this.count.at(T);
     this.e.style.opacity = this.op.at(T);
-    this.e.style.transform = 'translate(' + (this.x.at(T) - 1.5).toFixed(2) + 'px,' + (this.y.at(T) - 1.5).toFixed(2) + 'px)';
+    this.e.style.transform = 'translate(' + (x - 1.5).toFixed(2) + 'px,' + (y - 1.5).toFixed(2) + 'px)';
+    this.eCount.style.opacity = c;
+    if (c > 0) {
+      var n = this.countText.at(T);
+      if (n !== this.n) { this.eCount.textContent = n; this.n = n; }
+      this.eCount.style.transform = 'translate(' + (x + 12).toFixed(2) + 'px,' + (y + 14).toFixed(2) + 'px)';
+    }
   };
   function Marquee(parent, cursor) {
     this.cursor = cursor; this.op = new P(0); this.x0 = 0; this.y0 = 0;
@@ -596,6 +606,7 @@
         if (!grab.sel.at(t)) { files.forEach(function (f) { f.sel.to(t, 0); }); sel.forEach(function (f) { f.sel.to(t, 1); }); }
         wait(0.12);
         var gs = sel.map(function (f) { var g = ghost(f.f); g.dx = f.f.x - g0.x; g.dy = f.f.y - g0.y; g.op.to(t, 0.62); return g; });
+        if (sel.length > 1) { cursor.countText.to(t, String(sel.length)); cursor.count.to(t, 1, ease(EO, 0.15)); }
         var c = { x: orb.x.at(t), y: orb.y.at(t) };
         var span = move(c.x + 5, c.y + 3, opts.d);
         // 커서가 오브 창(112pt 정사각)에 들어오는 순간 dragEntered
@@ -628,6 +639,7 @@
         wait(0.6);
         var td = t;
         gs.forEach(function (g) { g.op.to(td, 0, ease(EO, 0.12)); });
+        cursor.count.to(td, 0, ease(EO, 0.12));
         return app.drop(td, FORMATS[fmt][0], count, opts.outs);
       }
 
