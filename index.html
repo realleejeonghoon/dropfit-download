@@ -579,11 +579,6 @@
   .fb.sent > :not(.fb-done) { display: none; }
   .fb.sent .fb-done { display: block; animation: fbIn .6s var(--ease) both; }
   /* 정식판 사전 신청: 피드백 폼과 같은 카드 */
-  .po-price { margin: 0; display: grid; gap: 0; }
-  .po-price div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line, rgba(0, 0, 0, .08)); }
-  .po-price div:first-child { padding-top: 0; }
-  .po-price dt { font-size: 15px; color: var(--ink-2); }
-  .po-price dd { margin: 0; font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
   .po-row { display: flex; gap: 10px; }
   .po-row input { flex: 1; min-width: 0; }
   .po-row .pill { flex: none; border: 0; font: inherit; font-size: 16px; padding: 11px 24px; cursor: pointer; }
@@ -815,24 +810,18 @@
   <div class="wrap split">
     <div class="sec-head">
       <p class="label reveal">Early access</p>
-      <h2 class="sec-title reveal" id="po-title">정식판이 나오면<br>먼저 알려 드릴게요.</h2>
-      <p class="sec-sub reveal">지금 써 보신 분께는 얼리 테스터 가격으로 드립니다.</p>
+      <h2 class="sec-title reveal" id="po-title">정식판이 나오면<br>알려 드릴게요.</h2>
     </div>
     <form class="fb reveal" id="poForm" novalidate>
-      <!-- 가격 문구는 정훈 님 확정 후 채운다 -->
-      <dl class="po-price">
-        <div><dt>정식판 예정 가격</dt><dd id="poPrice">○○원</dd></div>
-        <div><dt>얼리 테스터</dt><dd id="poEarly">○○% 할인</dd></div>
-      </dl>
       <label><span>알림 받을 이메일</span>
         <div class="po-row">
           <input type="email" name="email" id="poEmail" maxlength="200" autocomplete="email" required placeholder="name@example.com">
-          <button class="pill" type="submit" id="poSend">신청하기</button>
+          <button class="pill" type="submit" id="poSend">출시 알림 받기</button>
         </div>
       </label>
       <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <p class="fb-note" id="poNote" role="status">정식판 출시와 할인 안내 말고는 연락드리지 않습니다.</p>
-      <div class="fb-done" role="status"><b>신청되었습니다.</b><p>정식판이 나오면 이 주소로 먼저 알려 드릴게요.</p></div>
+      <p class="fb-note" id="poNote" role="status">출시 알림 말고는 연락드리지 않습니다.</p>
+      <div class="fb-done" role="status"><b>신청되었습니다.</b><p>정식판이 나오면 이 주소로 알려 드릴게요.</p></div>
     </form>
   </div>
 </section>
@@ -938,13 +927,13 @@
       fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
         .then(function () { po.classList.add('sent'); })
         .catch(function () {
-          btn.disabled = false; btn.textContent = '신청하기';
+          btn.disabled = false; btn.textContent = '출시 알림 받기';
           note.textContent = '전송하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; note.className = 'fb-note err';
         });
     });
     if (po) po.addEventListener('input', function () {
       var note = document.getElementById('poNote');
-      if (note.className.indexOf('err') >= 0) { note.textContent = '정식판 출시와 할인 안내 말고는 연락드리지 않습니다.'; note.className = 'fb-note'; }
+      if (note.className.indexOf('err') >= 0) { note.textContent = '출시 알림 말고는 연락드리지 않습니다.'; note.className = 'fb-note'; }
     });
     function copy(text, msg) {
       var done = function () { show(msg); };
