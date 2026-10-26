@@ -229,6 +229,24 @@
   .df-hint span:first-child { color: rgba(44, 44, 46, .82); }
   /* 마지막 섹션: 포물선 (사진 카드) */
   .df-cta { position: relative; width: 100%; max-width: 1080px; margin: -12px auto 0; }
+  .df-cta { overflow-x: clip; }
+  .df-strip { inset: 0 auto auto 0; will-change: transform; }
+  .df-strip > * { position: absolute; left: 0; top: 0; }
+  .df-cap { font-size: 17px; letter-spacing: -0.01em; color: var(--ink-2); white-space: nowrap; }
+  .df-dots { display: flex; gap: 8px; transform-origin: 0 0; }
+  .df-dots i { --on: 0; display: block; height: 7px; width: calc(7px + 15px * var(--on)); border-radius: 4px;
+    background: rgb(29 29 31 / calc(.16 + .5 * var(--on))); }
+  .df-dots { translate: -50% -50%; }
+  /* 오브 우클릭 메뉴 (macOS 밝은 메뉴) */
+  .df-menu { width: 190px; padding: 5px; box-sizing: border-box; border-radius: 10px; opacity: 0; z-index: 9; }
+  .df-strip > .df-cursor { z-index: 10; }
+  .df-menu {
+    background: rgba(246, 246, 248, .96); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .14), 0 10px 30px rgba(29, 45, 70, .16);
+    font-size: 13px; line-height: 22px; color: #1d1d1f; }
+  .df-menu b, .df-menu span { display: block; padding: 0 9px; border-radius: 5px; font-weight: 400; white-space: nowrap; }
+  .df-menu b { --on: 0; background: rgb(96 138 180 / var(--on)); color: color-mix(in srgb, #fff calc(var(--on) * 100%), #1d1d1f); }
+  .df-menu hr { border: 0; height: 1px; margin: 4px 9px; background: rgba(0, 0, 0, .1); }
+  @media (max-width: 599px) { .df-cap { font-size: 24px; } .df-dots { gap: 11px; } .df-dots i { height: 10px; width: calc(10px + 20px * var(--on)); border-radius: 5px; } .df-menu { font-size: 18px; line-height: 30px; width: 250px; } }
   .df-card { display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0; will-change: transform, opacity; }
   .df-card .ph { width: 92px; height: 68px; border-radius: 5px; border: 2.5px solid #fff; box-sizing: border-box; box-shadow: 0 6px 18px rgba(29, 45, 70, .12), 0 1px 3px rgba(29, 45, 70, .1); }
   .df-card .df-doc { width: 58px; filter: drop-shadow(0 5px 12px rgba(29, 45, 70, .16)); }
@@ -734,7 +752,7 @@
 
 <section class="final">
   <div class="wrap final-stack">
-    <div class="df-cta" id="dfCta" role="img" aria-label="사진과 폴더가 Dropfit에 들어갔다가 PNG로, 또는 PDF 한 개로 합쳐져 나오는 애니메이션"></div>
+    <div class="df-cta" id="dfCta" role="img" aria-label="한 장, 여러 장, 폴더째, PDF 한 권으로, 기본 위치 지정까지 Dropfit의 기능을 한 장면씩 옆으로 넘기며 보여 주는 애니메이션"></div>
     <h2 class="reveal">Dropfit</h2>
     <p class="final-sub reveal">지금 바로 써 보세요.</p>
     <div class="reveal">
@@ -893,6 +911,6 @@
 
   })();
 </script>
-<script src="demo.js?v=4" defer></script>
+<script src="demo.js?v=5" defer></script>
 </body>
 </html>
