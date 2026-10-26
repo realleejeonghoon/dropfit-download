@@ -531,8 +531,10 @@
   /* ---------- 공통: 무대 ---------- */
   function Stage(host, build) {
     this.host = host; this.build = build;
-    this.items = []; this.dur = 1; this.key = '';
+    this.items = []; this.dur = 1; this.key = ''; this.off = 0; this.T = 0;
   }
+  // 지금 보이는 시각을 t로 옮긴다(이후로는 그 자리에서 이어 재생)
+  Stage.prototype.seek = function (t) { this.off = t - this.T; this.render(this.T); };
   Stage.prototype.layout = function () {
     var w = this.host.clientWidth, h = this.host.clientHeight;
     var spec = this.build.spec(w, h);
@@ -542,14 +544,15 @@
       if (this.root) this.root.remove();
       this.root = el('div', 'df-root', this.host);
       this.root.style.width = spec.W + 'px'; this.root.style.height = spec.H + 'px';
-      this.items = []; this.still = null;
+      this.items = []; this.still = null; this.off = 0;
       this.dur = this.build.make(this, spec);
     }
     this.root.style.transform = 'scale(' + spec.s.toFixed(4) + ')';
   };
   Stage.prototype.add = function (x) { this.items.push(x); return x; };
   Stage.prototype.render = function (T) {
-    var t = ((T % this.dur) + this.dur) % this.dur;
+    this.T = T;
+    var t = (((T + this.off) % this.dur) + this.dur) % this.dur;
     for (var i = 0; i < this.items.length; i++) this.items[i].render(t);
   };
 
@@ -759,9 +762,17 @@
       var strip = el('div', 'df-strip', root), shift = new P(0);
       strip.style.width = (W * (N + 1)) + 'px'; strip.style.height = H + 'px';
       var cards = el('div', 'df-cards', strip);   // 사본은 오브 뒤로 들어가고 뒤에서 나온다
+      // 넘김 단추: ‹ 점 다섯 개 › — 누르면 그 장면으로 옮겨 가 처음부터 이어 재생한다
       var dotsE = el('div', 'df-dots', root), dots = [], dotOn = [];
       dotsE.style.transform = 'translate(' + (W / 2) + 'px,' + (H - (mob ? 28 : 36)) + 'px)';
-      for (var d = 0; d < N; d++) { dots.push(el('i', null, dotsE)); dotOn.push(new P(d === 0 ? 1 : 0)); }
+      var CHEV = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var prevB = el('button', 'df-nav', dotsE, CHEV); prevB.type = 'button'; prevB.setAttribute('aria-label', '이전 장면');
+      for (var d = 0; d < N; d++) {
+        var db = el('button', 'df-dot', dotsE, '<i></i>'); db.type = 'button'; db.setAttribute('aria-label', CAPS[d]);
+        dots.push(db); dotOn.push(new P(d === 0 ? 1 : 0));
+      }
+      var nextB = el('button', 'df-nav next', dotsE, CHEV); nextB.type = 'button'; nextB.setAttribute('aria-label', '다음 장면');
+      var starts = [0], slideAt = [], shown = 0, glide = null;
       var sc = [], orbs = [];
       function panel(i) {
         var c = { x: W * i + W / 2, y: cy };
@@ -827,10 +838,12 @@
         return r;
       }
       function next() {
+        slideAt.push(t);
         idx++;
         shift.to(t, -W * idx, ease(EIO, SLIDE));
         dotOn.forEach(function (p, k) { p.to(t, k === idx % N ? 1 : 0, ease(EIO, 0.5)); });
         t += SLIDE + 0.2;
+        starts.push(t - 0.2);
       }
       function row(c, names, side, ext, out) {
         var n = names.length, gap = mob ? 72 : 110;
@@ -894,9 +907,44 @@
 
       sc.forEach(st.add, st);
       st.add({ render: function (T) {
-        strip.style.transform = 'translateX(' + shift.at(T).toFixed(2) + 'px)';
-        dots.forEach(function (e, k) { e.style.setProperty('--on', dotOn[k].at(T).toFixed(3)); });
+        var x = shift.at(T);
+        if (glide) {   // 직접 넘긴 직후: 보이던 자리에서 고른 장면까지 부드럽게
+          var e = (performance.now() - glide.t0) / 1000;
+          if (e >= 0.7) glide = null; else x = glide.x0 + (x - glide.x0) * EIO(e / 0.7);
+        }
+        shown = x;
+        strip.style.transform = 'translateX(' + x.toFixed(2) + 'px)';
+        dots.forEach(function (e, k) { e.style.setProperty('--on', dotOn[k].at(T).toFixed(3)); e.setAttribute('aria-current', dotOn[k].at(T) > 0.5 ? 'true' : 'false'); });
       } });
+      function current() { return ((Math.round(-shown / W) % N) + N) % N; }
+      var still = global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function go(j) {
+        var from = current();
+        j = ((j % N) + N) % N;
+        if (j === from && Math.abs(shown + W * from) < 1) { st.seek(starts[j]); return; }
+        // 마지막 → 처음: 원래 흐름 그대로 끝 칸(처음과 같은 화면)으로 넘어간다
+        if (j === 0 && from === N - 1 && !still) { glide = null; st.seek(slideAt[N - 1]); return; }
+        glide = still ? null : { x0: shown, t0: performance.now() };
+        // 처음 → 마지막: 처음과 같은 끝 칸에서 한 칸만 뒤로
+        if (glide && j === N - 1 && from === 0 && shown > -W * (N - 0.5)) glide.x0 = shown - W * N;
+        st.seek(starts[j]);
+      }
+      prevB.addEventListener('click', function () { go(current() - 1); });
+      nextB.addEventListener('click', function () { go(current() + 1); });
+      dots.forEach(function (b, k) { b.addEventListener('click', function () { go(k); }); });
+      // 끌어서 넘기기(휴대폰 스와이프 · 트랙패드 드래그)
+      var sx = null, sy = 0;
+      st.host.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; sx = e.clientX; sy = e.clientY; });
+      st.host.addEventListener('pointerup', function (e) {
+        if (sx == null) return;
+        var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) go(current() + (dx < 0 ? 1 : -1));
+      });
+      st.host.addEventListener('pointercancel', function () { sx = null; });
+      st.host.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { go(current() + 1); e.preventDefault(); }
+        if (e.key === 'ArrowLeft') { go(current() - 1); e.preventDefault(); }
+      });
       return t;
     }
   };

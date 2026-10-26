@@ -233,10 +233,20 @@
   .df-strip { inset: 0 auto auto 0; will-change: transform; }
   .df-strip > * { position: absolute; left: 0; top: 0; }
   .df-cap { font-size: 17px; letter-spacing: -0.01em; color: var(--ink-2); white-space: nowrap; }
-  .df-dots { display: flex; gap: 8px; transform-origin: 0 0; }
-  .df-dots i { --on: 0; display: block; height: 7px; width: calc(7px + 15px * var(--on)); border-radius: 4px;
-    background: rgb(29 29 31 / calc(.16 + .5 * var(--on))); }
-  .df-dots { translate: -50% -50%; }
+  .df-cta { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .df-dots { display: flex; align-items: center; gap: 2px; translate: -50% -50%; pointer-events: auto; }
+  .df-dots button { appearance: none; border: 0; margin: 0; padding: 0; background: none; cursor: pointer; color: var(--ink-2); font: inherit; -webkit-tap-highlight-color: transparent; }
+  .df-dot { padding: 8px 3px !important; }
+  .df-dot { --on: 0; }
+  .df-dot i { display: block; height: 7px; width: calc(7px + 15px * var(--on)); border-radius: 4px; background: rgb(29 29 31 / calc(.16 + .5 * var(--on))); transition: background .2s; }
+  .df-dot:hover i { background: rgb(29 29 31 / calc(.32 + .34 * var(--on))); }
+  .df-nav { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; opacity: .7; transition: opacity .2s, background-color .2s; }
+  .df-nav:first-child { margin-right: 10px; }
+  .df-nav.next { margin-left: 10px; }
+  .df-nav.next svg { transform: scaleX(-1); }
+  .df-nav svg { width: 16px; height: 16px; }
+  .df-nav:hover { opacity: 1; background: rgba(29, 29, 31, .06); }
+  .df-dots button:focus-visible { outline: 2px solid var(--sky-deep); outline-offset: 1px; border-radius: 8px; }
   /* 오브 우클릭 메뉴 (macOS 밝은 메뉴) */
   .df-menu { width: 190px; padding: 5px; box-sizing: border-box; border-radius: 10px; opacity: 0; z-index: 9; }
   .df-strip > .df-cursor { z-index: 10; }
@@ -246,7 +256,7 @@
   .df-menu b, .df-menu span { display: block; padding: 0 9px; border-radius: 5px; font-weight: 400; white-space: nowrap; }
   .df-menu b { --on: 0; background: rgb(96 138 180 / var(--on)); color: color-mix(in srgb, #fff calc(var(--on) * 100%), #1d1d1f); }
   .df-menu hr { border: 0; height: 1px; margin: 4px 9px; background: rgba(0, 0, 0, .1); }
-  @media (max-width: 599px) { .df-cap { font-size: 24px; } .df-dots { gap: 11px; } .df-dots i { height: 10px; width: calc(10px + 20px * var(--on)); border-radius: 5px; } .df-menu { font-size: 18px; line-height: 30px; width: 250px; } }
+  @media (max-width: 599px) { .df-cap { font-size: 24px; } .df-dot { padding: 12px 5px !important; } .df-dot i { height: 10px; width: calc(10px + 20px * var(--on)); border-radius: 5px; } .df-nav { width: 44px; height: 44px; } .df-nav svg { width: 22px; height: 22px; } .df-menu { font-size: 18px; line-height: 30px; width: 250px; } }
   .df-card { display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0; will-change: transform, opacity; }
   .df-card .ph { width: 92px; height: 68px; border-radius: 5px; border: 2.5px solid #fff; box-sizing: border-box; box-shadow: 0 6px 18px rgba(29, 45, 70, .12), 0 1px 3px rgba(29, 45, 70, .1); }
   .df-card .df-doc { width: 58px; filter: drop-shadow(0 5px 12px rgba(29, 45, 70, .16)); }
@@ -752,7 +762,7 @@
 
 <section class="final">
   <div class="wrap final-stack">
-    <div class="df-cta" id="dfCta" role="img" aria-label="한 장, 여러 장, 폴더째, PDF 한 권으로, 기본 위치 지정까지 Dropfit의 기능을 한 장면씩 옆으로 넘기며 보여 주는 애니메이션"></div>
+    <div class="df-cta" id="dfCta" role="group" aria-roledescription="슬라이드" aria-label="한 장, 여러 장, 폴더째, PDF 한 권으로, 기본 위치 지정까지 Dropfit의 기능을 한 장면씩 옆으로 넘기며 보여 주는 애니메이션"></div>
     <h2 class="reveal">Dropfit</h2>
     <p class="final-sub reveal">지금 바로 써 보세요.</p>
     <div class="reveal">
@@ -915,6 +925,6 @@
 
   })();
 </script>
-<script src="demo.js?v=5" defer></script>
+<script src="demo.js?v=6" defer></script>
 </body>
 </html>
