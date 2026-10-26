@@ -1,7 +1,7 @@
 <p align="center"><img src="icon.png" width="160" alt="Dropfit"></p>
 
 <h1 align="center">Dropfit</h1>
-<p align="center">이미지를 끌어다 놓으면, 원하는 포맷으로.</p>
+<p align="center">Mac용 이미지·PDF 변환 앱. 끌어다 놓으면, 원하는 포맷으로.</p>
 
 <p align="center">
   <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 0.7MB)</b></a>
