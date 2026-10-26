@@ -822,12 +822,16 @@
       toast.textContent = msg; toast.classList.add('show');
       clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
     }
-    // 다운로드 수: 버튼을 누를 때 시각·버전만 보낸다 (개인정보 없음). 주소가 비어 있으면 아무것도 하지 않는다
+    // 다운로드 수: 버튼을 누를 때 시각·버전·유입 채널만 보낸다 (개인정보 없음). 주소가 비어 있으면 아무것도 하지 않는다
+    // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.4 seasoning'
+    var FROM = '';
+    try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
+    var VERSION = '0.4' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     document.querySelectorAll('a[href="Dropfit-macOS.zip"]').forEach(function (a) {
       a.addEventListener('click', function () {
         if (!COUNT_URL) return;
-        var body = new URLSearchParams({ event: 'download', version: '0.4' });
+        var body = new URLSearchParams({ event: 'download', version: VERSION });
         try { if (navigator.sendBeacon && navigator.sendBeacon(COUNT_URL, body)) return; } catch (e) {}
         try { fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: body, keepalive: true }); } catch (e) {}
       });
@@ -845,7 +849,7 @@
       if (!msg.value.trim()) { note.textContent = '하고 싶은 이야기를 한 줄 적어 주세요.'; note.className = 'fb-note err'; msg.focus(); return; }
       if (email.value && !email.checkValidity()) { note.textContent = '이메일 주소를 다시 확인해 주세요.'; note.className = 'fb-note err'; email.focus(); return; }
       var data = new URLSearchParams(new FormData(fb));
-      data.set('version', '0.4');
+      data.set('version', VERSION);
       btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note';
       fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
         .then(function () { fb.classList.add('sent'); })
@@ -866,7 +870,7 @@
       document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (e) {} t.remove();
     }
     document.querySelectorAll('[data-copy-link]').forEach(function (b) {
-      b.addEventListener('click', function () { copy(location.origin + location.pathname, '링크를 복사했습니다'); });
+      b.addEventListener('click', function () { copy(location.origin + location.pathname + (FROM ? '?from=' + FROM : ''), '링크를 복사했습니다'); });
     });
     document.querySelectorAll('[data-copy]').forEach(function (b) {
       b.addEventListener('click', function () { copy(document.querySelector(b.dataset.copy).textContent, '명령어를 복사했습니다'); });
