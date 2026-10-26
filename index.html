@@ -25,6 +25,14 @@
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"맥에서 PDF 여러 개를 하나로 합치려면?","acceptedAnswer":{"@type":"Answer","text":"PDF 파일들을 한꺼번에 골라 Dropfit에 끌어다 PDF 칸에 놓으면 고른 순서대로 한 권이 됩니다. 사진이 섞여 있어도 함께 묶입니다. 원본은 그대로 두고, 같은 폴더에 새 PDF가 생깁니다."}},
+{"@type":"Question","name":"맥북 사진(HEIC)을 JPG로 한 번에 바꾸려면?","acceptedAnswer":{"@type":"Answer","text":"사진을 여러 장 고르거나 폴더째 Dropfit에 끌어다 JPG 칸에 놓으면 됩니다. 400장이 약 30초에 끝납니다. 원본 HEIC는 그대로 남습니다."}},
+{"@type":"Question","name":"맥북 사진 여러 장을 PDF 하나로 만들려면?","acceptedAnswer":{"@type":"Answer","text":"사진을 골라 PDF 칸에 올리면 합치기 · 나누기가 나옵니다. 합치기에 놓으면 PDF 한 권, 나누기에 놓으면 장마다 PDF 한 개씩 만듭니다."}},
+{"@type":"Question","name":"파일이 인터넷에 올라가나요?","acceptedAnswer":{"@type":"Answer","text":"아니요. 변환은 모두 Mac 안에서 이루어지고, 파일은 어디에도 전송되지 않습니다."}}
+]}
+</script>
 <style>
   :root {
     --blue: #0071e3;
@@ -463,7 +471,8 @@
   .final-stack .cta-meta { margin: 14px 0 0; text-align: center; }
   .final-stack .pill.lg { justify-content: center; }
   .final-stack .cta-under { display: inline-block; margin-top: 16px; font-size: 15px; }
-  .final + #feedback { padding-top: 24px; }
+  .final + #preorder { padding-top: 24px; }
+  #preorder + #feedback { padding-top: 0; }
   @media (max-width: 734px) {
     .final { padding: 88px 0 96px; }
     .final-stack .cta-row { margin-top: 26px; flex-direction: column; gap: 16px; }
@@ -569,6 +578,12 @@
   .fb-done p { margin: 0; color: var(--ink-2); font-size: 16px; }
   .fb.sent > :not(.fb-done) { display: none; }
   .fb.sent .fb-done { display: block; animation: fbIn .6s var(--ease) both; }
+  /* 정식판 사전 신청: 피드백 폼과 같은 카드 */
+  .po-row { display: flex; gap: 10px; }
+  .po-row input { flex: 1; min-width: 0; }
+  .po-row .pill { flex: none; border: 0; font: inherit; font-size: 16px; padding: 11px 24px; cursor: pointer; }
+  .po-row .pill[disabled] { opacity: .55; cursor: default; }
+  @media (max-width: 734px) { .po-row { flex-direction: column; } }
   @media (max-width: 734px) { .fb { padding: 22px 18px; border-radius: 20px; } .rate { gap: 6px; } .rate label { font-size: 13.5px; padding: 8px 12px; } }
 </style>
 </head>
@@ -725,20 +740,32 @@
     <div class="sec-head"><p class="label reveal">FAQ</p><h2 class="sec-title reveal" id="faq-title">자주 묻는 질문</h2></div>
     <div class="faq reveal">
       <details>
+        <summary>맥에서 PDF 여러 개를 하나로 합치려면?</summary>
+        <p>PDF 파일들을 한꺼번에 골라 Dropfit에 끌어다 <b>PDF</b> 칸에 놓으면 고른 순서대로 한 권이 됩니다. 사진이 섞여 있어도 함께 묶입니다. 원본은 그대로 두고, 같은 폴더에 새 PDF가 생깁니다.</p>
+      </details>
+      <details>
+        <summary>맥북 사진(HEIC)을 JPG로 한 번에 바꾸려면?</summary>
+        <p>사진을 여러 장 고르거나 폴더째 Dropfit에 끌어다 <b>JPG</b> 칸에 놓으면 됩니다. 400장이 약 30초에 끝납니다. 원본 HEIC는 그대로 남고, 폴더를 올리면 옆에 ‘폴더명 (JPG)’ 새 폴더가 생깁니다.</p>
+      </details>
+      <details>
+        <summary>맥북 사진 여러 장을 PDF 하나로 만들려면?</summary>
+        <p>사진을 골라 <b>PDF</b> 칸에 올리면 바깥에 <b>합치기 · 나누기</b>가 나옵니다. 합치기에 놓으면 PDF 한 권, 나누기에 놓으면 장마다 PDF 한 개씩 만듭니다. 칸에 바로 놓으면 합칩니다.</p>
+      </details>
+      <details>
+        <summary>파일이 인터넷에 올라가나요?</summary>
+        <p>아니요. 변환은 모두 Mac 안에서 이루어지고, 파일은 어디에도 전송되지 않습니다.</p>
+      </details>
+      <details>
         <summary>무료인가요?</summary>
         <p>네, 테스트 버전은 무료입니다.</p>
       </details>
       <details>
         <summary>변환한 파일은 어디에 저장되나요?</summary>
-        <p>낱장은 원본과 같은 폴더에 새 파일로 저장됩니다. 폴더를 올리면 원본 폴더 바로 옆에 ‘폴더명 (포맷)’ 새 폴더가 생기고, 결과가 모두 그 안에 담깁니다. 원본은 어느 경우에도 건드리지 않습니다.</p>
+        <p>낱장은 원본과 같은 폴더에 새 파일로 저장됩니다. 폴더를 올리면 원본 폴더 바로 옆에 ‘폴더명 (포맷)’ 새 폴더가 생기고, 결과가 모두 그 안에 담깁니다. 원본은 어느 경우에도 건드리지 않습니다. 하위 폴더는 제외합니다.</p>
       </details>
       <details>
-        <summary>여러 장이나 폴더도 되나요?</summary>
-        <p>네, 여러 장을 한꺼번에 올려도 됩니다. 폴더를 올리면 원본 폴더는 그대로 두고, 변환된 이미지만 모은 새 폴더를 만들어 줍니다. 예를 들어 ‘여행’ 폴더를 PNG로 바꾸면 옆에 ‘여행 (PNG)’ 폴더가 생깁니다. 하위 폴더는 제외합니다.</p>
-      </details>
-      <details>
-        <summary>PDF도 되나요?</summary>
-        <p>네. 사진 여러 장을 PDF 칸에 올리면 바깥에 <b>합치기 · 나누기</b>가 나옵니다. 합치기는 PDF 한 권으로, 나누기는 장마다 PDF 한 개씩 만듭니다. 칸에 바로 놓으면 합칩니다. PDF 여러 개나 사진과 PDF가 섞여 있어도 순서대로 한 권이 됩니다. 반대로 PDF를 이미지 칸에 올리면 쪽마다 한 장씩 나옵니다. 암호가 걸린 PDF는 열 수 없습니다.</p>
+        <summary>PDF를 이미지로도 바꿀 수 있나요?</summary>
+        <p>네. PDF를 JPG나 PNG 같은 이미지 칸에 올리면 쪽마다 한 장씩 나옵니다. 암호가 걸린 PDF는 열 수 없습니다.</p>
       </details>
       <details>
         <summary>몇 장까지, 얼마나 큰 사진까지 되나요?</summary>
@@ -776,6 +803,26 @@
         <button class="pill lg" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="block" id="preorder" aria-labelledby="po-title">
+  <div class="wrap split">
+    <div class="sec-head">
+      <p class="label reveal">Early access</p>
+      <h2 class="sec-title reveal" id="po-title">정식판이 나오면<br>알려 드릴게요.</h2>
+    </div>
+    <form class="fb reveal" id="poForm" novalidate>
+      <label><span>알림 받을 이메일</span>
+        <div class="po-row">
+          <input type="email" name="email" id="poEmail" maxlength="200" autocomplete="email" required placeholder="name@example.com">
+          <button class="pill" type="submit" id="poSend">출시 알림 받기</button>
+        </div>
+      </label>
+      <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <p class="fb-note" id="poNote" role="status">출시 알림 말고는 연락드리지 않습니다.</p>
+      <div class="fb-done" role="status"><b>신청되었습니다.</b><p>정식판이 나오면 이 주소로 알려 드릴게요.</p></div>
+    </form>
   </div>
 </section>
 
@@ -867,6 +914,26 @@
           btn.disabled = false; btn.textContent = '보내기';
           note.textContent = '전송하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; note.className = 'fb-note err';
         });
+    });
+    // 정식판 사전 신청: 같은 Apps Script 주소로 event=preorder, 이메일, 버전·유입 채널만 보낸다
+    var po = document.getElementById('poForm');
+    if (po) po.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('poEmail'), note = document.getElementById('poNote'), btn = document.getElementById('poSend');
+      if (!email.value.trim() || !email.checkValidity()) { note.textContent = '이메일 주소를 다시 확인해 주세요.'; note.className = 'fb-note err'; email.focus(); return; }
+      var data = new URLSearchParams(new FormData(po));
+      data.set('event', 'preorder'); data.set('version', VERSION);
+      btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note';
+      fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
+        .then(function () { po.classList.add('sent'); })
+        .catch(function () {
+          btn.disabled = false; btn.textContent = '출시 알림 받기';
+          note.textContent = '전송하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; note.className = 'fb-note err';
+        });
+    });
+    if (po) po.addEventListener('input', function () {
+      var note = document.getElementById('poNote');
+      if (note.className.indexOf('err') >= 0) { note.textContent = '출시 알림 말고는 연락드리지 않습니다.'; note.className = 'fb-note'; }
     });
     function copy(text, msg) {
       var done = function () { show(msg); };
