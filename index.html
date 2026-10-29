@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dropfit · Mac용 이미지·PDF 변환 앱</title>
-<meta name="description" content="Dropfit은 Mac용 이미지·PDF 변환 앱입니다. 끌어다 놓으면 JPG · PNG · HEIC · TIFF · GIF · PDF로 바로 바뀝니다. 무료 테스트 버전.">
+<meta name="description" content="Dropfit은 Mac용 이미지·PDF 변환 앱입니다. 끌어다 놓으면 JPG · PNG · HEIC · TIFF · GIF · PDF로 바로 바뀝니다. 정식판 전까지 Pro 기능도 무료입니다.">
 <meta name="theme-color" content="#fbfbfd">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Dropfit">
 <meta property="og:title" content="Dropfit · Mac용 이미지·PDF 변환 앱">
-<meta property="og:description" content="끌어다 놓으면, 끝. 이미지와 PDF를 원하는 포맷으로. 무료 테스트 버전을 받아 보세요.">
+<meta property="og:description" content="끌어다 놓으면, 끝. 이미지와 PDF를 원하는 포맷으로. 지금은 Pro 기능까지 무료입니다.">
 <link rel="canonical" href="https://realleejeonghoon.github.io/dropfit-download/">
 <meta property="og:url" content="https://realleejeonghoon.github.io/dropfit-download/">
 <meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=7">
@@ -115,6 +115,7 @@
   .chips li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
   .cta { margin-top: 34px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
   .cta-meta { font-size: 12px; color: var(--ink-3); margin: 0; white-space: nowrap; letter-spacing: 0; }
+  .pro-note { margin: 20px 0 0; font-size: 13px; color: var(--ink-3); letter-spacing: 0; }
   .cta-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
 
   .notice {
@@ -637,6 +638,7 @@
       <button class="pill lg copy-only" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
       <a class="cta-alt mac-only" href="#install">설치 방법 ›</a>
     </div>
+    <p class="pro-note">0.5 Pro 미리 써 보기 · 정식판 전까지 Pro 기능 무료</p>
     <div class="notice" role="note">
       <strong>Dropfit은 Mac 전용 앱입니다.</strong>
       Mac의 카카오톡에서 이 링크를 다시 열면 바로 받을 수 있습니다.
@@ -704,7 +706,7 @@
       </details>
       <details>
         <summary>무료인가요?</summary>
-        <p>네, 테스트 버전은 무료입니다.</p>
+        <p>네. 기본 변환, PDF 합치기·나누기, 폴더째 변환은 계속 무료입니다. 0.5는 <b>Pro 미리 써 보기</b> 버전이라 정식판이 나오기 전까지 Pro 기능도 무료로 쓰실 수 있습니다.</p>
       </details>
       <details>
         <summary>변환한 파일은 어디에 저장되나요?</summary>
@@ -808,7 +810,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Dropfit 0.4 · 테스트 버전</span>
+    <span>Dropfit 0.5 · Pro 미리 써 보기</span>
   </div>
 </footer>
 
@@ -827,10 +829,10 @@
       clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
     }
     // 다운로드 수: 버튼을 누를 때 시각·버전·유입 채널만 보낸다 (개인정보 없음). 주소가 비어 있으면 아무것도 하지 않는다
-    // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.4 seasoning'
+    // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.5 seasoning'
     var FROM = '';
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
-    var VERSION = '0.4' + (FROM ? ' ' + FROM : '');
+    var VERSION = '0.5' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     document.querySelectorAll('a[href="Dropfit-macOS.zip"]').forEach(function (a) {
       a.addEventListener('click', function () {
