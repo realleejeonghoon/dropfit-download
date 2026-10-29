@@ -909,12 +909,11 @@
         app.enter(te, pn.ring, { length: count, photo: items[0].photo || 'p2', choices: !!sub }, disabled);
         var th = te + 0.8;
         if (st.still == null) st.still = th + 0.35;
-        if (crop) {   // 자르기: 가운데에 머물면 오브가 '자르기' 칸이 되고, 놓으면 4:5로 잘린 사본이 나온다
+        if (crop) {   // 자르기: 가운데에 머물면 오브가 '자르기' 칸이 되고, 놓으면 자르기 창이 열린다
           pn.orb.crop.to(th, 1, Motion.hover); pn.orb.scale.to(th, 1.05, Motion.orb);
-          pn.orb.crop.to(th + 0.65, 0, Motion.hover);
         } else app.hover(th, fmt);
         if (sub) { th += 0.7; app.hover(th, fmt, 'c'); }   // PDF: 보조 칸이 펼쳐진 뒤 '합치기'에 놓는다
-        var r = app.drop(th + 0.65, crop ? '4:5' : FORMATS[fmt][0], count, outs.length);
+        var r = crop ? cropWin(pn, th + 0.65) : app.drop(th + 0.65, FORMATS[fmt][0], count, outs.length);
         outs.forEach(function (f, i) {
           var o = card(f, true); flight(o, hole, f.pos, CS * 0.4, CS);
           var dd = (folder ? r.start : r.finish[Math.round((i + 1) / outs.length * count) - 1]) + 0.05 + i * 0.12;
@@ -922,6 +921,34 @@
         });
         t = r.idle + 0.5;
         return r;
+      }
+      // 놓으면 Dropfit은 접히고 자르기 창이 열린다 → 4:5 → 저장 (맨 위 시연과 같은 흐름)
+      function cropWin(pn, td) {
+        var o = pn.orb, ring = pn.ring, KW = mob ? 0.62 : 0.68;
+        var wc = { x: pn.c.x, y: mob ? 196 : 186 };
+        var cw = new CropWin(strip, '바다.heic'), cur = new Cursor(strip);
+        cw.e.style.transform = 'translate(' + (wc.x - 342).toFixed(1) + 'px,' + (wc.y - 256).toFixed(1) + 'px) scale(calc(' + KW + ' * var(--sc, 1)))';
+        function inWin(x, y) { return { x: wc.x + (x - 342) * KW, y: wc.y + (y - 256) * KW }; }
+        function go(p, tt, d) { cur.x.to(tt, p.x + 2, ease(EIO, d)); cur.y.to(tt, p.y + 3, ease(HAND, d)); return tt + d; }
+        ring.petals.forEach(function (p) { p.open.to(td, 0, Motion.close); });
+        ring.veil.to(td, 0, Motion.close);
+        o.crop.to(td, 0, Motion.hover); o.thumb.to(td, 0, Motion.hover);
+        o.scale.to(td, 1, Motion.orb); o.scan.to(td, 0); o.active.to(td, 0, Motion.reset);
+        o.glyph.to(td + 0.3, 1, Motion.reset);
+        var to = td + 0.35;
+        cw.op.to(to, 1, ease(EO, 0.3)); cw.sc.to(to, 1, ease(EO, 0.35));
+        var p0 = inWin(250, 330);
+        cur.x.to(0, p0.x); cur.y.to(0, p0.y); cur.op.to(to + 0.25, 1, ease(EO, 0.25));
+        var tt = go(inWin(544.5, 121), to + 0.6, 0.8) + 0.18;   // 4:5를 고른다
+        cw.on[0].to(tt, 0, Motion.hover); cw.on[2].to(tt, 1, Motion.hover);
+        cw.k.to(tt, 1, ease(EIO, 0.5));
+        cw.res.to(tt + 0.25, '2,419 × 3,024 px'); cw.w.to(tt + 0.25, '2419');
+        cw.ready.to(tt, 1, Motion.hover);
+        tt = go(inWin(584, 446), tt + 1.1, 0.75) + 0.2;   // 저장
+        cw.op.to(tt, 0, ease(EIO, 0.28)); cw.sc.to(tt, 0.98, ease(EIO, 0.28));
+        cur.op.to(tt + 0.1, 0, ease(EIO, 0.3));
+        st.add(cw); st.add(cur);
+        return { start: tt, finish: [tt + 0.15], idle: tt + 1.6 };
       }
       function next() {
         slideAt.push(t);
