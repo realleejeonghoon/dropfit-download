@@ -4,22 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dropfit · Mac용 이미지·PDF 변환 앱</title>
-<meta name="description" content="Dropfit은 Mac용 이미지·PDF 변환 앱입니다. 끌어다 놓으면 JPG · PNG · HEIC · TIFF · GIF · PDF로 바로 바뀝니다. 무료 테스트 버전.">
+<meta name="description" content="Dropfit은 Mac용 이미지·PDF 변환 앱입니다. 끌어다 놓으면 JPG · PNG · HEIC · TIFF · GIF · PDF로 바로 바뀝니다. 정식판 전까지 Pro 기능도 무료입니다.">
 <meta name="theme-color" content="#fbfbfd">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Dropfit">
 <meta property="og:title" content="Dropfit · Mac용 이미지·PDF 변환 앱">
-<meta property="og:description" content="끌어다 놓으면, 끝. 이미지와 PDF를 원하는 포맷으로. 무료 테스트 버전을 받아 보세요.">
+<meta property="og:description" content="끌어다 놓으면, 끝. 이미지와 PDF를 원하는 포맷으로. 지금은 Pro 기능까지 무료입니다.">
 <link rel="canonical" href="https://realleejeonghoon.github.io/dropfit-download/">
 <meta property="og:url" content="https://realleejeonghoon.github.io/dropfit-download/">
-<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=7">
+<meta property="og:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=8">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Dropfit 앱 아이콘과 문구 ‘Mac용 이미지·PDF 변환 앱 · 끌어다 놓으면, 끝.’">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=7">
+<meta name="twitter:image" content="https://realleejeonghoon.github.io/dropfit-download/assets/og.png?v=8">
 
 <link rel="stylesheet" href="fonts/pretendardvariable-dynamic-subset.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -35,15 +35,14 @@
 </script>
 <style>
   :root {
-    --blue: #0071e3;
-    --blue-hover: #0077ed;
-    --link: #0066cc;
+    --blue: #3c608a;
+    --blue-hover: #3c608a;
+    --link: #3c608a;
     --ink: #1d1d1f;
     --ink-2: #6e6e73;
     --ink-3: #86868b;
     --paper: #f5f5f7;
     --line: #d2d2d7;
-    --grad: linear-gradient(100deg, #ff7a59 0%, #f056a0 30%, #8e6cf5 62%, #3b8cf7 100%);
     --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     --ease: cubic-bezier(.28, .11, .32, 1);
@@ -90,7 +89,7 @@
 
   /* ---------- Intro: 태그 · 제목 · 설명 한 줄 · [다운로드 · 보조 링크] 한 줄 ---------- */
   .intro { padding: 72px 0 24px; text-align: center; animation: rise 1.1s .08s var(--ease) both; }
-  .tag { display: inline-block; margin: 0 0 22px; padding: 5px 12px; border-radius: 980px; background: rgba(96, 138, 180, .1); color: var(--sky-deeper); font-size: 13px; letter-spacing: -0.005em; }
+  .tag { display: inline-block; margin: 0 0 22px; padding: 5px 12px; border-radius: 980px; background: rgba(60, 96, 138, .08); color: var(--sky-deeper); font-size: 13px; letter-spacing: -0.005em; }
   .intro .lede { margin: 20px auto 0; font-size: clamp(17px, 1.6vw, 21px); line-height: 1.45; }
   .intro .cta { flex-direction: row; justify-content: center; align-items: center; gap: 28px; margin-top: 36px; }
   .intro .cta-alt { font-size: 17px; }
@@ -115,6 +114,7 @@
   .chips li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
   .cta { margin-top: 34px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
   .cta-meta { font-size: 12px; color: var(--ink-3); margin: 0; white-space: nowrap; letter-spacing: 0; }
+  .pro-note { margin: 20px 0 0; font-size: 13px; color: var(--ink-3); letter-spacing: 0; }
   .cta-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
 
   .notice {
@@ -146,7 +146,7 @@
     background:
       radial-gradient(70% 80% at 45% 45%, rgba(255, 255, 255, .8), transparent 70%),
       linear-gradient(180deg, #eef1f5 0%, #dde3ea 100%);
-    box-shadow: 0 0 0 1px rgba(60, 96, 138, .08), 0 30px 70px rgba(60, 96, 138, .12), 0 6px 18px rgba(60, 96, 138, .06);
+    box-shadow: 0 0 0 1px rgba(18, 28, 45, .08), 0 30px 70px rgba(18, 28, 45, .12), 0 6px 18px rgba(18, 28, 45, .06);
   }
   .menubar {
     position: absolute; inset: 0 0 auto; height: calc(24px * var(--s, 1)); display: flex; align-items: center; gap: calc(18px * var(--s, 1));
@@ -184,32 +184,33 @@
   .p4 { background: linear-gradient(90deg, transparent 18%, rgba(0, 0, 0, .1) 18% 20%, transparent 20% 80%, rgba(0, 0, 0, .1) 80% 82%, transparent 82%), linear-gradient(180deg, transparent 72%, #8d8378 72%, #a59a8e 100%), linear-gradient(90deg, #cfc5b8 0 18%, #e9e2d8 20% 80%, #c4b9ab 82%); }
   .p5 { background: radial-gradient(circle at 34% 58%, #f4e9d8 0 13%, #d9c3a3 14% 18%, transparent 19%), radial-gradient(circle at 68% 46%, #6b4a33 0 9%, transparent 10%), linear-gradient(180deg, #b48d6a 0%, #8c6648 100%); }
   /* 바탕화면 아이콘 (Finder) */
-  .df-file { width: 84px; margin: -40px 0 0 -42px; text-align: center; font-size: 11px; line-height: 1.25; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); opacity: 0; }
+  .df-file { width: 84px; margin: -40px 0 0 -42px; text-align: center; font-size: 11px; line-height: 1.25; color: #fff; text-shadow: 0 1px 2px rgba(18, 28, 45, .55); opacity: 0; }
   .df-file .ic { width: 66px; height: 52px; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; border-radius: 5px; }
-  .df-file .ph { width: 60px; height: 45px; border-radius: 3px; border: 2px solid #fff; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0, 0, 0, .18); }
-  .df-doc { display: block; width: 40px; height: auto; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .22)); }
-  .df-folder { display: block; width: 60px; height: auto; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .2)); }
+  .df-file .ph { width: 60px; height: 45px; border-radius: 3px; border: 2px solid #fff; box-sizing: border-box; box-shadow: 0 1px 3px rgba(18, 28, 45, .18); }
+  .df-doc { display: block; width: 40px; height: auto; filter: drop-shadow(0 1px 2px rgba(18, 28, 45, .22)); }
+  .df-folder { display: block; width: 60px; height: auto; filter: drop-shadow(0 1px 2px rgba(18, 28, 45, .2)); }
   .df-file span { display: inline-block; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
   .df-file.sel .ic { background: rgba(0, 0, 0, .26); }
-  .df-file.sel span { background: #2f6fd6; text-shadow: none; }
+  .df-file.sel span { background: #3c608a; color: #fff; text-shadow: none; }
   .df-file.df-ghost { z-index: 6; }
-  .df-cursor { width: 17px; height: 24px; z-index: 8; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .3)); }
+  .df-cursor { width: 17px; height: 24px; z-index: 8; filter: drop-shadow(0 1px 1.5px rgba(18, 28, 45, .3)); }
   .df-cursor svg { display: block; width: 100%; height: 100%; }
   /* 여러 개를 끌 때 macOS가 커서 옆에 붙이는 빨간 개수 배지 */
-  .df-count { z-index: 9; min-width: 18px; height: 18px; margin: 0; padding: 0 5px; box-sizing: border-box; border-radius: 9px; background: #ff3b30; color: #fff; font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); opacity: 0; }
+  .df-count { z-index: 9; min-width: 18px; height: 18px; margin: 0; padding: 0 5px; box-sizing: border-box; border-radius: 9px; background: #3c608a; color: #fff; font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 1px 2px rgba(18, 28, 45, .25); opacity: 0; }
   .df-marquee { z-index: 7; border-radius: 1px; background: rgba(255, 255, 255, .14); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55); opacity: 0; }
   /* 오브 (OrbView): 지름 60, 서리 유리 + 흰 테두리, 끌어오는 동안 그림자가 조금 짙어진다 */
   .df-orb { width: 60px; height: 60px; z-index: 3; --a: 0; transform-origin: 30px 30px; }
   .df-orb > * { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-  .df-orb-body { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(180deg, #eeeff2, #dee0e5);
-    box-shadow: inset 0 0 0 .8px rgba(255, 255, 255, calc(.75 + .15 * var(--a))), 0 2.5px calc(14px + 4px * var(--a)) rgba(0, 0, 0, calc(.14 + .03 * var(--a))); }
+  /* 0.5 미색 톤: 테두리 없이 그림자 A (대기 → 활성은 두 번째 그림자만 조금 짙고 넓게) */
+  .df-orb-body { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(180deg, #fcfcfa, #f3f2ee);
+    box-shadow: 0 .5px 1.2px rgba(18, 28, 45, .12), 0 calc(6px + .5px * var(--a)) calc(16px + 2px * var(--a)) rgba(18, 28, 45, calc(.08 + .03 * var(--a))); }
   .df-orb-glyph { width: 46px; height: 46px; }
-  .df-orb-glyph svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .08)); }
+  .df-orb-glyph svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 1px 1px rgba(18, 28, 45, .10)); }
   .df-thumb { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; box-shadow: inset 0 0 0 .6px rgba(255, 255, 255, .7); opacity: 0; }
   .df-thumb i { position: absolute; inset: 0; border-radius: 50%; background: #fff; }
   .df-hl { font-size: 12px; font-weight: 600; letter-spacing: 1.6px; padding-left: 1.6px; color: #3c608a; opacity: 0; }
   .df-badge { left: auto; right: -2px; top: 2px; transform: none; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 9px;
-    background: #608ab4; color: #fff; font: 600 10px/18px ui-rounded, "SF Pro Rounded", -apple-system, sans-serif; text-align: center; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); opacity: 0; }
+    background: #3c608a; color: #fff; font: 600 10px/18px ui-rounded, "SF Pro Rounded", -apple-system, sans-serif; text-align: center; box-shadow: 0 1px 3px rgba(18, 28, 45, .12); opacity: 0; }
   .df-scan, .df-prog { overflow: visible; opacity: 0; }
   .df-scan { width: 53px; height: 53px; }
   .df-prog { width: 60px; height: 60px; }
@@ -217,23 +218,24 @@
   .df-plabel b { display: block; font-size: 14px; font-weight: 500; }
   .df-plabel small { display: block; margin-top: 2px; font-size: 8.5px; letter-spacing: .3px; opacity: .62; }
   .df-spin { width: 28px; height: 28px; opacity: 0; }
-  .df-done { color: #608ab4; text-align: center; opacity: 0; }
+  .df-done { color: #3c608a; text-align: center; opacity: 0; }
   .df-done svg { display: block; width: 18px; height: 18px; margin: 0 auto 2px; }
   .df-done b { display: block; font: 600 10px/1 ui-rounded, "SF Pro Rounded", -apple-system, sans-serif; letter-spacing: 1px; white-space: nowrap; }
   .df-burst { width: 60px; height: 60px; border-radius: 50%; box-shadow: inset 0 0 0 1px #fff; opacity: 0; }
   /* 포맷 링 (SegmentView): 펄 화이트 칸, 고른 칸만 하늘색. 두께 54, 중심 반지름 74, 간격 4 */
   .df-ring { overflow: visible; visibility: hidden; }
-  /* 밝은 바탕에서 반투명 메뉴가 묻히지 않도록 은은한 그림자와 머리카락 테두리 */
-  .df-ring { filter: drop-shadow(0 10px 24px rgba(40, 60, 90, .14)) drop-shadow(0 0 .6px rgba(40, 60, 90, .35)); }
-  .df-petal { filter: drop-shadow(0 1.5px 2.5px rgba(0, 0, 0, .08)); }
+  /* 밝은 바탕에서 메뉴가 묻히지 않도록 링 전체에 은은한 그림자 하나(테두리 없음) */
+  .df-ring { filter: drop-shadow(0 8px 22px rgba(18, 28, 45, .10)); }
+  .df-petal { --h: 0; filter: drop-shadow(0 .5px .6px rgba(18, 28, 45, .10)) drop-shadow(0 calc(4px + 1px * var(--h)) calc(5.5px + 1.5px * var(--h)) rgba(18, 28, 45, calc(.06 + .04 * var(--h)))); }
   .df-seg-t { font-size: 11.5px; font-weight: 500; letter-spacing: 1.4px; fill: #2c2c2e; text-anchor: middle; dominant-baseline: central; }
-  .df-seg-t.on { fill: #fff; }
+  .df-seg-t.on { fill: #3c608a; font-weight: 600; }
+  .df-sub > g { filter: drop-shadow(0 .5px .6px rgba(18, 28, 45, .10)) drop-shadow(0 4px 5.5px rgba(18, 28, 45, .06)); }
   .df-sub-t { font-size: 10.5px; font-weight: 500; letter-spacing: .4px; fill: #2c2c2e; text-anchor: middle; dominant-baseline: central; }
-  .df-sub-t.on { fill: #fff; font-weight: 600; }
+  .df-sub-t.on { fill: #3c608a; font-weight: 600; }
   /* 안내 문구 (HintLabel) */
   .df-hint { z-index: 4; opacity: 0; }
   .df-hint span { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); white-space: nowrap; padding: 5.5px 12px; border-radius: 99px;
-    font-size: 11px; letter-spacing: .2px; color: #2c2c2e; background: rgba(250, 250, 252, .94); box-shadow: 0 0 0 .6px rgba(255, 255, 255, .8), 0 2px 6px rgba(0, 0, 0, .08); }
+    font-size: 11px; letter-spacing: .2px; color: #2c2c2e; background: linear-gradient(180deg, #fefdfc, #f6f5f2); box-shadow: 0 .5px 1.2px rgba(18, 28, 45, .10), 0 4px 11px rgba(18, 28, 45, .06); }
   .df-hint span:first-child { color: rgba(44, 44, 46, .82); }
   /* 마지막 섹션: 포물선 (사진 카드) */
   .df-cta { position: relative; width: 100%; max-width: 1080px; margin: -12px auto 0; }
@@ -259,17 +261,17 @@
   .df-menu { width: 190px; padding: 5px; box-sizing: border-box; border-radius: 10px; opacity: 0; z-index: 9; }
   .df-strip > .df-cursor { z-index: 10; }
   .df-menu {
-    background: rgba(246, 246, 248, .96); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .14), 0 10px 30px rgba(29, 45, 70, .16);
+    background: rgba(246, 246, 248, .96); box-shadow: 0 0 0 .5px rgba(18, 28, 45, .14), 0 10px 30px rgba(18, 28, 45, .16);
     font-size: 13px; line-height: 22px; color: #1d1d1f; }
   .df-menu b, .df-menu span { display: block; padding: 0 9px; border-radius: 5px; font-weight: 400; white-space: nowrap; }
   .df-menu b { --on: 0; background: rgb(96 138 180 / var(--on)); color: color-mix(in srgb, #fff calc(var(--on) * 100%), #1d1d1f); }
   .df-menu hr { border: 0; height: 1px; margin: 4px 9px; background: rgba(0, 0, 0, .1); }
   @media (max-width: 599px) { .df-cap { font-size: 24px; } .df-dot { padding: 12px 5px !important; } .df-dot i { height: 10px; width: calc(10px + 20px * var(--on)); border-radius: 5px; } .df-nav { width: 44px; height: 44px; } .df-nav svg { width: 22px; height: 22px; } .df-menu { font-size: 18px; line-height: 30px; width: 250px; } }
   .df-card { display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0; will-change: transform, opacity; }
-  .df-card .ph { width: 92px; height: 68px; border-radius: 5px; border: 2.5px solid #fff; box-sizing: border-box; box-shadow: 0 6px 18px rgba(29, 45, 70, .12), 0 1px 3px rgba(29, 45, 70, .1); }
-  .df-card .df-doc { width: 58px; filter: drop-shadow(0 5px 12px rgba(29, 45, 70, .16)); }
-  .df-card .df-folder { width: 92px; filter: drop-shadow(0 5px 12px rgba(29, 45, 70, .14)); }
-  .df-card span { font-size: 12px; line-height: 1.45; padding: 1px 8px; border-radius: 5px; white-space: nowrap; color: #1d1d1f; background: rgba(255, 255, 255, .94); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .06); }
+  .df-card .ph { width: 92px; height: 68px; border-radius: 5px; border: 2.5px solid #fff; box-sizing: border-box; box-shadow: 0 6px 18px rgba(18, 28, 45, .12), 0 1px 3px rgba(18, 28, 45, .1); }
+  .df-card .df-doc { width: 58px; filter: drop-shadow(0 5px 12px rgba(18, 28, 45, .16)); }
+  .df-card .df-folder { width: 92px; filter: drop-shadow(0 5px 12px rgba(18, 28, 45, .14)); }
+  .df-card span { font-size: 12px; line-height: 1.45; padding: 1px 8px; border-radius: 5px; white-space: nowrap; color: #1d1d1f; background: rgba(255, 255, 255, .94); box-shadow: 0 0 0 .5px rgba(18, 28, 45, .06); }
   .df-card.new span { background: var(--sky-deep); color: #fff; box-shadow: none; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; }
@@ -280,6 +282,7 @@
   .how div { padding-top: 24px; border-top: 1px solid var(--line); }
   .how b { display: block; font-size: 40px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; margin-bottom: 14px;
     background: linear-gradient(120deg, var(--a), var(--b)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .how p b.t { display: inline; font-size: inherit; font-weight: 600; letter-spacing: 0; line-height: inherit; margin: 0; background: none; color: var(--ink) !important; -webkit-text-fill-color: currentColor; }
   .how h3 { margin: 0 0 8px; font-size: 21px; letter-spacing: -0.02em; line-height: 1.3; }
   .how p { margin: 0; font-size: 16px; color: var(--ink-2); line-height: 1.6; }
 
@@ -308,7 +311,7 @@
   /* 시스템 설정 창 목업 */
   .win {
     border-radius: 14px; background: #ececec; overflow: hidden; color: #1d1d1f; font-size: 13px;
-    box-shadow: 0 0 0 .5px rgba(0, 0, 0, .2), 0 30px 60px rgba(30, 30, 60, .14), 0 8px 18px rgba(30, 30, 60, .06);
+    box-shadow: 0 0 0 .5px rgba(18, 28, 45, .2), 0 30px 60px rgba(18, 28, 45, .14), 0 8px 18px rgba(18, 28, 45, .06);
     letter-spacing: -0.01em;
   }
   .win-top { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; background: #f6f6f6; border-bottom: 1px solid #dcdcdc; }
@@ -319,19 +322,19 @@
   .side { background: #e3e3e6; padding: 12px 8px; font-size: 12px; color: #3a3a3c; }
   .side div { padding: 5px 8px; border-radius: 6px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
   .side div::before { content: ""; width: 16px; height: 16px; border-radius: 4px; background: var(--c, #8e8e93); flex: none; }
-  .side .on { background: var(--blue); color: #fff; }
+  .side .on { background: var(--btn-bg); color: var(--btn-ink); }
   .side .on::before { background: #fff; opacity: .9; }
   .pane { background: #f6f6f6; padding: 18px; }
   .pane h5 { margin: 0 0 10px; font-size: 13px; color: #6e6e73; font-weight: 600; }
-  .group { background: #fff; border-radius: 10px; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .1); }
+  .group { background: #fff; border-radius: 10px; box-shadow: 0 0 0 .5px rgba(18, 28, 45, .1); }
   .row { padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
   .row + .row { border-top: 1px solid #ececec; }
   .row .t { flex: 1; color: #3a3a3c; line-height: 1.45; }
   .row .t small { display: block; color: #8e8e93; font-size: 11px; }
-  .mac-btn { font-size: 12px; padding: 3px 12px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .2), 0 1px 1px rgba(0, 0, 0, .08); white-space: nowrap; }
-  .row.hl { background: rgba(0, 113, 227, .06); border-radius: 0 0 10px 10px; }
-  .row.hl .mac-btn { background: var(--blue); color: #fff; box-shadow: none; animation: pulse 2.2s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 113, 227, .45); } 50% { box-shadow: 0 0 0 7px rgba(0, 113, 227, 0); } }
+  .mac-btn { font-size: 12px; padding: 3px 12px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 .5px rgba(18, 28, 45, .2), 0 1px 1px rgba(18, 28, 45, .08); white-space: nowrap; }
+  .row.hl { background: rgba(60, 96, 138, .06); border-radius: 0 0 10px 10px; }
+  .row.hl .mac-btn { background: var(--btn-bg); color: var(--btn-ink); box-shadow: var(--btn-shadow); animation: pulse 2.2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(60, 96, 138, .45); } 50% { box-shadow: 0 0 0 7px rgba(60, 96, 138, 0); } }
   .radio { display: flex; gap: 14px; font-size: 12px; color: #3a3a3c; white-space: nowrap; }
   .radio span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1px solid #b0b0b5; margin-right: 5px; vertical-align: -1px; }
   .radio span.on::before { border: 3px solid var(--sky-deep); width: 6px; height: 6px; }
@@ -384,7 +387,7 @@
   /* ---------- Final CTA: 히어로 락업의 축소판 ---------- */
   .final { padding: 120px 0; }
   .final-lockup { display: flex; align-items: center; justify-content: center; gap: 40px; }
-  .final-lockup img { width: 136px; height: 136px; flex: none; filter: drop-shadow(0 18px 30px rgba(76, 60, 160, .24)); }
+  .final-lockup img { width: 136px; height: 136px; flex: none; filter: drop-shadow(0 18px 30px rgba(18, 28, 45, .12)); }
   .final-lockup h2 { margin: 0 0 20px; }
   .final-lockup .cta-row { justify-content: flex-start; }
   footer { background: var(--paper); color: var(--ink-3); font-size: 12px; padding: 20px 0 32px; }
@@ -429,20 +432,24 @@
 
   /* ---------- Theme: Sky (앱과 같은 밝은 그레이 + 스카이 블루) ---------- */
   :root {
-    --mist: #eeeff2; --mist-low: #dee0e5;
-    --sky-light: #cee2f4; --sky-soft: #a8c6e4; --sky-deep: #608ab4; --sky-deeper: #4a6f96; --sky-text: #3c608a;
-    --apple-top: #bad4ee; --apple-bottom: #8eb2d8;
+    --mist: #fcfcfa; --mist-low: #f3f2ee;
+    /* 하늘색은 두 단계만: 밝은 하늘(사과와 같은 #cce1f5→#a3c4e6)과 글자색 #3c608a, 그리고 그 투명도 변형 */
+    --sky-light: #cce1f5; --sky-soft: #a3c4e6; --sky-deep: #3c608a; --sky-deeper: #3c608a; --sky-text: #3c608a;
+    --btn-bg: linear-gradient(180deg, #cce1f5, #a3c4e6); --btn-ink: #3c608a;
+    --btn-shadow: 0 .5px 1.2px rgba(18, 28, 45, .12), 0 4px 12px rgba(18, 28, 45, .08);
+    --btn-shadow-hover: 0 .5px 1.2px rgba(18, 28, 45, .14), 0 6px 16px rgba(18, 28, 45, .11);
+    --apple-top: #cce1f5; --apple-bottom: #a3c4e6;
     --ink: #1d1d1f; --ink-2: #5d6673; --ink-3: #8a929e; --line: rgba(60, 96, 138, .14);
     --paper: #f3f4f7; --link: #3c608a;
     --blue: var(--sky-deeper);
-    --grad: linear-gradient(180deg, #7fa5cc 0%, #4a6f96 100%);
   }
   body { background: #fbfbfd; }
   ::selection { background: rgba(142, 178, 216, .35); }
   .nav { background: rgba(251, 251, 253, .78); border-bottom-color: var(--line); }
-  .pill { background: var(--blue); box-shadow: none; transition: background .2s; }
-  .pill:hover { background: #3f6189; filter: none; }
-  .pill.lg { box-shadow: none; padding: 12px 24px; min-width: 0; }
+  .pill { background: var(--btn-bg); color: var(--btn-ink); font-weight: 500; box-shadow: var(--btn-shadow); transition: box-shadow .25s; }
+  .pill:hover { background: var(--btn-bg); box-shadow: var(--btn-shadow-hover); filter: none; }
+  .pill.lg { box-shadow: var(--btn-shadow); padding: 12px 24px; min-width: 0; }
+  .pill.lg:hover { box-shadow: var(--btn-shadow-hover); }
   .more { color: var(--link); }
   .label { color: var(--sky-deep); font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
   .chips { color: var(--sky-text); font-size: 12px; font-weight: 500; letter-spacing: .18em; gap: 6px 18px; opacity: .85; }
@@ -453,7 +460,7 @@
 
   /* 단계 / 카드 */
   .how b { background: none; -webkit-text-fill-color: var(--sky-deep); color: var(--sky-deep); font-weight: 300; font-size: 32px; letter-spacing: .04em; }
-  .step { box-shadow: 0 0 0 1px rgba(60, 96, 138, .05), 0 10px 30px rgba(60, 96, 138, .06); }
+  .step { box-shadow: 0 0 0 1px rgba(18, 28, 45, .05), 0 10px 30px rgba(18, 28, 45, .06); }
   .step .n { background: transparent; color: var(--sky-deep); box-shadow: 0 0 0 1.2px var(--sky-soft); font-weight: 500; }
   .sec-steps .k { background: transparent; color: var(--sky-deep); box-shadow: 0 0 0 1.2px var(--sky-soft); font-weight: 500; }
   .term { background: var(--paper); }
@@ -477,42 +484,42 @@
     .final { padding: 88px 0 96px; }
     .final-stack .cta-row { margin-top: 26px; flex-direction: column; gap: 16px; }
   }
-  .toast { background: rgba(255, 255, 255, .92); color: var(--sky-text); box-shadow: 0 0 0 .6px rgba(60, 96, 138, .15), 0 10px 30px rgba(29, 45, 70, .12); }
+  .toast { background: rgba(255, 255, 255, .92); color: var(--sky-text); box-shadow: 0 0 0 .6px rgba(18, 28, 45, .15), 0 10px 30px rgba(18, 28, 45, .12); }
   /* 첫 실행 안내 애니메이션 (12초 반복): ① 경고 창 '완료' ② 설정 '그래도 열기' ③ 암호 → 열림
      왼쪽 단계 번호가 같은 시각에 함께 켜진다. 커서 목표 좌표는 스크립트가 실제 버튼 위치로 넣는다 */
   .walk { position: relative; }
   .walk > * { animation-duration: 12s; animation-iteration-count: infinite; animation-timing-function: cubic-bezier(.45, 0, .2, 1); }
   .walk .row.hl .mac-btn { animation: wkOpen 12s infinite; }
-  .wk-scrim { position: absolute; inset: 0; border-radius: 14px; background: rgba(20, 24, 32, .18); opacity: 0; animation-name: wkScrim; }
+  .wk-scrim { position: absolute; inset: 0; border-radius: 14px; background: rgba(18, 28, 45, .18); opacity: 0; animation-name: wkScrim; }
   .wk-alert { position: absolute; left: 50%; top: 50%; width: 248px; margin-left: -124px; transform: translateY(-50%) scale(.96); box-sizing: border-box;
     padding: 18px 16px 14px; border-radius: 14px; text-align: center; color: #1d1d1f;
-    background: rgba(246, 246, 248, .97); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .18), 0 20px 50px rgba(20, 24, 40, .22); opacity: 0; }
+    background: rgba(246, 246, 248, .97); box-shadow: 0 0 0 .5px rgba(18, 28, 45, .18), 0 20px 50px rgba(18, 28, 45, .22); opacity: 0; }
   .wk-alert img, .wk-lock { display: block; width: 56px; height: 56px; margin: 0 auto 8px; }
   .wk-lock { width: 40px; height: 40px; margin-bottom: 10px; }
   .wk-alert b { display: block; font-size: 13px; letter-spacing: -0.01em; }
   .wk-alert p { margin: 6px 0 12px; font-size: 11px; line-height: 1.45; color: #3a3a3c; }
-  .wk-btn { display: block; margin-top: 6px; padding: 5px 0; border-radius: 7px; font-size: 12.5px; background: #fff; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .14), 0 .5px 1px rgba(0, 0, 0, .06); }
-  .wk-btn.def { background: #0a84ff; color: #fff; box-shadow: none; }
+  .wk-btn { display: block; margin-top: 6px; padding: 5px 0; border-radius: 7px; font-size: 12.5px; background: #fff; box-shadow: 0 0 0 .5px rgba(18, 28, 45, .14), 0 .5px 1px rgba(18, 28, 45, .06); }
+  .wk-btn.def { background: var(--btn-bg); color: var(--btn-ink); box-shadow: var(--btn-shadow); }
   .wk-warn { animation-name: wkWarn; }
   .wk-pass { animation-name: wkPass; }
   .wk-field { display: block; height: 24px; margin-bottom: 8px; padding: 0 8px; border-radius: 6px; background: #fff; text-align: left; font-size: 13px; line-height: 24px; letter-spacing: 1px;
-    box-shadow: 0 0 0 1px rgba(10, 132, 255, .55), 0 0 0 3.5px rgba(10, 132, 255, .18); overflow: hidden; }
+    box-shadow: 0 0 0 1px rgba(60, 96, 138, .55), 0 0 0 3.5px rgba(60, 96, 138, .18); overflow: hidden; }
   .wk-field i { display: inline-block; font-style: normal; overflow: hidden; vertical-align: top; white-space: nowrap; width: 0; animation: wkType 12s steps(8, end) infinite; }
   #wkDone { animation: wkPressDone 12s infinite; }
   #wkOk { animation: wkPressOk 12s infinite; }
   .wk-done { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.96); display: flex; align-items: center; gap: 12px; white-space: nowrap;
-    padding: 12px 18px 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, .96); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .1), 0 16px 40px rgba(30, 40, 70, .16); opacity: 0; animation-name: wkDoneIn; }
+    padding: 12px 18px 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, .96); box-shadow: 0 0 0 .5px rgba(18, 28, 45, .1), 0 16px 40px rgba(18, 28, 45, .16); opacity: 0; animation-name: wkDoneIn; }
   .wk-done img { width: 36px; height: 36px; }
   .wk-done b { display: block; font-size: 14px; letter-spacing: -0.01em; }
   .wk-done small { display: block; margin-top: 2px; font-size: 12px; color: var(--ink-2); }
-  .wk-cur { position: absolute; left: 0; top: 0; width: 17px; height: 24px; z-index: 3; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .3)); opacity: 0; animation-name: wkCur; }
+  .wk-cur { position: absolute; left: 0; top: 0; width: 17px; height: 24px; z-index: 3; filter: drop-shadow(0 1px 1.5px rgba(18, 28, 45, .3)); opacity: 0; animation-name: wkCur; }
   @keyframes wkScrim { 0%, 1% { opacity: 0; } 4%, 20% { opacity: 1; } 24%, 43% { opacity: 0; } 46%, 68% { opacity: 1; } 72%, 100% { opacity: 0; } }
   @keyframes wkWarn { 0%, 1% { opacity: 0; transform: translateY(-50%) scale(.96); } 5%, 20% { opacity: 1; transform: translateY(-50%) scale(1); } 24%, 100% { opacity: 0; transform: translateY(-50%) scale(.98); } }
   @keyframes wkPass { 0%, 43% { opacity: 0; transform: translateY(-50%) scale(.96); } 47%, 68% { opacity: 1; transform: translateY(-50%) scale(1); } 72%, 100% { opacity: 0; transform: translateY(-50%) scale(.98); } }
   @keyframes wkType { 0%, 50% { width: 0; } 60%, 100% { width: 8.5em; } }
   @keyframes wkPressDone { 0%, 17% { filter: none; } 18%, 19% { filter: brightness(.82); } 20%, 100% { filter: none; } }
   @keyframes wkPressOk { 0%, 64% { filter: none; } 65%, 66% { filter: brightness(.82); } 67%, 100% { filter: none; } }
-  @keyframes wkOpen { 0%, 24% { filter: none; box-shadow: none; } 28%, 38% { filter: none; box-shadow: 0 0 0 3px rgba(96, 138, 180, .28); } 39%, 40% { filter: brightness(.82); } 41%, 70% { filter: none; box-shadow: none; } }
+  @keyframes wkOpen { 0%, 24% { filter: none; box-shadow: none; } 28%, 38% { filter: none; box-shadow: 0 0 0 3px rgba(60, 96, 138, .28); } 39%, 40% { filter: brightness(.82); } 41%, 70% { filter: none; box-shadow: none; } }
   @keyframes wkDoneIn { 0%, 72% { opacity: 0; transform: translate(-50%, -50%) scale(.96); } 76%, 92% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 96%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
   @keyframes wkCur {
     0% { opacity: 0; transform: translate(var(--x0), var(--y0)); }
@@ -540,6 +547,7 @@
   .settings-btn { margin-top: 28px; font-size: 15px; padding: 10px 20px; }
   #security { align-items: start; }
   .guide-note { margin: 14px 0 0; font-size: 13px; color: var(--ink-3); }
+  .how + .guide-note { margin-top: 32px; }
   .step p a, .cta-alt { color: var(--link); }
   .step p a:hover, .cta-alt:hover { text-decoration: underline; }
   .cta-alt { font-size: 17px; }
@@ -558,15 +566,15 @@
   .rate { display: flex; flex-wrap: wrap; gap: 8px; }
   .rate input { position: absolute; opacity: 0; pointer-events: none; }
   .rate label { font-size: 14px; padding: 8px 16px; border-radius: 980px; background: #fff; color: var(--ink-2); cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .14); transition: background .28s var(--ease), color .28s var(--ease), box-shadow .28s var(--ease); }
-  .rate label:hover { color: var(--ink); box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .3); }
-  .rate input:checked + label { background: var(--sky-light); color: var(--sky-text); box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .22); }
+    box-shadow: inset 0 0 0 1px rgba(18, 28, 45, .14); transition: background .28s var(--ease), color .28s var(--ease), box-shadow .28s var(--ease); }
+  .rate label:hover { color: var(--ink); box-shadow: inset 0 0 0 1px rgba(18, 28, 45, .3); }
+  .rate input:checked + label { background: var(--sky-light); color: var(--sky-text); box-shadow: inset 0 0 0 1px rgba(18, 28, 45, .22); }
   .rate input:focus-visible + label { outline: 2px solid var(--sky-deep); outline-offset: 2px; }
   .fb textarea, .fb input[type=email] { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 0; border-radius: 14px;
-    padding: 14px 16px; box-shadow: inset 0 0 0 1px rgba(60, 96, 138, .14); transition: box-shadow .28s var(--ease); }
+    padding: 14px 16px; box-shadow: inset 0 0 0 1px rgba(18, 28, 45, .14); transition: box-shadow .28s var(--ease); }
   .fb textarea { min-height: 132px; resize: vertical; line-height: 1.55; }
   .fb textarea::placeholder, .fb input::placeholder { color: var(--ink-3); }
-  .fb textarea:focus, .fb input[type=email]:focus { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(168, 198, 228, .35); }
+  .fb textarea:focus, .fb input[type=email]:focus { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(163, 196, 230, .35); }
   .fb .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .fb-foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .fb-foot .pill { border: 0; font: inherit; font-size: 16px; padding: 11px 26px; cursor: pointer; }
@@ -633,8 +641,9 @@
         Mac용 다운로드
       </a>
       <button class="pill lg copy-only" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
-      <a class="cta-alt mac-only" href="#install">처음 열 때 경고가 뜬다면 ›</a>
+      <a class="cta-alt mac-only" href="#install">설치 방법 ›</a>
     </div>
+    <p class="pro-note">0.5 Pro 미리 써 보기 · 정식판 전까지 Pro 기능 무료</p>
     <div class="notice" role="note">
       <strong>Dropfit은 Mac 전용 앱입니다.</strong>
       Mac의 카카오톡에서 이 링크를 다시 열면 바로 받을 수 있습니다.
@@ -665,73 +674,14 @@
     <div class="sec-head">
       <p class="label reveal">Install</p>
       <h2 class="sec-title reveal" id="install-title">1분이면 충분합니다.</h2>
-      <p class="sec-sub reveal">테스트 버전이라 처음 한 번은 Mac이 확인을 요청합니다. <span class="nb">순서대로 따라 하면 됩니다.</span></p>
+      <p class="sec-sub reveal">Apple 공증을 받은 앱이라 <span class="nb">경고 없이 바로 열립니다.</span></p>
     </div>
-
-    <div class="sec-grid walk-on" id="security">
-      <div class="reveal">
-        <ol class="sec-steps">
-          <li><span class="k">1</span><div><h4>열기</h4><p>받은 zip을 열면 생기는 <b>Dropfit</b> 폴더에서 <span class="nb">Dropfit을 엽니다.</span></p></div></li>
-          <li><span class="k">2</span><div><h4>경고 창 닫기</h4><p>처음 한 번 뜨는 경고에서 <b>완료</b>를 누릅니다. <span class="nb">(macOS 14는 <b>확인</b>)</span></p></div></li>
-          <li><span class="k">3</span><div><h4>그래도 열기</h4><p>아래 버튼으로 설정을 열고 <b>그래도 열기</b>를 누른 뒤 <span class="nb">암호를 입력합니다.</span></p></div></li>
-          <li><span class="k">4</span><div><h4>옮기기</h4><p>“응용 프로그램 폴더로 옮길까요?”에서 <span class="nb"><b>옮기기</b>를 누르면 끝입니다.</span></p></div></li>
-        </ol>
-        <a class="pill settings-btn mac-only" href="x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension">개인정보 보호 및 보안 열기</a>
-        <p class="guide-note">받은 폴더 안 ‘설치 방법’에도 같은 안내가 있습니다.</p>
-      </div>
-
-      <div class="walk reveal" id="walk" role="img" aria-label="경고 창에서 완료, 시스템 설정에서 그래도 열기, 암호 입력 순서를 보여 주는 애니메이션">
-        <div class="win">
-          <div class="win-top" aria-hidden="true"><i></i><i></i><i></i><span>개인정보 보호 및 보안</span></div>
-          <div class="win-body" aria-hidden="true">
-            <div class="side">
-              <div style="--c:#8e8e93">일반</div>
-              <div style="--c:#0a84ff">손쉬운 사용</div>
-              <div style="--c:#5e5ce6">데스크탑 및 Dock</div>
-              <div style="--c:#34c759">디스플레이</div>
-              <div class="on">개인정보 보호 및 보안</div>
-              <div style="--c:#ff9f0a">Touch ID 및 암호</div>
-            </div>
-            <div class="pane">
-              <h5>보안</h5>
-              <div class="group">
-                <div class="row"><div class="t">다음에서 응용 프로그램 허용<div class="radio" style="margin-top:6px"><span>App Store</span><span class="on">App Store 및 알려진 개발자</span></div></div></div>
-                <div class="row hl"><div class="t">“Dropfit”이(가) 확인된 개발자가 아니므로 사용이 차단되었습니다.<small>Dropfit.app</small></div><span class="mac-btn" id="wkOpen">그래도 열기</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="wk-scrim" aria-hidden="true"></div>
-        <div class="wk-alert wk-warn" aria-hidden="true">
-          <img src="assets/icon-128.png" width="56" height="56" alt="">
-          <b>“Dropfit”이(가) 열리지 않음</b>
-          <p>Apple은 “Dropfit”에 Mac에 손상을 입히거나 개인정보를 침해할 수 있는 악성 코드가 없음을 확인할 수 없습니다.</p>
-          <span class="wk-btn def" id="wkDone">완료</span>
-          <span class="wk-btn">휴지통으로 이동</span>
-        </div>
-        <div class="wk-alert wk-pass" aria-hidden="true">
-          <svg class="wk-lock" viewBox="0 0 40 40"><rect x="9" y="17" width="22" height="17" rx="3.5" fill="#8e8e93"/><path d="M14 17v-4a6 6 0 0 1 12 0v4" fill="none" stroke="#8e8e93" stroke-width="2.6"/></svg>
-          <b>시스템 설정</b>
-          <p>“Dropfit”을(를) 열려고 합니다. 허용하려면 암호를 입력하십시오.</p>
-          <span class="wk-field" id="wkField"><i>••••••••</i></span>
-          <span class="wk-btn def" id="wkOk">설정 변경</span>
-          <span class="wk-btn">취소</span>
-        </div>
-        <div class="wk-done" aria-hidden="true"><img src="assets/icon-128.png" width="36" height="36" alt=""><div><b>Dropfit이 열렸습니다</b><small>다음부터는 바로 열립니다.</small></div></div>
-        <svg class="wk-cur" viewBox="0 0 17 24" aria-hidden="true"><path d="M1.5 1.5v17.2l4.3-4.2 2.9 6.8 3-1.3-2.9-6.7h6z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      </div>
+    <div class="how reveal">
+      <div><b>01</b><h3>열기</h3><p>받은 zip을 열면 생기는 <b class="t">Dropfit</b> 폴더에서 Dropfit을 더블클릭합니다.</p></div>
+      <div><b>02</b><h3>열기 확인</h3><p>“인터넷에서 다운로드한 앱”이라는 확인 창에서 <b class="t">열기</b>를 누릅니다.</p></div>
+      <div><b>03</b><h3>옮기기</h3><p>“응용 프로그램 폴더로 옮길까요?”에서 <b class="t">옮기기</b>를 누르면 끝입니다.</p></div>
     </div>
-
-    <details class="fallback reveal">
-      <summary>그래도 열리지 않는다면</summary>
-      <div class="term">
-        <div class="tx">
-          <p>터미널에 아래 한 줄을 붙여 넣은 뒤 Dropfit을 다시 여세요. <span class="nb">Dropfit 한 앱에만 적용됩니다.</span></p>
-          <code id="cmd">xattr -dr com.apple.quarantine ~/Downloads/Dropfit/Dropfit.app ~/Downloads/Dropfit.app /Applications/Dropfit.app 2&gt;/dev/null</code>
-        </div>
-        <button class="ghost" type="button" data-copy="#cmd">명령어 복사</button>
-      </div>
-    </details>
+    <p class="guide-note reveal">받은 폴더 안 ‘설치 방법’에도 같은 안내가 있습니다.</p>
   </div>
 </section>
 
@@ -756,8 +706,20 @@
         <p>아니요. 변환은 모두 Mac 안에서 이루어지고, 파일은 어디에도 전송되지 않습니다.</p>
       </details>
       <details>
+        <summary>안전한 앱인가요?</summary>
+        <p>네. Dropfit은 Apple 공증을 받은 앱입니다. Apple이 악성 코드 검사를 마친 앱이라 처음 열 때도 경고 없이 열립니다.</p>
+      </details>
+      <details>
+        <summary>파일 용량을 정해서 줄일 수 있나요?</summary>
+        <p>네. Dropfit을 우클릭해 <b>설정…</b>(⌘,)을 열고 포맷마다 기본 용량을 정해 두면, 그 칸에 놓을 때 파일 하나당 그 크기 이하로 맞춥니다. 이미지는 2MB · 1MB · 500KB, PDF는 10MB · 5MB · 2MB 중에서 고르거나 직접 입력할 수 있고, 파일 이름에 ‘(2MB)’처럼 표시됩니다. Pro 기능이며 0.5에서는 무료입니다.</p>
+      </details>
+      <details>
+        <summary>원형 메뉴에 나오는 포맷을 바꿀 수 있나요?</summary>
+        <p>네. 같은 설정 창에서 원형 메뉴에 놓을 포맷을 고르고 순서를 정할 수 있습니다. Pro 기능이며 0.5에서는 무료입니다.</p>
+      </details>
+      <details>
         <summary>무료인가요?</summary>
-        <p>네, 테스트 버전은 무료입니다.</p>
+        <p>네. 기본 변환, PDF 합치기·나누기, 폴더째 변환은 계속 무료입니다. 0.5는 <b>Pro 미리 써 보기</b> 버전이라 정식판이 나오기 전까지 Pro 기능도 무료로 쓰실 수 있습니다.</p>
       </details>
       <details>
         <summary>변환한 파일은 어디에 저장되나요?</summary>
@@ -861,7 +823,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Dropfit 0.4 · 테스트 버전</span>
+    <span>Dropfit 0.5 · Pro 미리 써 보기</span>
   </div>
 </footer>
 
@@ -880,10 +842,10 @@
       clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
     }
     // 다운로드 수: 버튼을 누를 때 시각·버전·유입 채널만 보낸다 (개인정보 없음). 주소가 비어 있으면 아무것도 하지 않는다
-    // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.4 seasoning'
+    // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.5 seasoning'
     var FROM = '';
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
-    var VERSION = '0.4' + (FROM ? ' ' + FROM : '');
+    var VERSION = '0.5' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     document.querySelectorAll('a[href="Dropfit-macOS.zip"]').forEach(function (a) {
       a.addEventListener('click', function () {
@@ -992,6 +954,6 @@
 
   })();
 </script>
-<script src="demo.js?v=6" defer></script>
+<script src="demo.js?v=9" defer></script>
 </body>
 </html>
