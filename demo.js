@@ -827,7 +827,7 @@
   };
 
   /* ================= 마지막 섹션: 기능별 장면이 옆으로 넘어가는 슬라이드 =================
-     한 장 → 여러 장 → 폴더째 → PDF 한 권으로. 장면마다 자기 오브를 갖고, 끝나면 띠 전체가 한 칸 옆으로 간다.
+     한 장 → 여러 장 → 폴더째 → PDF 한 권으로 → 자르기. 장면마다 자기 오브를 갖고, 끝나면 띠 전체가 한 칸 옆으로 간다.
      마지막 뒤에는 첫 장면의 시작 화면(빈 오브)과 같은 칸을 하나 더 두어 처음으로 이음매 없이 돌아간다. */
   var CTA = {
     spec: function (w) {
@@ -840,7 +840,7 @@
       st.host.style.height = (H * spec.s).toFixed(1) + 'px';
       var cy = mob ? 200 : 180;
       var X = mob ? 185 : 340, CS = mob ? 0.8 : 1, ARC = mob ? 130 : 170;
-      var CAPS = ['한 장', '여러 장 한꺼번에', '폴더째', 'PDF 한 권으로'];
+      var CAPS = ['한 장', '여러 장 한꺼번에', '폴더째', 'PDF 한 권으로', '자르기'];
       var N = CAPS.length, SLIDE = 1.0;
       var strip = el('div', 'df-strip', root), shift = new P(0);
       strip.style.width = (W * (N + 1)) + 'px'; strip.style.height = H + 'px';
@@ -894,7 +894,7 @@
       }
       var t = 0, idx = 0;
       // 장면 i의 원본은 칸이 들어오는 동안 이미 놓여 있다(첫 장면만 제자리에서 나타남)
-      function scene(pn, items, outs, fmt, disabled, count, folder, sub) {
+      function scene(pn, items, outs, fmt, disabled, count, folder, sub, crop) {
         var c = pn.c, app = pn.app, hole = { x: c.x, y: c.y - 4 };
         var src = items.map(function (f) { return card(f); });
         src.forEach(function (o) { if (idx === 0) o.op.to(t, 1, ease(EO, 0.5)); else o.op.to(t - SLIDE, 1); });
@@ -909,9 +909,12 @@
         app.enter(te, pn.ring, { length: count, photo: items[0].photo || 'p2', choices: !!sub }, disabled);
         var th = te + 0.8;
         if (st.still == null) st.still = th + 0.35;
-        app.hover(th, fmt);
+        if (crop) {   // 자르기: 가운데에 머물면 오브가 '자르기' 칸이 되고, 놓으면 4:5로 잘린 사본이 나온다
+          pn.orb.crop.to(th, 1, Motion.hover); pn.orb.scale.to(th, 1.05, Motion.orb);
+          pn.orb.crop.to(th + 0.65, 0, Motion.hover);
+        } else app.hover(th, fmt);
         if (sub) { th += 0.7; app.hover(th, fmt, 'c'); }   // PDF: 보조 칸이 펼쳐진 뒤 '합치기'에 놓는다
-        var r = app.drop(th + 0.65, FORMATS[fmt][0], count, outs.length);
+        var r = app.drop(th + 0.65, crop ? '4:5' : FORMATS[fmt][0], count, outs.length);
         outs.forEach(function (f, i) {
           var o = card(f, true); flight(o, hole, f.pos, CS * 0.4, CS);
           var dd = (folder ? r.start : r.finish[Math.round((i + 1) / outs.length * count) - 1]) + 0.05 + i * 0.12;
@@ -935,8 +938,8 @@
           return { name: nm + ext, photo: PHOTOS[i], pos: { x: c.x + side * X + off, y: c.y + 30 } };
         });
       }
-      var p0 = panel(0), p1 = panel(1), p2 = panel(2), p3 = panel(3);
-      panel(4);   // 처음과 같은 빈 화면
+      var p0 = panel(0), p1 = panel(1), p2 = panel(2), p3 = panel(3), p4 = panel(4);
+      panel(5);   // 처음과 같은 빈 화면
 
       scene(p0, row(p0.c, ['여행'], -1, '.heic'), row(p0.c, ['여행'], 1, '.png'), 1, 2, 1);
       next();
@@ -947,6 +950,9 @@
         [{ name: '여행 (PNG)', folder: true, pos: { x: p2.c.x + X, y: p2.c.y + 30 } }], 1, 2, 48, true);
       next();
       scene(p3, row(p3.c, many, -1, '.heic'), [{ name: '바다 외 ' + (many.length - 1) + '장.pdf', pdf: true, pos: { x: p3.c.x + X, y: p3.c.y + 30 } }], PDF, 2, many.length, false, true);
+      next();
+      scene(p4, [{ name: '바다.heic', photo: 'p0', pos: { x: p4.c.x - X, y: p4.c.y + 30 } }],
+        [{ name: '바다 (자름).heic', photo: 'p0 crop', pos: { x: p4.c.x + X, y: p4.c.y + 30 } }], 1, 2, 1, false, false, true);
       next();
 
 
