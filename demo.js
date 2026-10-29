@@ -13,7 +13,7 @@
 
   var C = {
     graphite: '#2c2c2e', pearl: '#fefdfc', veil: '#f6f5f2',
-    skySoft: '#a8c6e4', skyDeep: '#608ab4', skyText: '#3c608a',
+    skySoft: '#cce1f5', skyDeep: '#a3c4e6', skyText: '#3c608a', skyLine: 'rgba(60,96,138,.85)',
     appleTop: '#cce1f5', appleBottom: '#a3c4e6'
   };
   var M = { orb: 60, thick: 54, ring: 74, minArc: 46, fanArc: 116, gap: 4, pad: 72, panel: 112, subGap: 6, subThick: 34 };
@@ -190,10 +190,10 @@
     el('div', 'df-orb-body', e);
     this.eScan = sv('svg', { 'class': 'df-scan', viewBox: '0 0 53 53' }, e);
     var r1 = 26.5 - 0.6, L1 = 2 * Math.PI * r1;
-    this.eScanC = sv('circle', { cx: 26.5, cy: 26.5, r: r1, fill: 'none', stroke: C.skyDeep, 'stroke-opacity': 0.45, 'stroke-width': 1.2, 'stroke-linecap': 'round', 'stroke-dasharray': (L1 * 0.18).toFixed(2) + ' ' + L1.toFixed(2) }, this.eScan);
+    this.eScanC = sv('circle', { cx: 26.5, cy: 26.5, r: r1, fill: 'none', stroke: C.skyLine, 'stroke-opacity': 0.45, 'stroke-width': 1.2, 'stroke-linecap': 'round', 'stroke-dasharray': (L1 * 0.18).toFixed(2) + ' ' + L1.toFixed(2) }, this.eScan);
     this.eProg = sv('svg', { 'class': 'df-prog', viewBox: '0 0 60 60' }, e);
     this.L2 = 2 * Math.PI * 30;
-    this.eProgC = sv('circle', { cx: 30, cy: 30, r: 30, fill: 'none', stroke: C.skyDeep, 'stroke-width': 1.6, 'stroke-linecap': 'round', transform: 'rotate(-90 30 30)', 'stroke-dasharray': this.L2.toFixed(2) + ' ' + this.L2.toFixed(2) }, this.eProg);
+    this.eProgC = sv('circle', { cx: 30, cy: 30, r: 30, fill: 'none', stroke: C.skyLine, 'stroke-width': 1.6, 'stroke-linecap': 'round', transform: 'rotate(-90 30 30)', 'stroke-dasharray': this.L2.toFixed(2) + ' ' + this.L2.toFixed(2) }, this.eProg);
     this.eGlyph = el('div', 'df-orb-glyph', e, GLYPH.replace(/\{u\}/g, u));
     this.eThumb = el('div', 'df-thumb', e, '<i></i>');
     this.eHl = el('span', 'df-hl', e);
@@ -201,7 +201,7 @@
     this.eP = el('div', 'df-plabel', e, '<b></b><small></small>');
     this.eSpin = sv('svg', { 'class': 'df-spin', viewBox: '0 0 28 28' }, e);
     var r3 = 14 - 0.8, L3 = 2 * Math.PI * r3;
-    sv('circle', { cx: 14, cy: 14, r: r3, fill: 'none', stroke: C.skyDeep, 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-dasharray': (L3 * 0.68).toFixed(2) + ' ' + L3.toFixed(2) }, this.eSpin);
+    sv('circle', { cx: 14, cy: 14, r: r3, fill: 'none', stroke: C.skyLine, 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-dasharray': (L3 * 0.68).toFixed(2) + ' ' + L3.toFixed(2) }, this.eSpin);
     this.eDone = el('div', 'df-done', e, CHECK + '<b></b>');
     this.eBurst = el('div', 'df-burst', e);
     this.cache = {};
