@@ -186,6 +186,7 @@
     this.spin = new P(0);
     this.done = new P(0); this.doneText = new P('PNG');
     this.burst = new P(0);
+    this.crop = new P(0);            // 가운데에 머물면 오브가 '자르기' 칸이 된다
     var e = this.e = el('div', 'df-orb', parent);
     el('div', 'df-orb-body', e);
     this.eScan = sv('svg', { 'class': 'df-scan', viewBox: '0 0 53 53' }, e);
@@ -204,6 +205,7 @@
     sv('circle', { cx: 14, cy: 14, r: r3, fill: 'none', stroke: C.skyLine, 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-dasharray': (L3 * 0.68).toFixed(2) + ' ' + L3.toFixed(2) }, this.eSpin);
     this.eDone = el('div', 'df-done', e, CHECK + '<b></b>');
     this.eBurst = el('div', 'df-burst', e);
+    this.eCrop = el('div', 'df-cropc', e, '<b>자르기</b>');
     this.cache = {};
   }
   Orb.prototype.render = function (T) {
@@ -240,6 +242,7 @@
     var b = this.burst.at(T);
     this.eBurst.style.opacity = b > 0 && b < 1 ? (0.8 * (1 - b)).toFixed(3) : 0;
     this.eBurst.style.transform = 'translate(-50%,-50%) scale(' + (1 + 0.4 * b).toFixed(4) + ')';
+    this.eCrop.style.opacity = this.crop.at(T);
   };
   Orb.prototype.set = function (node, key, v) { if (this.cache[key] !== v) { node.textContent = v; this.cache[key] = v; } };
 
@@ -418,6 +421,52 @@
     this.e.style.height = Math.abs(y - this.y0).toFixed(1) + 'px';
   };
 
+
+  /* ---------- 자르기 창 (CropWindow · 0.5) ----------
+     창 684×512pt: 제목 줄 28, 왼쪽 이미지 칸 440 + 여백 22, 오른쪽 패널 200 (비율 카드 · 크기 카드 · 결과 · 저장 · 취소) */
+  var RATIOS = ['자유', '1:1', '4:5', '3:4', '16:9', '크기 지정'];
+  function CropWin(parent, name) {
+    this.op = new P(0); this.sc = new P(0.97); this.k = new P(0);
+    this.on = RATIOS.map(function (r, i) { return new P(i === 0 ? 1 : 0); });
+    this.ready = new P(0.45); this.res = new P('4,032 × 3,024 px'); this.w = new P('4032');
+    var chips = RATIOS.map(function (r, i) {
+      var x = 8 + (i % 2) * 79, y = 8 + Math.floor(i / 2) * 32;
+      return '<div class="cw-chip" style="left:' + x + 'px;top:' + y + 'px"><span>' + r + '</span><i><span>' + r + '</span></i></div>';
+    }).join('');
+    this.e = el('div', 'df-cw', parent,
+      '<div class="cw-bar"><i></i><i></i><i></i><b>자르기 · ' + name + '</b></div>' +
+      '<div class="cw-img p0"><div class="cw-frame"></div></div>' +
+      '<div class="cw-panel">' +
+        '<p class="cw-lab" style="top:20px">비율</p><div class="cw-card" style="top:40px;height:106px">' + chips + '</div>' +
+        '<p class="cw-lab" style="top:162px">크기</p><div class="cw-card" style="top:182px;height:75px">' +
+          '<span class="cw-f" style="left:10px"></span><span class="cw-x">×</span><span class="cw-f" style="left:95px">3024</span>' +
+          '<p class="cw-note">px · "크기 지정"을 누르면 입력할 수 있어요</p></div>' +
+        '<p class="cw-res"><span>결과</span><b></b></p>' +
+        '<div class="cw-save">저장</div><div class="cw-cancel">취소</div>' +
+      '</div>');
+    this.eFrame = this.e.querySelector('.cw-frame');
+    this.eChips = this.e.querySelectorAll('.cw-chip i');
+    this.eRes = this.e.querySelector('.cw-res b');
+    this.eW = this.e.querySelector('.cw-f');
+    this.eSave = this.e.querySelector('.cw-save');
+    this.cache = {};
+  }
+  CropWin.prototype.render = function (T) {
+    var o = this.op.at(T);
+    this.e.style.opacity = o;
+    this.e.style.visibility = o > 0.001 ? 'visible' : 'hidden';
+    if (o <= 0.001) return;
+    this.e.style.setProperty('--sc', this.sc.at(T).toFixed(4));
+    var k = this.k.at(T);   // 자유(사진 전체) → 4:5 (높이 그대로, 가운데)
+    this.eFrame.style.left = (88 * k).toFixed(2) + 'px';
+    this.eFrame.style.width = (440 - 176 * k).toFixed(2) + 'px';
+    for (var i = 0; i < this.eChips.length; i++) this.eChips[i].style.opacity = this.on[i].at(T);
+    this.eSave.style.opacity = this.ready.at(T);
+    var r = this.res.at(T), w = this.w.at(T);
+    if (this.cache.r !== r) { this.eRes.textContent = r; this.cache.r = r; }
+    if (this.cache.w !== w) { this.eW.textContent = w; this.cache.w = w; }
+  };
+
   /* ---------- 앱 동작 (OrbController) ---------- */
   function App(root, orb, opts) {
     this.root = root; this.orb = orb; this.opts = opts || {};
@@ -547,6 +596,8 @@
       this.dur = this.build.make(this, spec);
     }
     this.root.style.transform = 'scale(' + spec.s.toFixed(4) + ')';
+    // 창 너비가 바뀌면 높이도 같은 비율로 (안 그러면 넓힌 뒤 아래 글자와 겹친다)
+    if (spec.fit) this.host.style.height = (spec.H * spec.s).toFixed(1) + 'px';
   };
   Stage.prototype.add = function (x) { this.items.push(x); return x; };
   Stage.prototype.render = function (T) {
@@ -567,16 +618,19 @@
       var root = st.root, vis = { x0: 0, y0: 24, x1: W, y1: H };
       var col = function (c) { return W - 58 - c * 100; }, row = function (r) { return 24 + 50 + r * 98; };
       var home = { x: Math.round(W * (mob ? 0.36 : 0.42)), y: Math.round(24 + (H - 24) * 0.5) };
-      var corner = { x: W - 66, y: H - 66 };
 
       var layer = el('div', 'df-layer', root);
       var orb = new Orb(root), cursor = new Cursor(root);
       var app = new App(root, orb, { hint: true });
-      var fullL = makeLayout(6, home, vis), cornerL = makeLayout(6, corner, vis);
-      var ringFull = app.ring(fullL), ringCorner = app.ring(cornerL);
+      var fullL = makeLayout(6, home, vis);
+      var ringFull = app.ring(fullL);
       root.appendChild(orb.e);   // 오브는 링 위
       root.appendChild(app.hint.e);
       var marquee = new Marquee(root, cursor);
+      var cw = new CropWin(root, '바다.heic'), KW = mob ? 0.66 : 0.88;
+      var wc = { x: W / 2, y: 24 + (H - 24) / 2 };
+      cw.e.style.transform = 'translate(' + (wc.x - 342).toFixed(1) + 'px,' + (wc.y - 256).toFixed(1) + 'px) scale(calc(' + KW + ' * var(--sc, 1)))';
+      function inWin(x, y) { return { x: wc.x + (x - 342) * KW, y: wc.y + (y - 256) * KW }; }
       root.appendChild(cursor.e);
       orb.x.to(0, home.x); orb.y.to(0, home.y);
 
@@ -713,42 +767,72 @@
       t = r5.idle + 0.3;
       hide(days.concat([pdfOut]), t); wait(0.6);
 
-      /* ⑤ 화면 모서리 · Dropfit을 옮기면 메뉴가 사분원으로 */
-      var cf = file({ x: col(0), y: row(0), photo: 'p3', name: '노을.heic' });
-      var cfOut = file({ x: col(0), y: row(1), photo: 'p3', name: '노을.tiff' });
-      show([cf]);
-      move(home.x + 2, home.y + 4);
-      orb.scale.to(t - 0.15, 1.025, Motion.orb); orb.active.to(t - 0.15, 0.5, ease(EIO, 0.3));
-      wait(0.18);
-      move(corner.x + 2, corner.y + 4, 1.0, { x: 2, y: 4 });
-      wait(0.1);
-      var r4 = dragToOrb([cf], cf, ringCorner, 3, 2);
-      cfOut.op.to(r4.finish[0], 1, ease(EO, 0.35));
-      t = r4.idle;
-      // 제자리로 되돌려 놓는다
-      move(corner.x + 2, corner.y + 4);
-      orb.scale.to(t - 0.15, 1.025, Motion.orb); orb.active.to(t - 0.15, 0.5, ease(EIO, 0.3));
-      wait(0.18);
-      move(home.x + 2, home.y + 4, 1.0, { x: 2, y: 4 });
-      orb.scale.to(t, 1, Motion.orb); orb.active.to(t, 0, ease(EIO, 0.3));
-      hide([cf, cfOut], t);
-      move(home.x + 150, home.y + 120, 0.8);
-      wait(0.5);
-      st.marks = [r1, r2, r3, r5, r4];
+      /* ⑤ 자르기 · 가운데에 머물면 Dropfit이 '자르기' 칸이 된다 → 놓으면 자르기 창 → 4:5 → 저장 → '바다 (자름).heic' */
+      var cr = file({ x: col(0), y: row(0), photo: 'p0', name: '바다.heic' });
+      var crOut = file({ x: col(0), y: row(1), photo: 'p0 crop', name: '바다 (자름).heic' });
+      show([cr]); wait(0.5);
+      (function () {
+        var g0 = { x: cr.f.x + 2, y: cr.f.y - 6 };
+        move(g0.x, g0.y); wait(0.14);
+        files.forEach(function (f) { f.sel.to(t, 0); }); cr.sel.to(t, 1);
+        wait(0.12);
+        var g = ghost(cr.f); g.dx = cr.f.x - g0.x; g.dy = cr.f.y - g0.y; g.op.to(t, 0.62);
+        var c = { x: orb.x.at(t), y: orb.y.at(t) };
+        var span = move(c.x + 5, c.y + 3), te = null;
+        scan(span[0], span[1], function (u, x, y) { if (te === null && Math.abs(x - c.x) < M.panel / 2 && Math.abs(y - c.y) < M.panel / 2) te = u; });
+        app.enter(te, ringFull, { length: 1, photo: 'p0' }, 2);
+        wait(0.5);
+        move(c.x + 1, c.y - 1, 0.3);
+        wait(0.35);   // 가운데에 0.35초 머물면
+        orb.crop.to(t, 1, Motion.hover); orb.scale.to(t, 1.05, Motion.orb);
+        g.op.to(t, 0.3, Motion.hover);   // 끌고 온 사진이 '자르기' 칸을 가리지 않게 살짝 흐리게
+        app.hint.hov.to(t, '자르기 · 포맷은 그대로'); app.hint.k.to(t, 1, Motion.hover);
+        wait(0.8);
+        // 놓으면 Dropfit은 접히고 자르기 창이 열린다
+        var td = t;
+        g.op.to(td, 0, ease(EO, 0.12));
+        ringFull.petals.forEach(function (p) { p.open.to(td, 0, Motion.close); });
+        ringFull.veil.to(td, 0, Motion.close);
+        app.hint.op.to(td, 0, ease(EIO, 0.2));
+        orb.crop.to(td, 0, Motion.hover); orb.thumb.to(td, 0, Motion.hover);
+        orb.scale.to(td, 1, Motion.orb); orb.scan.to(td, 0); orb.active.to(td, 0, Motion.reset);
+        orb.glyph.to(td + 0.3, 1, Motion.reset);
+        var to = td + 0.35;
+        cw.op.to(to, 1, ease(EO, 0.3)); cw.sc.to(to, 1, ease(EO, 0.35));
+        t = to + 0.5;
+        // 4:5를 고른다
+        var p45 = inWin(544.5, 121);
+        move(p45.x + 2, p45.y + 3, 0.8); wait(0.18);
+        cw.on[0].to(t, 0, Motion.hover); cw.on[2].to(t, 1, Motion.hover);
+        cw.k.to(t, 1, ease(EIO, 0.5));
+        cw.res.to(t + 0.25, '2,419 × 3,024 px'); cw.w.to(t + 0.25, '2419');
+        cw.ready.to(t, 1, Motion.hover);
+        wait(1.1);
+        // 저장
+        var ps = inWin(584, 446);
+        move(ps.x + 2, ps.y + 3, 0.75); wait(0.2);
+        cw.op.to(t, 0, ease(EIO, 0.28)); cw.sc.to(t, 0.98, ease(EIO, 0.28));
+        crOut.op.to(t + 0.35, 1, ease(EO, 0.35));
+        wait(0.3);
+        move(home.x + 150, home.y + 120, 0.9);
+        wait(1.4);
+        hide([cr, crOut], t); wait(0.6);
+      })();
+      st.marks = [r1, r2, r3, r5];
 
       files.forEach(st.add, st); ghosts.forEach(st.add, st);
-      st.add(ringFull); st.add(ringCorner); st.add(orb); st.add(app.hint); st.add(marquee); st.add(cursor);
+      st.add(ringFull); st.add(orb); st.add(app.hint); st.add(marquee); st.add(cw); st.add(cursor);
       return t;
     }
   };
 
   /* ================= 마지막 섹션: 기능별 장면이 옆으로 넘어가는 슬라이드 =================
-     한 장 → 여러 장 → 폴더째 → PDF 한 권으로 → 기본 위치. 장면마다 자기 오브를 갖고, 끝나면 띠 전체가 한 칸 옆으로 간다.
+     한 장 → 여러 장 → 폴더째 → PDF 한 권으로. 장면마다 자기 오브를 갖고, 끝나면 띠 전체가 한 칸 옆으로 간다.
      마지막 뒤에는 첫 장면의 시작 화면(빈 오브)과 같은 칸을 하나 더 두어 처음으로 이음매 없이 돌아간다. */
   var CTA = {
     spec: function (w) {
       var mobile = w < 600, W = mobile ? 540 : 1080;
-      return { key: mobile ? 'm' : 'd', W: W, H: mobile ? 470 : 480, s: w / W, mobile: mobile };
+      return { key: mobile ? 'm' : 'd', W: W, H: mobile ? 470 : 480, s: w / W, mobile: mobile, fit: true };
     },
     make: function (st, spec) {
       var W = spec.W, H = spec.H, mob = spec.mobile, root = st.root, K = mob ? 1.0 : 1.6;
@@ -756,7 +840,7 @@
       st.host.style.height = (H * spec.s).toFixed(1) + 'px';
       var cy = mob ? 200 : 180;
       var X = mob ? 185 : 340, CS = mob ? 0.8 : 1, ARC = mob ? 130 : 170;
-      var CAPS = ['한 장', '여러 장 한꺼번에', '폴더째', 'PDF 한 권으로', '원하는 자리를 기본 위치로'];
+      var CAPS = ['한 장', '여러 장 한꺼번에', '폴더째', 'PDF 한 권으로'];
       var N = CAPS.length, SLIDE = 1.0;
       var strip = el('div', 'df-strip', root), shift = new P(0);
       strip.style.width = (W * (N + 1)) + 'px'; strip.style.height = H + 'px';
@@ -851,8 +935,8 @@
           return { name: nm + ext, photo: PHOTOS[i], pos: { x: c.x + side * X + off, y: c.y + 30 } };
         });
       }
-      var p0 = panel(0), p1 = panel(1), p2 = panel(2), p3 = panel(3), p4 = panel(4);
-      panel(5);   // 처음과 같은 빈 화면
+      var p0 = panel(0), p1 = panel(1), p2 = panel(2), p3 = panel(3);
+      panel(4);   // 처음과 같은 빈 화면
 
       scene(p0, row(p0.c, ['여행'], -1, '.heic'), row(p0.c, ['여행'], 1, '.png'), 1, 2, 1);
       next();
@@ -865,44 +949,6 @@
       scene(p3, row(p3.c, many, -1, '.heic'), [{ name: '바다 외 ' + (many.length - 1) + '장.pdf', pdf: true, pos: { x: p3.c.x + X, y: p3.c.y + 30 } }], PDF, 2, many.length, false, true);
       next();
 
-      /* ⑤ 기본 위치: Dropfit을 원하는 자리로 옮기고 우클릭 → '여기를 기본 위치로' */
-      (function () {
-        var c = p4.c, o = p4.orb;
-        var menu = el('div', 'df-menu', strip,
-          '<b>여기를 기본 위치로</b><span>기본 위치로 돌아가기</span><hr><span>피드백 보내기…</span>');
-        var cur = new Cursor(strip);
-        var mOp = new P(0), mOn = new P(0);
-        var to = mob ? 150 : 250;                                    // 오브가 옮겨 갈 거리(링 단위)
-        var oc = function (dx) { return { x: c.x + dx * K, y: c.y }; };
-        function moveC(x, y, dur) { cur.x.to(t, x, dur ? ease(HAND, dur) : null); cur.y.to(t, y, dur ? ease(HAND, dur) : null); t += dur || 0; }
-        cur.x.to(0, c.x + 120); cur.y.to(0, c.y + 90);
-        cur.op.to(t - 0.2, 1, ease(EO, 0.4));
-        moveC(c.x + 6, c.y + 8, 0.8); t += 0.15;
-        o.scale.to(t, 1.025, Motion.orb); o.active.to(t, 0.5, ease(EIO, 0.3)); t += 0.2;
-        var tm = t;
-        moveC(oc(to).x + 6, c.y + 8, 1.1);
-        o.x.to(tm, to, ease(HAND, 1.1));
-        o.scale.to(t, 1, Motion.orb); o.active.to(t, 0, ease(EIO, 0.3)); t += 0.45;
-        // 우클릭 → 메뉴가 커서 오른쪽 아래로 부드럽게
-        var mx = oc(to).x + 8, my = c.y + 10;
-        var MW = mob ? 250 : 190;
-        if (mx + MW > c.x + W / 2 - 16) mx = oc(to).x - MW - 6;
-        menu.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
-        mOp.to(t, 1, ease(EO, 0.28)); t += 0.6;
-        moveC(mx + MW * 0.4, my + (mob ? 20 : 15), 0.5);
-        mOn.to(t, 1, ease(EIO, 0.15)); t += 0.45;
-        mOp.to(t, 0, ease(EIO, 0.3)); mOn.to(t + 0.3, 0);
-        o.active.to(t, 0.35, ease(EIO, 0.25)); o.active.to(t + 0.35, 0, ease(EIO, 0.45));
-        t += 0.6;
-        moveC(oc(to).x + 90, c.y + 110, 0.8);
-        cur.op.to(t, 0, ease(EIO, 0.4)); t += 0.8;
-        st.add(cur);
-        st.add({ render: function (T) {
-          menu.style.opacity = mOp.at(T);
-          menu.firstChild.style.setProperty('--on', mOn.at(T).toFixed(3));
-        } });
-      })();
-      next();
 
       sc.forEach(st.add, st);
       st.add({ render: function (T) {

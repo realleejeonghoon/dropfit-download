@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드 (zip, 0.7MB)</b></a>
-  <br><sub>현재 버전 0.5 (Pro 미리 써 보기 · 정식판 전까지 Pro 기능 무료) · 설치 안내 페이지: <a href="https://realleejeonghoon.github.io/dropfit-download/">realleejeonghoon.github.io/dropfit-download</a></sub>
+  <br><sub>무료 · 설치 안내 페이지: <a href="https://realleejeonghoon.github.io/dropfit-download/">realleejeonghoon.github.io/dropfit-download</a></sub>
 </p>
 
 ---
@@ -25,4 +25,4 @@
 > 요구 사양: macOS 14 Sonoma 이상 · Apple Silicon / Intel 모두 지원 · iPhone/iPad 미지원
 
 ## 피드백
-첫인상, 불편했던 점, 있었으면 하는 기능을 알려 주세요.
+Dropfit을 우클릭해 **피드백 보내기…**를 누르면 메일이 바로 열립니다.
