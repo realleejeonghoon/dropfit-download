@@ -330,7 +330,7 @@
         h.t1.setAttribute('fill-opacity', (0.9 * (1 - k)).toFixed(3));
         h.t2.setAttribute('fill-opacity', k.toFixed(3));
         // 그림자: 0.08 · 반경 5 · y 1.5 → 올라가면 0.13 · 7 · 2.5
-        h.g.style.filter = 'drop-shadow(0 ' + (1.5 + k).toFixed(2) + 'px ' + (2.5 + k).toFixed(2) + 'px rgba(0,0,0,' + (0.08 + 0.05 * k).toFixed(3) + '))';
+        h.g.style.filter = 'drop-shadow(0 .5px .6px rgba(18,28,45,.10)) drop-shadow(0 ' + (4 + k).toFixed(2) + 'px ' + (5.5 + 1.5 * k).toFixed(2) + 'px rgba(18,28,45,' + (0.06 + 0.04 * k).toFixed(3) + '))';
       });
     }
     this.e.style.visibility = any || v > 0.001 ? 'visible' : 'hidden';

@@ -43,7 +43,6 @@
     --ink-3: #86868b;
     --paper: #f5f5f7;
     --line: #d2d2d7;
-    --grad: linear-gradient(180deg, #7fa5cc 0%, #4a6f96 100%);
     --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     --ease: cubic-bezier(.28, .11, .32, 1);
@@ -192,7 +191,7 @@
   .df-folder { display: block; width: 60px; height: auto; filter: drop-shadow(0 1px 2px rgba(18, 28, 45, .2)); }
   .df-file span { display: inline-block; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
   .df-file.sel .ic { background: rgba(0, 0, 0, .26); }
-  .df-file.sel span { background: #2f6fd6; text-shadow: none; }
+  .df-file.sel span { background: var(--sky-deep); text-shadow: none; }
   .df-file.df-ghost { z-index: 6; }
   .df-cursor { width: 17px; height: 24px; z-index: 8; filter: drop-shadow(0 1px 1.5px rgba(18, 28, 45, .3)); }
   .df-cursor svg { display: block; width: 100%; height: 100%; }
@@ -333,9 +332,9 @@
   .row .t { flex: 1; color: #3a3a3c; line-height: 1.45; }
   .row .t small { display: block; color: #8e8e93; font-size: 11px; }
   .mac-btn { font-size: 12px; padding: 3px 12px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 .5px rgba(18, 28, 45, .2), 0 1px 1px rgba(18, 28, 45, .08); white-space: nowrap; }
-  .row.hl { background: rgba(0, 113, 227, .06); border-radius: 0 0 10px 10px; }
+  .row.hl { background: rgba(74, 111, 150, .06); border-radius: 0 0 10px 10px; }
   .row.hl .mac-btn { background: var(--blue); color: #fff; box-shadow: none; animation: pulse 2.2s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 113, 227, .45); } 50% { box-shadow: 0 0 0 7px rgba(0, 113, 227, 0); } }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(74, 111, 150, .45); } 50% { box-shadow: 0 0 0 7px rgba(74, 111, 150, 0); } }
   .radio { display: flex; gap: 14px; font-size: 12px; color: #3a3a3c; white-space: nowrap; }
   .radio span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1px solid #b0b0b5; margin-right: 5px; vertical-align: -1px; }
   .radio span.on::before { border: 3px solid var(--sky-deep); width: 6px; height: 6px; }
@@ -433,13 +432,12 @@
 
   /* ---------- Theme: Sky (앱과 같은 밝은 그레이 + 스카이 블루) ---------- */
   :root {
-    --mist: #eeeff2; --mist-low: #dee0e5;
+    --mist: #fcfcfa; --mist-low: #f3f2ee;
     --sky-light: #cee2f4; --sky-soft: #a8c6e4; --sky-deep: #608ab4; --sky-deeper: #4a6f96; --sky-text: #3c608a;
-    --apple-top: #bad4ee; --apple-bottom: #8eb2d8;
+    --apple-top: #cce1f5; --apple-bottom: #a3c4e6;
     --ink: #1d1d1f; --ink-2: #5d6673; --ink-3: #8a929e; --line: rgba(60, 96, 138, .14);
     --paper: #f3f4f7; --link: #3c608a;
     --blue: var(--sky-deeper);
-    --grad: linear-gradient(180deg, #7fa5cc 0%, #4a6f96 100%);
   }
   body { background: #fbfbfd; }
   ::selection { background: rgba(142, 178, 216, .35); }
@@ -487,20 +485,20 @@
   .walk { position: relative; }
   .walk > * { animation-duration: 12s; animation-iteration-count: infinite; animation-timing-function: cubic-bezier(.45, 0, .2, 1); }
   .walk .row.hl .mac-btn { animation: wkOpen 12s infinite; }
-  .wk-scrim { position: absolute; inset: 0; border-radius: 14px; background: rgba(20, 24, 32, .18); opacity: 0; animation-name: wkScrim; }
+  .wk-scrim { position: absolute; inset: 0; border-radius: 14px; background: rgba(18, 28, 45, .18); opacity: 0; animation-name: wkScrim; }
   .wk-alert { position: absolute; left: 50%; top: 50%; width: 248px; margin-left: -124px; transform: translateY(-50%) scale(.96); box-sizing: border-box;
     padding: 18px 16px 14px; border-radius: 14px; text-align: center; color: #1d1d1f;
-    background: rgba(246, 246, 248, .97); box-shadow: 0 0 0 .5px rgba(18, 28, 45, .18), 0 20px 50px rgba(20, 24, 40, .22); opacity: 0; }
+    background: rgba(246, 246, 248, .97); box-shadow: 0 0 0 .5px rgba(18, 28, 45, .18), 0 20px 50px rgba(18, 28, 45, .22); opacity: 0; }
   .wk-alert img, .wk-lock { display: block; width: 56px; height: 56px; margin: 0 auto 8px; }
   .wk-lock { width: 40px; height: 40px; margin-bottom: 10px; }
   .wk-alert b { display: block; font-size: 13px; letter-spacing: -0.01em; }
   .wk-alert p { margin: 6px 0 12px; font-size: 11px; line-height: 1.45; color: #3a3a3c; }
   .wk-btn { display: block; margin-top: 6px; padding: 5px 0; border-radius: 7px; font-size: 12.5px; background: #fff; box-shadow: 0 0 0 .5px rgba(18, 28, 45, .14), 0 .5px 1px rgba(18, 28, 45, .06); }
-  .wk-btn.def { background: #0a84ff; color: #fff; box-shadow: none; }
+  .wk-btn.def { background: var(--blue); color: #fff; box-shadow: none; }
   .wk-warn { animation-name: wkWarn; }
   .wk-pass { animation-name: wkPass; }
   .wk-field { display: block; height: 24px; margin-bottom: 8px; padding: 0 8px; border-radius: 6px; background: #fff; text-align: left; font-size: 13px; line-height: 24px; letter-spacing: 1px;
-    box-shadow: 0 0 0 1px rgba(10, 132, 255, .55), 0 0 0 3.5px rgba(10, 132, 255, .18); overflow: hidden; }
+    box-shadow: 0 0 0 1px rgba(74, 111, 150, .55), 0 0 0 3.5px rgba(74, 111, 150, .18); overflow: hidden; }
   .wk-field i { display: inline-block; font-style: normal; overflow: hidden; vertical-align: top; white-space: nowrap; width: 0; animation: wkType 12s steps(8, end) infinite; }
   #wkDone { animation: wkPressDone 12s infinite; }
   #wkOk { animation: wkPressOk 12s infinite; }
@@ -951,6 +949,6 @@
 
   })();
 </script>
-<script src="demo.js?v=7" defer></script>
+<script src="demo.js?v=8" defer></script>
 </body>
 </html>
