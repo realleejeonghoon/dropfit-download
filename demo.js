@@ -12,9 +12,9 @@
   'use strict';
 
   var C = {
-    graphite: '#2c2c2e', pearl: '#fafafc', veil: '#f0f1f4',
+    graphite: '#2c2c2e', pearl: '#fefdfc', veil: '#f6f5f2',
     skySoft: '#a8c6e4', skyDeep: '#608ab4', skyText: '#3c608a',
-    appleTop: '#bad4ee', appleBottom: '#8eb2d8'
+    appleTop: '#cce1f5', appleBottom: '#a3c4e6'
   };
   var M = { orb: 60, thick: 54, ring: 74, minArc: 46, fanArc: 116, gap: 4, pad: 72, panel: 112, subGap: 6, subThick: 34 };
   var FORMATS = [['JPG', '범용'], ['PNG', '무손실'], ['HEIC', '고효율'], ['TIFF', '인쇄'], ['GIF', '웹·단순'], ['PDF', '문서']];
@@ -265,8 +265,8 @@
       var mid = (s.start + s.end) / 2, r = (s.inner + s.outer) / 2;
       var g = sv('g', { 'class': 'df-petal' }, svg);
       var d = sectorPath(s);
-      var base = sv('path', { d: d, fill: 'url(#dfPearl' + u + ')', stroke: '#fff', 'stroke-width': 0.8 }, g);
-      var on = sv('path', { d: d, fill: 'url(#dfSky' + u + ')', stroke: '#fff', 'stroke-width': 1, opacity: 0 }, g);
+      var base = sv('path', { d: d, fill: 'url(#dfPearl' + u + ')' }, g);
+      var on = sv('path', { d: d, fill: 'url(#dfSky' + u + ')', opacity: 0 }, g);
       var rot = Math.PI / 2 - mid;
       if (Math.sin(mid) < -0.05) rot += Math.PI;
       var tf = 'translate(' + (r * Math.cos(mid)).toFixed(2) + ' ' + (-r * Math.sin(mid)).toFixed(2) + ') rotate(' + (rot * 180 / Math.PI).toFixed(2) + ')';
@@ -281,8 +281,8 @@
     this.sub = { g: sg, op: new P(0), sc: new P(1), halves: [['c', '합치기', pm, ps.end], ['s', '나누기', ps.start, pm]].map(function (h) {
       var seg = { start: h[2], end: h[3], inner: si, outer: so, startInset: g2, endInset: g2 };
       var hg = sv('g', {}, sg), d = sectorPath(seg), mid = (h[2] + h[3]) / 2, r = (si + so) / 2;
-      var base = sv('path', { d: d, fill: 'url(#dfPearl' + u + ')', 'fill-opacity': 0.94, stroke: '#fff', 'stroke-opacity': 0.9, 'stroke-width': 0.8 }, hg);
-      var on = sv('path', { d: d, fill: 'url(#dfSky' + u + ')', 'fill-opacity': 0.97, stroke: '#fff', 'stroke-opacity': 0.95, 'stroke-width': 1, opacity: 0 }, hg);
+      var base = sv('path', { d: d, fill: 'url(#dfPearl' + u + ')', 'fill-opacity': 0.94 }, hg);
+      var on = sv('path', { d: d, fill: 'url(#dfSky' + u + ')', 'fill-opacity': 0.97, opacity: 0 }, hg);
       var rot = Math.PI / 2 - mid;
       if (Math.sin(mid) < -0.05) rot += Math.PI;
       var tf = 'translate(' + (r * Math.cos(mid)).toFixed(2) + ' ' + (-r * Math.sin(mid)).toFixed(2) + ') rotate(' + (rot * 180 / Math.PI).toFixed(2) + ')';
@@ -308,12 +308,11 @@
       p.g.setAttribute('transform', 'translate(' + ox.toFixed(2) + ' ' + oy.toFixed(2) + ') rotate(' + rot.toFixed(3) + ') translate(' + cx.toFixed(2) + ' ' + cy.toFixed(2) + ') scale(' + sc.toFixed(4) + ') translate(' + (-cx).toFixed(2) + ' ' + (-cy).toFixed(2) + ')');
       p.g.setAttribute('opacity', Math.min(1, k).toFixed(3));
       var h = p.hover.at(T), dm = p.dim.at(T), off = p.off.at(T);
-      // 칸 바탕: 0.94 → 흐림 0.8 · 비활성 0.42, 테두리: 0.9 → 흐림 0.6 · 비활성 0.45
-      var fo = off ? 0.42 : 0.94 - 0.14 * dm, so = off ? 0.45 : 0.9 - 0.3 * dm;
+      // 칸 바탕: 0.94 → 흐림 0.8 · 비활성 0.42 (0.5부터 테두리 없음)
+      var fo = off ? 0.42 : 0.94 - 0.14 * dm;
       p.base.setAttribute('fill-opacity', fo.toFixed(3));
-      p.base.setAttribute('stroke-opacity', so.toFixed(3));
       p.on.setAttribute('opacity', (0.97 * h).toFixed(3));
-      p.on.setAttribute('stroke-opacity', 0.95);
+      p.g.style.setProperty('--h', h.toFixed(3));   // 고른 칸은 그림자가 조금 짙고 넓게
       var to = off ? 0.3 : 0.9 - 0.4 * dm;
       p.t1.setAttribute('fill-opacity', (to * (1 - h)).toFixed(3));
       p.t2.setAttribute('fill-opacity', h.toFixed(3));
