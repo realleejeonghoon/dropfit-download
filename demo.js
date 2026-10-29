@@ -547,6 +547,8 @@
       this.dur = this.build.make(this, spec);
     }
     this.root.style.transform = 'scale(' + spec.s.toFixed(4) + ')';
+    // 창 너비가 바뀌면 높이도 같은 비율로 (안 그러면 넓힌 뒤 아래 글자와 겹친다)
+    if (spec.fit) this.host.style.height = (spec.H * spec.s).toFixed(1) + 'px';
   };
   Stage.prototype.add = function (x) { this.items.push(x); return x; };
   Stage.prototype.render = function (T) {
@@ -743,12 +745,12 @@
   };
 
   /* ================= 마지막 섹션: 기능별 장면이 옆으로 넘어가는 슬라이드 =================
-     한 장 → 여러 장 → 폴더째 → PDF 한 권으로 → 기본 위치. 장면마다 자기 오브를 갖고, 끝나면 띠 전체가 한 칸 옆으로 간다.
+     한 장 → 여러 장 → 폴더째 → PDF 한 권으로. 장면마다 자기 오브를 갖고, 끝나면 띠 전체가 한 칸 옆으로 간다.
      마지막 뒤에는 첫 장면의 시작 화면(빈 오브)과 같은 칸을 하나 더 두어 처음으로 이음매 없이 돌아간다. */
   var CTA = {
     spec: function (w) {
       var mobile = w < 600, W = mobile ? 540 : 1080;
-      return { key: mobile ? 'm' : 'd', W: W, H: mobile ? 470 : 480, s: w / W, mobile: mobile };
+      return { key: mobile ? 'm' : 'd', W: W, H: mobile ? 470 : 480, s: w / W, mobile: mobile, fit: true };
     },
     make: function (st, spec) {
       var W = spec.W, H = spec.H, mob = spec.mobile, root = st.root, K = mob ? 1.0 : 1.6;
@@ -756,7 +758,7 @@
       st.host.style.height = (H * spec.s).toFixed(1) + 'px';
       var cy = mob ? 200 : 180;
       var X = mob ? 185 : 340, CS = mob ? 0.8 : 1, ARC = mob ? 130 : 170;
-      var CAPS = ['한 장', '여러 장 한꺼번에', '폴더째', 'PDF 한 권으로', '원하는 자리를 기본 위치로'];
+      var CAPS = ['한 장', '여러 장 한꺼번에', '폴더째', 'PDF 한 권으로'];
       var N = CAPS.length, SLIDE = 1.0;
       var strip = el('div', 'df-strip', root), shift = new P(0);
       strip.style.width = (W * (N + 1)) + 'px'; strip.style.height = H + 'px';
@@ -851,8 +853,8 @@
           return { name: nm + ext, photo: PHOTOS[i], pos: { x: c.x + side * X + off, y: c.y + 30 } };
         });
       }
-      var p0 = panel(0), p1 = panel(1), p2 = panel(2), p3 = panel(3), p4 = panel(4);
-      panel(5);   // 처음과 같은 빈 화면
+      var p0 = panel(0), p1 = panel(1), p2 = panel(2), p3 = panel(3);
+      panel(4);   // 처음과 같은 빈 화면
 
       scene(p0, row(p0.c, ['여행'], -1, '.heic'), row(p0.c, ['여행'], 1, '.png'), 1, 2, 1);
       next();
@@ -865,44 +867,6 @@
       scene(p3, row(p3.c, many, -1, '.heic'), [{ name: '바다 외 ' + (many.length - 1) + '장.pdf', pdf: true, pos: { x: p3.c.x + X, y: p3.c.y + 30 } }], PDF, 2, many.length, false, true);
       next();
 
-      /* ⑤ 기본 위치: Dropfit을 원하는 자리로 옮기고 우클릭 → '여기를 기본 위치로' */
-      (function () {
-        var c = p4.c, o = p4.orb;
-        var menu = el('div', 'df-menu', strip,
-          '<b>여기를 기본 위치로</b><span>기본 위치로 돌아가기</span><hr><span>피드백 보내기…</span>');
-        var cur = new Cursor(strip);
-        var mOp = new P(0), mOn = new P(0);
-        var to = mob ? 150 : 250;                                    // 오브가 옮겨 갈 거리(링 단위)
-        var oc = function (dx) { return { x: c.x + dx * K, y: c.y }; };
-        function moveC(x, y, dur) { cur.x.to(t, x, dur ? ease(HAND, dur) : null); cur.y.to(t, y, dur ? ease(HAND, dur) : null); t += dur || 0; }
-        cur.x.to(0, c.x + 120); cur.y.to(0, c.y + 90);
-        cur.op.to(t - 0.2, 1, ease(EO, 0.4));
-        moveC(c.x + 6, c.y + 8, 0.8); t += 0.15;
-        o.scale.to(t, 1.025, Motion.orb); o.active.to(t, 0.5, ease(EIO, 0.3)); t += 0.2;
-        var tm = t;
-        moveC(oc(to).x + 6, c.y + 8, 1.1);
-        o.x.to(tm, to, ease(HAND, 1.1));
-        o.scale.to(t, 1, Motion.orb); o.active.to(t, 0, ease(EIO, 0.3)); t += 0.45;
-        // 우클릭 → 메뉴가 커서 오른쪽 아래로 부드럽게
-        var mx = oc(to).x + 8, my = c.y + 10;
-        var MW = mob ? 250 : 190;
-        if (mx + MW > c.x + W / 2 - 16) mx = oc(to).x - MW - 6;
-        menu.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
-        mOp.to(t, 1, ease(EO, 0.28)); t += 0.6;
-        moveC(mx + MW * 0.4, my + (mob ? 20 : 15), 0.5);
-        mOn.to(t, 1, ease(EIO, 0.15)); t += 0.45;
-        mOp.to(t, 0, ease(EIO, 0.3)); mOn.to(t + 0.3, 0);
-        o.active.to(t, 0.35, ease(EIO, 0.25)); o.active.to(t + 0.35, 0, ease(EIO, 0.45));
-        t += 0.6;
-        moveC(oc(to).x + 90, c.y + 110, 0.8);
-        cur.op.to(t, 0, ease(EIO, 0.4)); t += 0.8;
-        st.add(cur);
-        st.add({ render: function (T) {
-          menu.style.opacity = mOp.at(T);
-          menu.firstChild.style.setProperty('--on', mOn.at(T).toFixed(3));
-        } });
-      })();
-      next();
 
       sc.forEach(st.add, st);
       st.add({ render: function (T) {

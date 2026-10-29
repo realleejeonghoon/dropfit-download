@@ -161,9 +161,8 @@
   .menubar .mb-ic svg { height: calc(11px * var(--s, 1)); width: auto; }
   .menubar span { white-space: nowrap; }
   @media (max-width: 640px) { .menubar .mb-x { display: none; } }
-  /* 바탕화면: 펄 화이트 + 오른쪽 아래 옅은 하늘빛 (메뉴가 주인공이 되도록 깨끗하게) */
+  /* 바탕화면: 맑은 단색 (그라데이션은 Safari에서 띠·이음매가 생겨 뺐다) */
   .demo-top .stage { background: #eef0f3; }
-  .wall { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .demo-top .menubar { background: rgba(255, 255, 255, .55); color: rgba(29, 29, 31, .78); border-bottom: 0; }
   .demo-top .menubar b { color: #1d1d1f; }
   /* 밝은 바탕 위 파일 이름은 macOS 밝은 화면처럼 어두운 글씨 */
@@ -478,8 +477,7 @@
   .final-stack .cta-meta { margin: 14px 0 0; text-align: center; }
   .final-stack .pill.lg { justify-content: center; }
   .final-stack .cta-under { display: inline-block; margin-top: 16px; font-size: 15px; }
-  .final + #preorder { padding-top: 24px; }
-  #preorder + #feedback { padding-top: 0; }
+  .final + #preorder { padding: 8px 0 120px; }
   @media (max-width: 734px) {
     .final { padding: 88px 0 96px; }
     .final-stack .cta-row { margin-top: 26px; flex-direction: column; gap: 16px; }
@@ -586,7 +584,20 @@
   .fb-done p { margin: 0; color: var(--ink-2); font-size: 16px; }
   .fb.sent > :not(.fb-done) { display: none; }
   .fb.sent .fb-done { display: block; animation: fbIn .6s var(--ease) both; }
-  /* 정식판 사전 신청: 피드백 폼과 같은 카드 */
+  /* 정식판 출시 알림: 마지막 다운로드와 같은 가운데 한 축 */
+  .po-stack { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .po-stack .sec-title { font-size: clamp(26px, 3.2vw, 34px); }
+  .po { width: 100%; max-width: 480px; margin: 28px 0 0; }
+  .po .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .po input[type=email] { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 0; border-radius: 980px;
+    padding: 12px 20px; box-shadow: inset 0 0 0 1px rgba(18, 28, 45, .14); transition: box-shadow .28s var(--ease); }
+  .po input::placeholder { color: var(--ink-3); }
+  .po input[type=email]:focus { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(163, 196, 230, .35); }
+  .po .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .po .fb-note { margin-top: 12px; }
+  .po.sent > :not(.fb-done) { display: none; }
+  .po.sent .fb-done { display: block; padding: 8px 0 0; animation: fbIn .6s var(--ease) both; }
+  /* 정식판 사전 신청 입력 줄 */
   .po-row { display: flex; gap: 10px; }
   .po-row input { flex: 1; min-width: 0; }
   .po-row .pill { flex: none; border: 0; font: inherit; font-size: 16px; padding: 11px 24px; cursor: pointer; }
@@ -613,18 +624,6 @@
 <section class="demo-top" id="how" aria-label="Dropfit 시연">
   <div class="wrap">
     <div class="stage" id="dfTop" role="img" aria-label="이미지를 Dropfit에 끌어와 포맷을 고르면 변환되는 시연: 사진 1장, 여러 장, 폴더, 여러 장을 PDF 하나로, 화면 모서리">
-      <svg class="wall" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <linearGradient id="wBase" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f7f8fa"/><stop offset="1" stop-color="#e6e9ee"/>
-          </linearGradient>
-          <radialGradient id="wSky" cx=".85" cy=".9" r=".7">
-            <stop offset="0" stop-color="#d6e4f2" stop-opacity=".9"/><stop offset="1" stop-color="#d6e4f2" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <rect width="1600" height="1000" fill="url(#wBase)"/>
-        <rect width="1600" height="1000" fill="url(#wSky)"/>
-      </svg>
       <div class="menubar" aria-hidden="true"><svg class="mb-apple" viewBox="0 0 14 17"><path fill="currentColor" d="M11.6 9c0-2 1.7-3 1.8-3.1-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8s-1.6-.7-2.7-.7C3.2 4.4 1.9 5.2 1.2 6.5c-1.4 2.5-.4 6.1 1 8.1.7 1 1.5 2.1 2.5 2 1 0 1.4-.6 2.6-.6s1.6.6 2.6.6c1.1 0 1.8-1 2.4-2 .8-1.1 1.1-2.2 1.1-2.3 0 0-2.8-1-2.8-3.3zM9.6 3c.6-.7.9-1.6.8-2.5-.8 0-1.8.5-2.4 1.2-.5.6-1 1.5-.8 2.4.9.1 1.8-.4 2.4-1.1z"/></svg><b>Finder</b><span>파일</span><span>편집</span><span>보기</span><span class="mb-x">이동</span><span class="mb-x">윈도우</span><span class="mb-x">도움말</span><span class="sp mb-ic"><svg viewBox="0 0 24 14"><rect x=".75" y=".75" width="20" height="12.5" rx="3.6" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/><rect x="2.6" y="2.6" width="13" height="8.8" rx="2" fill="currentColor"/><path d="M22.6 5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".55"/></svg></span><span class="mb-ic"><svg viewBox="0 0 18 14"><path d="M9 12.6 6.4 9.9a3.7 3.7 0 0 1 5.2 0zM3.9 7.4a7.3 7.3 0 0 1 10.2 0l-1.3 1.3a5.5 5.5 0 0 0-7.6 0zM1.3 4.8a11 11 0 0 1 15.4 0l-1.3 1.3a9.2 9.2 0 0 0-12.8 0z" fill="currentColor"/></svg></span><span class="mb-ic mb-x"><svg viewBox="0 0 16 14"><rect x=".7" y=".7" width="14.6" height="5.4" rx="2.7" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="12.6" cy="3.4" r="1.6" fill="currentColor"/><rect x=".7" y="7.9" width="14.6" height="5.4" rx="2.7" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="3.4" cy="10.6" r="1.6" fill="currentColor"/></svg></span><span id="demoDate">10월 22일 (목) 오후 3:54</span></div>
     </div>
   </div>
@@ -632,18 +631,16 @@
 
 <header class="intro" id="top">
   <div class="wrap">
-    <p class="tag">Dropfit · Mac용 이미지·PDF 변환 앱</p>
+    <p class="tag">Dropfit · Mac용 무료 이미지·PDF 변환 앱</p>
     <h1>끌어다 놓으면, <span class="grad">끝.</span></h1>
     <p class="lede">이미지와 PDF를 원하는 포맷으로. <br class="m">한 장도, 폴더째로도.</p>
     <div class="cta">
       <a class="pill lg mac-only" href="Dropfit-macOS.zip" download>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg>
-        Mac용 다운로드
+        다운로드
       </a>
       <button class="pill lg copy-only" type="button" data-copy-link>Mac으로 보낼 링크 복사</button>
-      <a class="cta-alt mac-only" href="#install">설치 방법 ›</a>
     </div>
-    <p class="pro-note">0.5 Pro 미리 써 보기 · 정식판 전까지 Pro 기능 무료</p>
     <div class="notice" role="note">
       <strong>Dropfit은 Mac 전용 앱입니다.</strong>
       Mac의 카카오톡에서 이 링크를 다시 열면 바로 받을 수 있습니다.
@@ -690,60 +687,16 @@
     <div class="sec-head"><p class="label reveal">FAQ</p><h2 class="sec-title reveal" id="faq-title">자주 묻는 질문</h2></div>
     <div class="faq reveal">
       <details>
-        <summary>맥에서 PDF 여러 개를 하나로 합치려면?</summary>
-        <p>PDF 파일들을 한꺼번에 골라 Dropfit에 끌어다 <b>PDF</b> 칸에 놓으면 고른 순서대로 한 권이 됩니다. 사진이 섞여 있어도 함께 묶입니다. 원본은 그대로 두고, 같은 폴더에 새 PDF가 생깁니다.</p>
+        <summary>변환한 파일은 어디에 생기나요?</summary>
+        <p>원본과 같은 폴더에 새 파일로 생깁니다. 폴더를 올리면 바로 옆에 ‘폴더명 (포맷)’ 새 폴더가 생깁니다. 원본은 그대로 남습니다. 방금 만든 파일은 Dropfit 우클릭 → <b>마지막 결과 Finder에서 보기</b>로 바로 열 수 있습니다.</p>
       </details>
       <details>
-        <summary>맥북 사진(HEIC)을 JPG로 한 번에 바꾸려면?</summary>
-        <p>사진을 여러 장 고르거나 폴더째 Dropfit에 끌어다 <b>JPG</b> 칸에 놓으면 됩니다. 400장이 약 30초에 끝납니다. 원본 HEIC는 그대로 남고, 폴더를 올리면 옆에 ‘폴더명 (JPG)’ 새 폴더가 생깁니다.</p>
-      </details>
-      <details>
-        <summary>맥북 사진 여러 장을 PDF 하나로 만들려면?</summary>
-        <p>사진을 골라 <b>PDF</b> 칸에 올리면 바깥에 <b>합치기 · 나누기</b>가 나옵니다. 합치기에 놓으면 PDF 한 권, 나누기에 놓으면 장마다 PDF 한 개씩 만듭니다. 칸에 바로 놓으면 합칩니다.</p>
-      </details>
-      <details>
-        <summary>파일이 인터넷에 올라가나요?</summary>
-        <p>아니요. 변환은 모두 Mac 안에서 이루어지고, 파일은 어디에도 전송되지 않습니다.</p>
-      </details>
-      <details>
-        <summary>안전한 앱인가요?</summary>
-        <p>네. Dropfit은 Apple 공증을 받은 앱입니다. Apple이 악성 코드 검사를 마친 앱이라 처음 열 때도 경고 없이 열립니다.</p>
-      </details>
-      <details>
-        <summary>파일 용량을 정해서 줄일 수 있나요?</summary>
-        <p>네. Dropfit을 우클릭해 <b>설정…</b>(⌘,)을 열고 포맷마다 기본 용량을 정해 두면, 그 칸에 놓을 때 파일 하나당 그 크기 이하로 맞춥니다. 이미지는 2MB · 1MB · 500KB, PDF는 10MB · 5MB · 2MB 중에서 고르거나 직접 입력할 수 있고, 파일 이름에 ‘(2MB)’처럼 표시됩니다. Pro 기능이며 0.5에서는 무료입니다.</p>
-      </details>
-      <details>
-        <summary>원형 메뉴에 나오는 포맷을 바꿀 수 있나요?</summary>
-        <p>네. 같은 설정 창에서 원형 메뉴에 놓을 포맷을 고르고 순서를 정할 수 있습니다. Pro 기능이며 0.5에서는 무료입니다.</p>
-      </details>
-      <details>
-        <summary>무료인가요?</summary>
-        <p>네. 기본 변환, PDF 합치기·나누기, 폴더째 변환은 계속 무료입니다. 0.5는 <b>Pro 미리 써 보기</b> 버전이라 정식판이 나오기 전까지 Pro 기능도 무료로 쓰실 수 있습니다.</p>
-      </details>
-      <details>
-        <summary>변환한 파일은 어디에 저장되나요?</summary>
-        <p>낱장은 원본과 같은 폴더에 새 파일로 저장됩니다. 폴더를 올리면 원본 폴더 바로 옆에 ‘폴더명 (포맷)’ 새 폴더가 생기고, 결과가 모두 그 안에 담깁니다. 원본은 어느 경우에도 건드리지 않습니다. 하위 폴더는 제외합니다.</p>
-      </details>
-      <details>
-        <summary>PDF를 이미지로도 바꿀 수 있나요?</summary>
-        <p>네. PDF를 JPG나 PNG 같은 이미지 칸에 올리면 쪽마다 한 장씩 나옵니다. 암호가 걸린 PDF는 열 수 없습니다.</p>
-      </details>
-      <details>
-        <summary>몇 장까지, 얼마나 큰 사진까지 되나요?</summary>
-        <p>장수 제한은 없습니다. 사진 400장이 약 30초에 끝나고, 한 장은 최대 3억 화소까지 변환합니다.</p>
+        <summary>PDF 여러 개를 하나로 합치려면?</summary>
+        <p>파일들을 한꺼번에 골라 Dropfit에 끌어다 <b>PDF</b> 칸에 올리면 바깥에 <b>합치기 · 나누기</b>가 나옵니다. 합치기에 놓으면 고른 순서대로 한 권이 됩니다. 사진이 섞여 있어도 함께 묶입니다.</p>
       </details>
       <details>
         <summary>화면에 Dropfit이 보이지 않아요.</summary>
-        <p>Dock의 Dropfit 아이콘을 클릭하면 Dropfit 위치를 알려 줍니다.</p>
-      </details>
-      <details>
-        <summary>Mac을 켤 때 자동으로 실행할 수 있나요?</summary>
-        <p>Dropfit을 우클릭해 <b>로그인 시 자동 실행</b>을 켜면 됩니다. 기본값은 꺼져 있습니다.</p>
-      </details>
-      <details>
-        <summary>피드백은 어디로 보내나요?</summary>
-        <p>이 페이지 아래 <a href="#feedback">피드백</a> 칸에 남겨 주세요. 바로 전달됩니다.</p>
+        <p>Dock의 Dropfit 아이콘을 누르면 Dropfit이 있는 자리를 알려 줍니다. 창에 가려졌다면 우클릭 메뉴의 <b>바탕화면에 고정</b>을 꺼 보세요.</p>
       </details>
     </div>
   </div>
@@ -751,14 +704,14 @@
 
 <section class="final">
   <div class="wrap final-stack">
-    <div class="df-cta" id="dfCta" role="group" aria-roledescription="슬라이드" aria-label="한 장, 여러 장, 폴더째, PDF 한 권으로, 기본 위치 지정까지 Dropfit의 기능을 한 장면씩 옆으로 넘기며 보여 주는 애니메이션"></div>
+    <div class="df-cta" id="dfCta" role="group" aria-roledescription="슬라이드" aria-label="한 장, 여러 장, 폴더째, PDF 한 권으로까지 Dropfit의 기능을 한 장면씩 옆으로 넘기며 보여 주는 애니메이션"></div>
     <h2 class="reveal">Dropfit</h2>
     <p class="final-sub reveal">지금 바로 써 보세요.</p>
     <div class="reveal">
       <div class="cta-row mac-only">
         <a class="pill lg" href="Dropfit-macOS.zip" download>
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg>
-          Mac용 다운로드
+          다운로드
         </a>
       </div>
       <div class="cta-row copy-only">
@@ -769,17 +722,14 @@
 </section>
 
 <section class="block" id="preorder" aria-labelledby="po-title">
-  <div class="wrap split">
-    <div class="sec-head">
-      <p class="label reveal">Early access</p>
-      <h2 class="sec-title reveal" id="po-title">정식판이 나오면<br>알려 드릴게요.</h2>
-    </div>
-    <form class="fb reveal" id="poForm" novalidate>
-      <label><span>알림 받을 이메일</span>
-        <div class="po-row">
-          <input type="email" name="email" id="poEmail" maxlength="200" autocomplete="email" required placeholder="name@example.com">
-          <button class="pill" type="submit" id="poSend">출시 알림 받기</button>
-        </div>
+  <div class="wrap po-stack">
+    <p class="label reveal">Early access</p>
+    <h2 class="sec-title reveal" id="po-title">정식판이 나오면 <span class="nb">알려 드릴게요.</span></h2>
+    <form class="po reveal" id="poForm" novalidate>
+      <label class="po-row">
+        <span class="sr">알림 받을 이메일</span>
+        <input type="email" name="email" id="poEmail" maxlength="200" autocomplete="email" required placeholder="name@example.com">
+        <button class="pill" type="submit" id="poSend">출시 알림 받기</button>
       </label>
       <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="fb-note" id="poNote" role="status">출시 알림 말고는 연락드리지 않습니다.</p>
@@ -788,42 +738,9 @@
   </div>
 </section>
 
-<section class="block" id="feedback" aria-labelledby="fb-title">
-  <div class="wrap split">
-    <div class="sec-head">
-      <p class="label reveal">Feedback</p>
-      <h2 class="sec-title reveal" id="fb-title">써 보신 소감을<br>들려주세요.</h2>
-      <p class="sec-sub reveal">한 줄이어도 좋습니다. <span class="nb">남겨 주신 이야기는 바로 전달됩니다.</span></p>
-    </div>
-    <form class="fb reveal" id="fbForm" novalidate>
-      <fieldset>
-        <legend>써 보니 어떠셨나요?<small>선택</small></legend>
-        <div class="rate">
-          <input type="radio" name="rating" id="fbR1" value="아쉬워요"><label for="fbR1">아쉬워요</label>
-          <input type="radio" name="rating" id="fbR2" value="괜찮아요"><label for="fbR2">괜찮아요</label>
-          <input type="radio" name="rating" id="fbR3" value="좋아요"><label for="fbR3">좋아요</label>
-          <input type="radio" name="rating" id="fbR4" value="아주 좋아요"><label for="fbR4">아주 좋아요</label>
-        </div>
-      </fieldset>
-      <label><span>하고 싶은 이야기</span>
-        <textarea name="message" id="fbMsg" maxlength="4000" required placeholder="좋았던 점, 불편했던 점, 있었으면 하는 기능 무엇이든 괜찮아요."></textarea>
-      </label>
-      <label><span>답장 받을 이메일<small>선택</small></span>
-        <input type="email" name="email" id="fbEmail" maxlength="200" autocomplete="email" placeholder="name@example.com">
-      </label>
-      <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <div class="fb-foot">
-        <button class="pill" type="submit" id="fbSend">보내기</button>
-        <p class="fb-note" id="fbNote" role="status">이메일을 남기지 않으면 익명으로 전달됩니다.</p>
-      </div>
-      <div class="fb-done" role="status"><b>고맙습니다.</b><p>남겨 주신 이야기를 잘 받았습니다.</p></div>
-    </form>
-  </div>
-</section>
-
 <footer>
   <div class="wrap">
-    <span>Dropfit 0.5 · Pro 미리 써 보기</span>
+    <span>Dropfit</span>
   </div>
 </footer>
 
@@ -854,28 +771,6 @@
         try { if (navigator.sendBeacon && navigator.sendBeacon(COUNT_URL, body)) return; } catch (e) {}
         try { fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: body, keepalive: true }); } catch (e) {}
       });
-    });
-    // 피드백: 같은 Apps Script 주소로 보내면 시트 '피드백' 탭에 한 줄 + 정훈 님 메일 알림
-    var fb = document.getElementById('fbForm');
-    if (fb) fb.addEventListener('input', function () {
-      var note = document.getElementById('fbNote');
-      if (note.className.indexOf('err') >= 0) { note.textContent = '이메일을 남기지 않으면 익명으로 전달됩니다.'; note.className = 'fb-note'; }
-    });
-    if (fb) fb.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var msg = document.getElementById('fbMsg'), note = document.getElementById('fbNote'), btn = document.getElementById('fbSend');
-      var email = document.getElementById('fbEmail');
-      if (!msg.value.trim()) { note.textContent = '하고 싶은 이야기를 한 줄 적어 주세요.'; note.className = 'fb-note err'; msg.focus(); return; }
-      if (email.value && !email.checkValidity()) { note.textContent = '이메일 주소를 다시 확인해 주세요.'; note.className = 'fb-note err'; email.focus(); return; }
-      var data = new URLSearchParams(new FormData(fb));
-      data.set('version', VERSION);
-      btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note';
-      fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
-        .then(function () { fb.classList.add('sent'); })
-        .catch(function () {
-          btn.disabled = false; btn.textContent = '보내기';
-          note.textContent = '전송하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; note.className = 'fb-note err';
-        });
     });
     // 정식판 사전 신청: 같은 Apps Script 주소로 event=preorder, 이메일, 버전·유입 채널만 보낸다
     var po = document.getElementById('poForm');
