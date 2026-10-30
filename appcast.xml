@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Dropfit</title>
+    <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
+    <language>ko</language>
+    <item>
+      <title>Dropfit 0.6</title>
+      <sparkle:version>20</sparkle:version>
+      <sparkle:shortVersionString>0.6</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <pubDate>Fri, 30 Oct 2026 08:34:32 +0000</pubDate>
+      <description><![CDATA[<ul><li>자르기 창에서 형식과 용량을 고를 수 있습니다</li><li>크기 칸에 바로 입력할 수 있습니다</li><li>자동 업데이트</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6-20.zip" type="application/octet-stream" sparkle:edSignature="phqAYgZEZZyT0OpkqDX9w9wfzz2Yzfg656oLt3WQ5pxObizt4CvDfJL4Pa781hVgI1Tvu+9E/DMTE3idhqMMBA==" length="2100979" />
+    </item>
+  </channel>
+</rss>

@@ -442,11 +442,12 @@
       '<div class="cw-img p0"><div class="cw-frame"></div></div>' +
       '<div class="cw-panel">' +
         '<p class="cw-lab" style="top:20px">비율</p><div class="cw-card" style="top:40px;height:106px">' + chips + '</div>' +
-        '<p class="cw-lab" style="top:162px">크기</p><div class="cw-card" style="top:182px;height:75px">' +
-          '<span class="cw-f" style="left:10px"></span><span class="cw-x">×</span><span class="cw-f" style="left:95px">3024</span>' +
-          '<p class="cw-note">px · "크기 지정"을 누르면 입력할 수 있어요</p></div>' +
-        '<p class="cw-lab" style="top:273px">저장 형식</p><div class="cw-card" style="top:293px;height:44px">' +
-          '<span class="cw-pick">원본' + CHEV2 + '</span></div>' +
+        '<p class="cw-lab" style="top:162px">크기</p><div class="cw-card" style="top:182px;height:42px">' +
+          '<span class="cw-f" style="left:10px"></span><span class="cw-x">×</span><span class="cw-f" style="left:80px">3024</span><span class="cw-u">px</span></div>' +
+        '<p class="cw-lab" style="top:240px">저장</p><div class="cw-card" style="top:260px;height:77px">' +
+          '<span class="cw-row" style="top:0">형식</span><span class="cw-pick" style="top:6px">원본' + CHEV2 + '</span>' +
+          '<i class="cw-sep"></i>' +
+          '<span class="cw-row" style="top:38.5px">용량</span><span class="cw-pick" style="top:44.5px">원본 용량' + CHEV2 + '</span></div>' +
         '<p class="cw-res"><span>결과</span><b></b></p>' +
         '<div class="cw-save">저장</div><div class="cw-cancel">취소</div>' +
       '</div>');
@@ -489,8 +490,7 @@
     }).join('');
     this.e = el('div', 'df-cw df-sw', parent,
       '<div class="cw-bar"><i></i><i></i><i></i><b>Dropfit 설정</b></div>' +
-      '<p class="sw-h">메뉴에 둘 포맷과 기본 용량</p>' +
-      '<p class="sw-d">용량을 정한 칸에 놓으면 그 크기 이하로 맞춥니다. PDF는 한&nbsp;권 기준입니다.</p>' +
+      '<p class="sw-h">메뉴</p>' +
       '<div class="cw-card sw-card">' + rows + '</div>' +
       '<div class="df-menu sw-menu">' + SIZES.map(function (t) { return t === '-' ? '<hr>' : '<b>' + t + '</b>'; }).join('') + '</div>');
     this.eRows = this.e.querySelectorAll('.sw-row');
@@ -501,10 +501,10 @@
     this.cache = {};
   }
   // 창 좌표에서 n번째 줄의 체크 상자 · 용량 단추 · 펼친 목록 k번째 항목
-  SetWin.box = function (n) { return { x: 22 + 12 + 7, y: 116 + n * 38.5 + 19 }; };
-  SetWin.pick = function (n) { return { x: 380 - 22 - 12 - 54, y: 116 + n * 38.5 + 19 }; };
+  SetWin.box = function (n) { return { x: 22 + 12 + 7, y: 72 + n * 38.5 + 19 }; };
+  SetWin.pick = function (n) { return { x: 380 - 22 - 12 - 54, y: 72 + n * 38.5 + 19 }; };
   SetWin.item = function (n, k) {   // macOS 팝업 단추: 지금 고른 항목이 단추 자리에 오도록 목록이 열린다
-    var y = 0, top = 116 + n * 38.5 + 19 - 11 - 5;
+    var y = 0, top = 72 + n * 38.5 + 19 - 11 - 5;
     for (var i = 0, j = 0; i < SIZES.length; i++) { if (SIZES[i] === '-') { y += 9; continue; } if (j === k) break; y += 22; j++; }
     return { x: 380 - 22 - 12 - 54, y: top + 5 + y + 11 };
   };
@@ -524,7 +524,7 @@
     var d = this.drop.at(T);
     this.eMenu.style.opacity = d.toFixed(3);
     this.eMenu.style.visibility = d > 0.001 ? 'visible' : 'hidden';
-    this.eMenu.style.top = (116 + this.dropRow * 38.5 + 19 - 11 - 5) + 'px';
+    this.eMenu.style.top = (72 + this.dropRow * 38.5 + 19 - 11 - 5) + 'px';
     for (var k = 0; k < this.eItems.length; k++) this.eItems[k].style.setProperty('--on', this.hi[k].at(T).toFixed(3));
   };
 
@@ -593,7 +593,7 @@
     o.hl.to(t, idx >= 0 ? 1 : 0, Motion.hover);
     o.scale.to(t, idx >= 0 ? 0.98 : 1.02, Motion.orb);
     if (this.hint) {
-      if (idx >= 0 && armed < 0) this.hint.hov.to(t, FORMATS[idx][0] + '로 변환 · ' + FORMATS[idx][1]);
+      if (idx >= 0 && armed < 0) this.hint.hov.to(t, FORMATS[idx][0] + '로 변환');
       this.hint.k.to(t, idx >= 0 ? 1 : 0, Motion.hover);
     }
   };
@@ -1016,8 +1016,8 @@
       function settings(pn, t0, kind) {
         var KW = 0.8, wc = { x: pn.c.x, y: mob ? 186 : 182 };
         var sw = new SetWin(strip), cur = new Cursor(strip);
-        sw.e.style.transform = 'translate(' + (wc.x - 190).toFixed(1) + 'px,' + (wc.y - 204).toFixed(1) + 'px) scale(calc(' + KW + ' * var(--sc, 1)))';
-        function inWin(p) { return { x: wc.x + (p.x - 190) * KW, y: wc.y + (p.y - 204) * KW }; }
+        sw.e.style.transform = 'translate(' + (wc.x - 190).toFixed(1) + 'px,' + (wc.y - 182).toFixed(1) + 'px) scale(calc(' + KW + ' * var(--sc, 1)))';
+        function inWin(p) { return { x: wc.x + (p.x - 190) * KW, y: wc.y + (p.y - 182) * KW }; }
         function go(p, tt, d) { p = inWin(p); cur.x.to(tt, p.x + 2, ease(EIO, d)); cur.y.to(tt, p.y + 3, ease(HAND, d)); return tt + d; }
         var to = t0 + 0.3;
         sw.op.to(to, 1, ease(EO, 0.3)); sw.sc.to(to, 1, ease(EO, 0.35));
