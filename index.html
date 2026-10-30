@@ -263,11 +263,13 @@
   .cw-chip i { inset: 0; border-radius: 7px; background: #fafafc; opacity: 0; font-style: normal;
     box-shadow: 0 0 0 .5px rgba(18, 28, 45, .07), 0 .5px 1.2px rgba(18, 28, 45, .12), 0 2px 5px rgba(18, 28, 45, .06); }
   .cw-chip i span { position: absolute; color: #3c608a; font-weight: 600; }
-  .cw-f { top: 10px; width: 63px; height: 22px; box-sizing: border-box; padding: 3px 6px 0; text-align: right; border-radius: 5px; background: #f0f1f4;
+  .cw-f { top: 10px; width: 56px; height: 22px; box-sizing: border-box; padding: 3px 6px 0; text-align: right; border-radius: 5px; background: #f0f1f4;
     font-size: 12px; font-variant-numeric: tabular-nums; color: rgba(44, 44, 46, .35); }
-  .cw-x { left: 79px; top: 13px; width: 10px; text-align: center; font-size: 11px; color: rgba(44, 44, 46, .4); }
-  .cw-note { left: 10px; top: 39px; width: 148px; margin: 0; font-size: 10.5px; line-height: 1.3; color: rgba(44, 44, 46, .5); }
-  .cw-pick { left: 50%; top: 9px; transform: translateX(-50%); height: 26px; box-sizing: border-box; padding: 0 9px 0 14px; border-radius: 7px; display: flex; align-items: center; gap: 24px;
+  .cw-x { left: 68px; top: 13px; width: 10px; text-align: center; font-size: 11px; color: rgba(44, 44, 46, .4); }
+  .cw-u { left: 140px; top: 13px; font-size: 11px; color: rgba(44, 44, 46, .5); }
+  .cw-row { left: 12px; height: 38px; display: flex; align-items: center; font-size: 11.5px; color: #2c2c2e; }
+  .cw-sep { left: 12px; right: 0; top: 38px; height: .5px; background: rgba(18, 28, 45, .07); }
+  .cw-pick { right: 8px; width: 100px; height: 26px; box-sizing: border-box; padding: 0 7px 0 10px; border-radius: 7px; display: flex; align-items: center; justify-content: space-between;
     background: #fff; font-size: 12px; color: #1d1d1f; box-shadow: 0 0 0 .5px rgba(18, 28, 45, .12), 0 .5px 1.5px rgba(18, 28, 45, .10); white-space: nowrap; }
   .cw-pick svg { width: 8px; height: 12px; color: rgba(44, 44, 46, .6); }
   .cw-res { left: 16px; top: 378px; width: 168px; margin: 0; display: flex; justify-content: space-between; }
@@ -277,12 +279,12 @@
   .cw-save { top: 404px; background: linear-gradient(180deg, #cce1f5, #a3c4e6); color: #3c608a; font-weight: 600; box-shadow: 0 .5px 1.2px rgba(18, 28, 45, .10); }
   .cw-cancel { top: 438px; background: #fafafc; box-shadow: 0 0 0 .5px rgba(18, 28, 45, .07), 0 .5px 1.2px rgba(18, 28, 45, .08); }
   /* 설정 창 (자르기 창과 같은 바탕·제목 줄·카드) */
-  .df-sw { width: 380px; height: 408px; transform-origin: 190px 204px; background: #f0f1f4; }
+  .df-sw { width: 380px; height: 364px; transform-origin: 190px 182px; background: #f0f1f4; }
   .df-sw .cw-bar { width: 380px; }
   .df-sw p { text-align: left; }
   .sw-h { left: 22px; top: 46px; margin: 0; font-size: 13px; font-weight: 600; color: #1d1d1f; }
   .sw-d { left: 22px; top: 68px; width: 336px; margin: 0; font-size: 11.5px; line-height: 1.38; color: rgba(44, 44, 46, .6); word-break: keep-all; }
-  .sw-card { left: 22px; top: 116px; width: 336px; height: 269.5px; }
+  .sw-card { left: 22px; top: 72px; width: 336px; height: 269.5px; }
   .sw-row { left: 0; width: 336px; height: 38px; }
   .sw-row.sep::before { content: ""; position: absolute; left: 40px; right: 0; top: -.5px; height: .5px; background: rgba(18, 28, 45, .07); }
   .sw-row > * { position: absolute; }
@@ -802,10 +804,10 @@
       clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
     }
     // 다운로드 수: 버튼을 누를 때 시각·버전·유입 채널만 보낸다 (개인정보 없음). 주소가 비어 있으면 아무것도 하지 않는다
-    // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.5 seasoning'
+    // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.6 seasoning'
     var FROM = '';
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
-    var VERSION = '0.5' + (FROM ? ' ' + FROM : '');
+    var VERSION = '0.6' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     document.querySelectorAll('a[href="Dropfit-macOS.zip"]').forEach(function (a) {
       a.addEventListener('click', function () {
@@ -892,6 +894,6 @@
 
   })();
 </script>
-<script src="demo.js?v=14" defer></script>
+<script src="demo.js?v=15" defer></script>
 </body>
 </html>
