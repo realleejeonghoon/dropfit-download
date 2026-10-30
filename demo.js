@@ -432,7 +432,7 @@
   function CropWin(parent, name) {
     this.op = new P(0); this.sc = new P(0.97); this.k = new P(0);
     this.on = RATIOS.map(function (r, i) { return new P(i === 0 ? 1 : 0); });
-    this.ready = new P(0.45); this.res = new P('4,032 × 3,024 px'); this.w = new P('4032');
+    this.ready = new P(0.45); this.res = new P('4,032 × 3,024 px · HEIC'); this.w = new P('4032');
     var chips = RATIOS.map(function (r, i) {
       var x = 8 + (i % 2) * 79, y = 8 + Math.floor(i / 2) * 32;
       return '<div class="cw-chip" style="left:' + x + 'px;top:' + y + 'px"><span>' + r + '</span><i><span>' + r + '</span></i></div>';
@@ -445,6 +445,8 @@
         '<p class="cw-lab" style="top:162px">크기</p><div class="cw-card" style="top:182px;height:75px">' +
           '<span class="cw-f" style="left:10px"></span><span class="cw-x">×</span><span class="cw-f" style="left:95px">3024</span>' +
           '<p class="cw-note">px · "크기 지정"을 누르면 입력할 수 있어요</p></div>' +
+        '<p class="cw-lab" style="top:273px">저장 형식</p><div class="cw-card" style="top:293px;height:44px">' +
+          '<span class="cw-pick">원본' + CHEV2 + '</span></div>' +
         '<p class="cw-res"><span>결과</span><b></b></p>' +
         '<div class="cw-save">저장</div><div class="cw-cancel">취소</div>' +
       '</div>');
@@ -845,7 +847,7 @@
         wait(0.35);   // 가운데에 0.35초 머물면
         orb.crop.to(t, 1, Motion.hover); orb.scale.to(t, 1.05, Motion.orb);
         g.op.to(t, 0.3, Motion.hover);   // 끌고 온 사진이 '자르기' 칸을 가리지 않게 살짝 흐리게
-        app.hint.hov.to(t, '자르기 · 포맷은 그대로'); app.hint.k.to(t, 1, Motion.hover);
+        app.hint.hov.to(t, '자르기'); app.hint.k.to(t, 1, Motion.hover);
         wait(0.8);
         // 놓으면 Dropfit은 접히고 자르기 창이 열린다
         var td = t;
@@ -864,7 +866,7 @@
         move(p45.x + 2, p45.y + 3, 0.8); wait(0.18);
         cw.on[0].to(t, 0, Motion.hover); cw.on[2].to(t, 1, Motion.hover);
         cw.k.to(t, 1, ease(EIO, 0.5));
-        cw.res.to(t + 0.25, '2,419 × 3,024 px'); cw.w.to(t + 0.25, '2419');
+        cw.res.to(t + 0.25, '2,419 × 3,024 px · HEIC'); cw.w.to(t + 0.25, '2419');
         cw.ready.to(t, 1, Motion.hover);
         wait(1.1);
         // 저장
@@ -1002,7 +1004,7 @@
         var tt = go(inWin(544.5, 121), to + 0.6, 0.8) + 0.18;   // 4:5를 고른다
         cw.on[0].to(tt, 0, Motion.hover); cw.on[2].to(tt, 1, Motion.hover);
         cw.k.to(tt, 1, ease(EIO, 0.5));
-        cw.res.to(tt + 0.25, '2,419 × 3,024 px'); cw.w.to(tt + 0.25, '2419');
+        cw.res.to(tt + 0.25, '2,419 × 3,024 px · HEIC'); cw.w.to(tt + 0.25, '2419');
         cw.ready.to(tt, 1, Motion.hover);
         tt = go(inWin(584, 446), tt + 1.1, 0.75) + 0.2;   // 저장
         cw.op.to(tt, 0, ease(EIO, 0.28)); cw.sc.to(tt, 0.98, ease(EIO, 0.28));
