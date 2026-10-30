@@ -6,16 +6,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
     <language>ko</language>
     <item>
-      <title>Dropfit 0.6.2</title>
-      <sparkle:version>22</sparkle:version>
-      <sparkle:shortVersionString>0.6.2</sparkle:shortVersionString>
+      <title>Dropfit 0.6.3</title>
+      <sparkle:version>23</sparkle:version>
+      <sparkle:shortVersionString>0.6.3</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Fri, 30 Oct 2026 15:20:27 +0000</pubDate>
-      <description><![CDATA[<ul><li>자르기 창 저장 칸 정렬</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.2-22.zip" type="application/octet-stream" sparkle:edSignature="Df+kXhnLgAejJD0mD6HFEmCQK3eG8wKgXkwAa/nchhzK3/dtHQ5dvODCnMlhqD45xtoT3SZyQqXM7FYoPOf0Aw==" length="2153642"></enclosure>
+      <pubDate>Fri, 30 Oct 2026 16:15:07 +0000</pubDate>
+      <description><![CDATA[<ul><li>업데이트 상태 표시 개선</li><li>안내 문구 정리</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.3-23.zip" type="application/octet-stream" sparkle:edSignature="lt7XUkEqW9cs/kSBxgoyFyMLTnfnVPAz6rxw2pUy4b54lvCnTf4G9QQshsQUGDqxzgI5oISdNKJ6RVhEyeHtDg==" length="2161178"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: ygyoevQuWhmywWF/yrJsdNlLdQQ7kJMOzKGiPHzUn8yDPefjX2j39AoENAJTzTxWlTHfT4qe2dOaqUFtnr8pCw==
-length: 1262
+edSignature: 5LEkHO3z+O6J0anJllRcRFmsDkVMQY2zagcRZ5nD0zD8LlMX/Z3Ry0ZgR3P7enqdUQ4k2fTJRoIr25fcR+uGDA==
+length: 1293
 -->
