@@ -347,7 +347,7 @@
   function Hint(parent, orb) {
     this.orb = orb;
     this.op = new P(0); this.dx = new P(0); this.dy = new P(123);
-    this.base = new P('포맷 위에 놓으세요'); this.hov = new P(''); this.k = new P(0);
+    this.base = new P('포맷 위에 놓기'); this.hov = new P(''); this.k = new P(0);
     this.e = el('div', 'df-hint', parent, '<span></span><span class="h"></span>');
     this.cache = {};
   }
@@ -445,7 +445,7 @@
         '<p class="cw-lab" style="top:162px">크기</p><div class="cw-card" style="top:182px;height:42px">' +
           '<span class="cw-f" style="left:10px"></span><span class="cw-x">×</span><span class="cw-f" style="left:80px">3024</span><span class="cw-u">px</span></div>' +
         '<p class="cw-lab" style="top:240px">저장</p><div class="cw-card" style="top:260px;height:77px">' +
-          '<span class="cw-row" style="top:0">형식</span><span class="cw-pick" style="top:6px">원본' + CHEV2 + '</span>' +
+          '<span class="cw-row" style="top:0">포맷</span><span class="cw-pick" style="top:6px">원본' + CHEV2 + '</span>' +
           '<i class="cw-sep"></i>' +
           '<span class="cw-row" style="top:38.5px">용량</span><span class="cw-pick" style="top:44.5px">원본 용량' + CHEV2 + '</span></div>' +
         '<p class="cw-res"><span>결과</span><b></b></p>' +
@@ -560,7 +560,7 @@
       var h = this.hint;
       var hp = this.choices ? ring.L.hintSub : ring.L.hint;
       h.dx.to(t, hp.x); h.dy.to(t, hp.y);
-      h.base.to(t, '포맷 위에 놓으세요'); h.k.to(t, 0);
+      h.base.to(t, '포맷 위에 놓기'); h.k.to(t, 0);
       h.op.to(t, 1, ease(EIO, 0.4), 0.25);
     }
   };
