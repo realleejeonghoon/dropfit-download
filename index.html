@@ -682,6 +682,16 @@
   .po-row .pill { flex: none; border: 0; font: inherit; font-size: 16px; padding: 11px 24px; cursor: pointer; }
   .po-row .pill[disabled] { opacity: .55; cursor: default; }
   @media (max-width: 734px) { .po-row { flex-direction: column; } }
+  /* 출시 전 의견 메일: 선택 동의 체크 (기본 비어 있음) */
+  .po-opt { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 14px; color: var(--ink-2); cursor: pointer; text-align: left; }
+  .po-opt input { appearance: none; -webkit-appearance: none; flex: none; width: 18px; height: 18px; margin: 0; border-radius: 5px; background: #fff; cursor: pointer;
+    box-shadow: inset 0 0 0 1.2px rgba(18, 28, 45, .22); display: grid; place-content: center; transition: background .28s var(--ease), box-shadow .28s var(--ease); }
+  .po-opt input::after { content: ""; width: 9px; height: 5px; border: solid #fff; border-width: 0 0 2px 2px; transform: rotate(-45deg) translate(1px, -1px); opacity: 0; transition: opacity .2s var(--ease); }
+  .po-opt input:checked { background: var(--sky-deep); box-shadow: none; }
+  .po-opt input:checked::after { opacity: 1; }
+  .po-opt input:focus-visible { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(163, 196, 230, .35); }
+  .po-opt input:disabled { opacity: .55; cursor: default; }
+  .po-opt .po-sub { font-size: 13px; color: #8a929e; margin-left: 6px; }
   @media (max-width: 734px) { .fb { padding: 22px 18px; border-radius: 20px; } .rate { gap: 6px; } .rate label { font-size: 13.5px; padding: 8px 12px; } }
 </style>
 </head>
@@ -792,8 +802,9 @@
         <button class="pill" type="submit" id="poSend">출시 알림 받기</button>
       </label>
       <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <p class="fb-note" id="poNote" role="status">출시 메일 한 통을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
-      <div class="fb-done" role="status"><b>신청되었습니다.</b><p>출시되면 이 주소로 메일을 보냅니다.</p></div>
+      <label class="po-opt" for="poOpt"><input type="checkbox" name="optin" id="poOpt" value="1"><span id="poOptLabel">만드는 과정, 같이 나누기 (선택)<span class="po-sub">출시 전 의견 메일</span></span></label>
+      <p class="fb-note" id="poNote" role="status">출시 메일을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
+      <div class="fb-done" role="status"><b>신청되었습니다.</b><p id="poDoneMsg">출시되면 이 주소로 메일을 보냅니다.</p></div>
     </form>
   </div>
 </section>
@@ -841,12 +852,18 @@
       var email = document.getElementById('poEmail'), note = document.getElementById('poNote'), btn = document.getElementById('poSend');
       if (!email.value.trim() || !email.checkValidity()) { note.textContent = '이메일 주소를 확인하십시오.'; note.className = 'fb-note err'; email.focus(); return; }
       var data = new URLSearchParams(new FormData(po));
-      data.set('event', 'preorder'); data.set('version', VERSION);
-      btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note';
+      var opt = document.getElementById('poOpt');
+      // 의견 메일 동의는 시트의 '버전·경로' 칸 끝에 ' 의견'으로 남긴다 (Apps Script 20자 제한 안에 맞춤)
+      data.delete('optin');
+      data.set('event', 'preorder'); data.set('version', opt && opt.checked ? VERSION.slice(0, 17) + ' 의견' : VERSION);
+      btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note'; if (opt) opt.disabled = true;
       fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
-        .then(function () { po.classList.add('sent'); })
+        .then(function () {
+          if (opt && opt.checked) document.getElementById('poDoneMsg').textContent = '출시 전 의견 메일과 출시 메일을 이 주소로 보냅니다.';
+          po.classList.add('sent');
+        })
         .catch(function () {
-          btn.disabled = false; btn.textContent = '출시 알림 받기';
+          btn.disabled = false; btn.textContent = '출시 알림 받기'; if (opt) opt.disabled = false;
           note.textContent = '신청할 수 없습니다. 잠시 후 다시 시도하십시오.'; note.className = 'fb-note err';
         });
     });
