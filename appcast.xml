@@ -6,16 +6,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
     <language>ko</language>
     <item>
-      <title>Dropfit 0.6.5</title>
-      <sparkle:version>26</sparkle:version>
-      <sparkle:shortVersionString>0.6.5</sparkle:shortVersionString>
+      <title>Dropfit 0.6.6</title>
+      <sparkle:version>27</sparkle:version>
+      <sparkle:shortVersionString>0.6.6</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Tue, 03 Nov 2026 15:28:30 +0000</pubDate>
-      <description><![CDATA[<ul><li>어두운 모드에서 앱 아이콘이 어둡게 바뀝니다.</li><li>바탕화면 Dropfit의 그림이 앱 아이콘과 같아졌습니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.5-26.zip" type="application/octet-stream" sparkle:edSignature="ya+luDFgvAdKpUvULjErwiOgOIafKzCo0skMMqPifhsHKcdqDMfGxItfORuqH51720d0r917oiONygEVi4bcBQ==" length="4184674"></enclosure>
+      <pubDate>Wed, 04 Nov 2026 08:31:51 +0000</pubDate>
+      <description><![CDATA[<ul><li>어두운 모드에서 바탕화면 Dropfit 위에 포인터를 두면 그림 둘레가 다시 은은하게 빛납니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.6-27.zip" type="application/octet-stream" sparkle:edSignature="zYiTcfuVwwJi3jxBiHlxND3DQgQqGcTSqBj6LTzx7NtNVFRNwvhJvVv42q1rZc3NaS2MVZh4PpwOGqzC37oCDg==" length="4188038"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: HLkQ5S8a7T2pCJabrXh4zH3MsS2Cyz5707yyrN4fLVvoaGQpGHVX9pHO2BP/Fk4pzXtlw/znr+Mf5rqVAY4kAA==
-length: 1373
+edSignature: qP/m1QethdSNVccU3woEQZcqnUxkBVsehDhfd5XkFaU4o+KSx6K4crHHCp99fRe7hEBl7QXG25HzsVHHZNswDw==
+length: 1352
 -->
