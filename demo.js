@@ -1074,7 +1074,7 @@
 
       scene(p0, row(p0.c, ['여행'], -1, '.heic'), row(p0.c, ['여행'], 1, '.png'), 1, 2, 1);
       next();
-      var many = mob ? ['바다', '숲'] : ['바다', '사막', '숲'];
+      var many = mob ? ['바다', '사막'] : ['바다', '사막', '숲'];
       scene(p1, row(p1.c, many, -1, '.heic'), row(p1.c, many, 1, '.png'), 1, 2, many.length);
       next();
       scene(p2, [{ name: '여행', folder: true, pos: { x: p2.c.x - X, y: p2.c.y + 30 } }],
