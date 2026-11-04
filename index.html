@@ -672,6 +672,8 @@
   .po input[type=email]:focus { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(163, 196, 230, .35); }
   .po .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .po .fb-note { margin-top: 12px; }
+  .fb-note a { color: var(--link); }
+  .fb-note a:hover { text-decoration: underline; }
   .po.sent > :not(.fb-done) { display: none; }
   .po.sent .fb-done { display: block; padding: 8px 0 0; animation: fbIn .6s var(--ease) both; }
   /* 정식판 사전 신청 입력 줄 */
@@ -790,7 +792,7 @@
         <button class="pill" type="submit" id="poSend">출시 알림 받기</button>
       </label>
       <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <p class="fb-note" id="poNote" role="status">출시 알림 외에는 메일을 보내지 않습니다.</p>
+      <p class="fb-note" id="poNote" role="status">출시 메일 한 통을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
       <div class="fb-done" role="status"><b>신청되었습니다.</b><p>출시되면 이 주소로 메일을 보냅니다.</p></div>
     </form>
   </div>
@@ -799,6 +801,7 @@
 <footer>
   <div class="wrap">
     <span>Dropfit</span>
+    <a href="privacy.html">개인정보 처리방침</a>
   </div>
 </footer>
 
@@ -820,7 +823,7 @@
     // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.6 seasoning'
     var FROM = '';
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
-    var VERSION = '0.6.5' + (FROM ? ' ' + FROM : '');
+    var VERSION = '0.6.6' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     document.querySelectorAll('a[href="Dropfit-macOS.zip"]').forEach(function (a) {
       a.addEventListener('click', function () {
@@ -832,6 +835,7 @@
     });
     // 정식판 사전 신청: 같은 Apps Script 주소로 event=preorder, 이메일, 버전·유입 채널만 보낸다
     var po = document.getElementById('poForm');
+    var poNoteBase = po ? document.getElementById('poNote').innerHTML : ''; // 오류 뒤 처음 안내(방침 링크 포함)로 되돌릴 때 쓴다
     if (po) po.addEventListener('submit', function (e) {
       e.preventDefault();
       var email = document.getElementById('poEmail'), note = document.getElementById('poNote'), btn = document.getElementById('poSend');
@@ -848,7 +852,7 @@
     });
     if (po) po.addEventListener('input', function () {
       var note = document.getElementById('poNote');
-      if (note.className.indexOf('err') >= 0) { note.textContent = '출시 알림 외에는 메일을 보내지 않습니다.'; note.className = 'fb-note'; }
+      if (note.className.indexOf('err') >= 0) { note.innerHTML = poNoteBase; note.className = 'fb-note'; }
     });
     function copy(text, msg) {
       var done = function () { show(msg); };
