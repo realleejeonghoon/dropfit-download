@@ -22,7 +22,9 @@ codesign --verify --deep --strict "$APP_SRC" >"$OUT/codesign.txt" 2>&1 && put ok
 spctl --assess --type execute -vv "$APP_SRC" >"$OUT/spctl.txt" 2>&1
 grep -q "accepted" "$OUT/spctl.txt" && grep -q "Notarized Developer ID" "$OUT/spctl.txt" \
   && put ok "Gatekeeper: 공증된 Developer ID로 허용" || put bad "Gatekeeper: $(tr '\n' ' ' <"$OUT/spctl.txt")"
-xcrun stapler validate "$APP_SRC" >"$OUT/stapler.txt" 2>&1 && put ok "공증 티켓 첨부 확인(오프라인에서도 열림)" || put bad "공증 티켓 없음: $(tail -1 "$OUT/stapler.txt")"
+# stapler는 확인할 때 Apple 서버에도 묻는다. 서버·망이 잠깐 안 될 때(Error 68 등)는 5초 간격으로 세 번까지
+ST=bad; for TRY in 1 2 3; do xcrun stapler validate "$APP_SRC" >"$OUT/stapler.txt" 2>&1 && { ST=ok; break; }; sleep 5; done
+[ $ST = ok ] && put ok "공증 티켓 첨부 확인(오프라인에서도 열림$([ $TRY -gt 1 ] && echo ", ${TRY}번째 확인"))" || put bad "공증 티켓 없음(3번 확인): $(tail -1 "$OUT/stapler.txt")"
 
 APP=/Applications/Dropfit.app
 rm -rf "$APP"; ditto "$APP_SRC" "$APP"
