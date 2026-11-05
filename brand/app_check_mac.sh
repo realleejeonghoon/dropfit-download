@@ -42,11 +42,14 @@ fi
 
 # 참고(합격 판정에 넣지 않음): 같은 점검을 오브를 화면 한가운데 두고 한 번 더. 처음 설치한 자리(오른쪽 위)에서만 다르면 자리 탓
 DOM=app.dropfit.prototype
-defaults write $DOM orb.homeFraction "{0.5, 0.5}"; defaults delete $DOM orb.center 2>/dev/null
+MID="$(osascript -l JavaScript -e 'ObjC.import("AppKit"); var v=$.NSScreen.mainScreen.visibleFrame; "{"+(v.origin.x+v.size.width/2)+", "+(v.origin.y+v.size.height/2)+"}"' 2>/dev/null)"
+echo "처음 자리 설정: $(defaults read $DOM 2>&1 | tr '\n' ' ')" >"$OUT/position.txt"
+defaults write $DOM orb.homeFraction "{0.5, 0.5}"; defaults write $DOM orb.center "$MID"
+echo "한가운데 설정(orb.center): $MID" >>"$OUT/position.txt"
 "$APP/Contents/MacOS/Dropfit" --qa "$OUT/ui-center.txt" >"$OUT/qa-center-run.txt" 2>&1 &
 QP=$!; for _ in $(seq 1 300); do kill -0 $QP 2>/dev/null || break; sleep 1; done
 kill -0 $QP 2>/dev/null && kill $QP; wait $QP 2>/dev/null; RC2=$?
-defaults delete $DOM orb.homeFraction 2>/dev/null
+defaults delete $DOM orb.homeFraction 2>/dev/null; defaults delete $DOM orb.center 2>/dev/null
 NOTE="참고: 오브를 화면 한가운데 두면 화면 동작 점검 $([ $RC2 -eq 0 ] && echo 통과 || echo "문제 $(grep -c "✗" "$OUT/ui-center.txt" 2>/dev/null || echo ?)건")"
 
 CR=$(find ~/Library/Logs/DiagnosticReports /Library/Logs/DiagnosticReports -name 'Dropfit*' -newermt "@$START" 2>/dev/null | head -3)
@@ -90,5 +93,5 @@ else put bad "앱 아이콘을 꺼내지 못함"; fi
 
 pkill -x Dropfit 2>/dev/null
 { echo "### Dropfit 앱 실행 점검 · macOS $OS · 화면 ${SCREEN:-알 수 없음} · $(cat "$DIR/version.txt" 2>/dev/null)"; echo; for l in "${LINES[@]}"; do echo "- $l"; done; echo "- $NOTE"; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
-printf '%s\n' "${LINES[@]}"; echo "· $NOTE"; echo; echo "--- 화면 동작 점검 보고서 (화면 ${SCREEN:-?}) ---"; cat "$OUT/ui.txt" 2>/dev/null; echo; echo "--- 참고: 화면 한가운데에서 ---"; grep "✗\|결과" "$OUT/ui-center.txt" 2>/dev/null; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "${FAILS}건 다름 · macOS $OS"
+printf '%s\n' "${LINES[@]}"; echo "· $NOTE"; echo; echo "--- 화면 동작 점검 보고서 (화면 ${SCREEN:-?}) ---"; cat "$OUT/ui.txt" 2>/dev/null; echo; echo "--- 참고: 화면 한가운데에서 ---"; cat "$OUT/position.txt" 2>/dev/null; grep "✗\|결과" "$OUT/ui-center.txt" 2>/dev/null; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "${FAILS}건 다름 · macOS $OS"
 exit $([ $FAILS -eq 0 ] && echo 0 || echo 1)
