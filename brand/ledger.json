@@ -1,4 +1,6 @@
 {
+ "og_v": "10",
+ "zip_bytes": 4192253,
  "_설명": "정훈이 확정한 상태의 지문. 바꾸려면 확정 후 python3 brand/check.py --confirm",
  "files": {
   "index.html": "e6ece9e7e03f3d6d7b97122da3e5a5e6106256faa3dd580d9647daf73fad3163",

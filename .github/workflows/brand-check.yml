@@ -13,12 +13,12 @@ permissions:
 
 jobs:
   repo:
-    name: 저장소 점검 (아이콘·페이지·버전·확정값·색)
+    name: 저장소 점검 (아이콘·페이지·버전·문안·확정값·색·휴대폰 폭)
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pip install --quiet pillow numpy
+      - run: pip install --quiet pillow numpy playwright && python3 -m playwright install --with-deps chromium
       - run: python3 brand/check.py
 
   live:

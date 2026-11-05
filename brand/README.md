@@ -9,7 +9,7 @@
 
 ## 점검
 
-- PR마다·main 반영마다: `python3 brand/check.py` — 아이콘이 기준 그림과 같은지(밝은·어두운 바탕), 모든 페이지의 아이콘 연결, 미리보기 그림 주소, 랜딩·appcast·zip 버전, 확정 뒤 바뀐 파일, 장부에 없는 새 색.
+- PR마다·main 반영마다: `python3 brand/check.py` — 아이콘이 기준 그림과 같은지(밝은·어두운 바탕), 모든 페이지의 아이콘 연결, 미리보기 그림 주소, 랜딩·appcast·zip 버전, 금지어, 확정 뒤 바뀐 파일·zip 크기 변화, 장부에 없는 새 색, 400px·1280px 폭 가로 넘침. 합격 수치는 품질 기술서(Claude Doc) 3장.
 - 매일 09:00 KST: `python3 brand/check.py --live` — 공개 사이트 파일이 main과 같은지.
 - 하나라도 다르면 실패로 표시되고 GitHub가 알림 메일을 보냅니다.
 

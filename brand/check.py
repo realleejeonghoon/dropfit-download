@@ -4,6 +4,7 @@
   python3 brand/check.py            저장소 점검 (PR마다 자동)
   python3 brand/check.py --live     공개 사이트가 이 저장소와 같은지 (매일 09:00 KST 자동)
   python3 brand/check.py --confirm  지금 상태를 확정값으로 기록 (정훈 확정 뒤에만)
+  --no-render                       휴대폰 폭 화면 점검(playwright) 건너뛰기
 
 기준: brand/master/ 의 11/3 확정 아이콘(하늘 선), brand/palette.json, brand/ledger.json.
 하나라도 다르면 ✗ 와 함께 끝 코드 1.
@@ -128,6 +129,40 @@ def check_version():
     diff = [k for k in set(a) | set(b) if a.get(k) != b.get(k)]
     (ok if not diff else bad)('버전', '다운로드 zip과 업데이트 zip의 앱이 같음' if not diff else f'두 zip의 앱이 다름: {diff[:3]}')
 
+# ---------- 문안: 금지어 ----------
+BANNED = ['오브', '통과 보장', '평생 무료', '광고 규격 그대로']   # 품질 기술서 3장 '문안'
+def check_words():
+    for f in TP['pages'] + ['README.md']:
+        txt = re.sub(r'<script[\s\S]*?</script>|<style[\s\S]*?</style>', '', read(f))
+        hit = [w for w in BANNED if w in txt]
+        (bad if hit else ok)('문안', f'{f}: ' + ('금지어 ' + ', '.join(hit) if hit else f'금지어 {len(BANNED)}개 없음'))
+
+# ---------- 화면: 휴대폰 폭 가로 넘침 ----------
+def check_render():
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        bad('화면', 'playwright가 없어 휴대폰 폭 점검을 못 했습니다 (pip install playwright && playwright install chromium)'); return
+    import http.server, threading, functools
+    class H(http.server.SimpleHTTPRequestHandler):   # 공개 주소처럼 /dropfit-download/ 아래로도 열리게
+        def log_message(self, *a): pass
+        def translate_path(self, path):
+            return super().translate_path(path.replace('/dropfit-download/', '/', 1))
+    srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(H, directory=ROOT))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    base = f'http://127.0.0.1:{srv.server_address[1]}/'
+    with sync_playwright() as pw:
+        b = pw.chromium.launch(executable_path=os.environ.get('CHROME_PATH') or None)
+        for page in TP['pages']:
+            for w in (400, 1280):
+                pg = b.new_page(viewport={'width': w, 'height': 900}, reduced_motion='reduce')
+                pg.goto(base + page); pg.wait_for_timeout(600)
+                over = pg.evaluate('document.documentElement.scrollWidth - innerWidth')
+                (ok if over <= 0 else bad)('화면', f'{page} {w}px 폭: 가로 넘침 {max(over, 0)}px (기준 0)')
+                pg.close()
+        b.close()
+    srv.shutdown()
+
 # ---------- 확정값: 파일 지문·색 ----------
 HEX = re.compile(r'#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b')
 def colors(path):
@@ -143,12 +178,24 @@ def check_ledger():
         bad('확정값', '확정 뒤 바뀐 파일: ' + ', '.join(changed) + ' → 정훈 확정 후 --confirm')
     else:
         ok('확정값', f'보이는 파일 {len(TP["watched"])}개가 확정값과 같음')
+    if led.get('zip_bytes'):
+        r = zip_size() / led['zip_bytes'] - 1
+        (ok if abs(r) <= 0.20 else bad)('확정값', f'다운로드 zip {zip_size() / 1e6:.1f}MB, 확정값 대비 {r * 100:+.0f}% (20% 넘으면 원인 기록 후 확정)')
     for f in TP['color_files']:
         new = [c for c in colors(f) if c not in led['colors'].get(f, [])]
         (bad if new else ok)('색', f'{f}: ' + ('장부에 없는 새 색 ' + ' '.join(new) if new else f'색 {len(colors(f))}개 모두 장부 안'))
 
+def og_v():
+    m = re.search(r'og\.png\?v=(\d+)', read('index.html')); return m.group(1) if m else None
+
+def zip_size():
+    return os.path.getsize(os.path.join(ROOT, 'Dropfit-macOS.zip'))
+
 def confirm():
-    led = {'_설명': '정훈이 확정한 상태의 지문. 바꾸려면 확정 후 python3 brand/check.py --confirm',
+    old = load('ledger.json') if os.path.exists(os.path.join(B, 'ledger.json')) else {}
+    if old and old['files'].get('assets/og.png') != sha('assets/og.png') and old.get('og_v') == og_v():
+        print('확정 안 함: 미리보기 그림(og.png)이 바뀌었는데 index.html의 og.png?v= 숫자가 그대로입니다. 카톡이 예전 그림을 계속 보여 줍니다.'); sys.exit(1)
+    led = {'og_v': og_v(), 'zip_bytes': zip_size(), '_설명': '정훈이 확정한 상태의 지문. 바꾸려면 확정 후 python3 brand/check.py --confirm',
            'files': {p: sha(p) for p in TP['watched'] if os.path.exists(os.path.join(ROOT, p))},
            'colors': {f: colors(f) for f in TP['color_files']}}
     with open(os.path.join(B, 'ledger.json'), 'w', encoding='utf-8') as fp:
@@ -183,5 +230,6 @@ if __name__ == '__main__':
     if '--live' in sys.argv:
         check_live()
     else:
-        check_icons(); check_pages(); check_version(); check_ledger()
+        check_icons(); check_pages(); check_version(); check_words(); check_ledger()
+        if '--no-render' not in sys.argv: check_render()
     sys.exit(report())
