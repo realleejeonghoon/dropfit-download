@@ -7,15 +7,15 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <language>ko</language>
     <item>
       <title>Dropfit 0.6.7</title>
-      <sparkle:version>28</sparkle:version>
+      <sparkle:version>29</sparkle:version>
       <sparkle:shortVersionString>0.6.7</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 05 Nov 2026 03:08:05 +0000</pubDate>
-      <description><![CDATA[<ul><li>Finder 목록·작은 크기와 macOS 14·15에서도 앱 아이콘이 확정 그림 그대로 보입니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.7-28.zip" type="application/octet-stream" sparkle:edSignature="BZh72ChNa5velxIp31iK6XDZLDfMeaAO/BrK1uO05roAquivWBhD8PyjqFYnGF2Xg5ljYO7vt1THztsGZTdhCg==" length="3302491"></enclosure>
+      <pubDate>Thu, 05 Nov 2026 03:36:05 +0000</pubDate>
+      <description><![CDATA[<ul><li>Finder 목록·작은 크기와 macOS 14·15에서도 앱 아이콘이 확정 그림 그대로 보입니다.</li><li>화면 위쪽에 둔 Dropfit에 파일을 끌어와도 자리가 그대로입니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.7-29.zip" type="application/octet-stream" sparkle:edSignature="tEuzpDTH7VTLeVQV3g/GfyXLbNWt0BW7F8X+RpdK+KPQxmJXzCrVw39lJUp+TE3OonqM2bqnHW9Yxp2rgcnxAA==" length="3302788"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: jLiYQgJZ7cbYdsw4a5OJ/HuV9eWtw9EGLU9XPTUJbr/iWtdHxdIdN76aDh84jOurb0lgm1VgW+eGz/R9+JLpBQ==
-length: 1339
+edSignature: Mp6sOSqrdEBLq2DwCYeqRjDjJ4gJrBnh+gtlM3VxQuObSH9Qrsud+1NLvBCdnbGC7b6OiPeZ6HHkknUdLdVNBg==
+length: 1432
 -->
