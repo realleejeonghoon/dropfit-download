@@ -144,6 +144,22 @@ def check_words():
 MANNER = {'보냅니다': '보내 드립니다', '알립니다': '알려 드립니다', '알려줍니다': '알려 드립니다',
           '여쭙': '어색한 말, 다른 말로(예: 의견을 듣고 싶습니다)'}
 JOINED = re.compile(r'[가-힣]*(?:아|어|여|해|내|려|와|워|춰|꿔|줘|봐)(?:드[리립려렸]|주[세셔시십신])[가-힣]*')
+# AI 말투 일곱 가지 (11/5 말투 점검, 정훈 확정). 공개 글에 쓰지 않는다
+AI_TONE = {
+  '진심 강조 상투어': ['하나만', '충분합니다', '큰 도움이 됩니다', '솔직한 후기'],
+  '예스러운 낮춤말': ['여쭤'],
+  '광고식 반문': ['계시진 않나요', '지 않으신가요?'],
+  '끊어 쓰는 연출': ['니까요.'],
+  '참여를 끄는 질문': ['여러분', '몇 장이세요'],
+  '번역투·통보 말투': ['이루어지', '전송되지 않습니다', '회신합니다', '하십시오'],
+  '영어 문구·내부 용어': ['Fixing what bugs me', '확정 그림', '진짜 사용자'],
+}
+def check_tone():
+    for f in TP['pages'] + ['README.md']:
+        txt = re.sub(r'<style[\s\S]*?</style>|<!--[\s\S]*?-->', '', read(f))
+        hit = [f'{k} "{w}"' for k, ws in AI_TONE.items() for w in ws if w in txt]
+        (bad if hit else ok)('문안', f'{f}: ' + ('AI 말투 ' + ', '.join(hit) if hit else f'AI 말투 {len(AI_TONE)}가지 없음'))
+
 def check_manner():
     for f in TP['pages'] + ['README.md']:
         txt = re.sub(r'<style[\s\S]*?</style>|<!--[\s\S]*?-->', '', read(f))
@@ -244,6 +260,6 @@ if __name__ == '__main__':
     if '--live' in sys.argv:
         check_live()
     else:
-        check_icons(); check_pages(); check_version(); check_words(); check_manner(); check_ledger()
+        check_icons(); check_pages(); check_version(); check_words(); check_manner(); check_tone(); check_ledger()
         if '--no-render' not in sys.argv: check_render()
     sys.exit(report())
