@@ -31,6 +31,7 @@ jobs:
           cp Dropfit-macOS.zip "$RUNNER_TEMP/new.zip"
           ls -l "$RUNNER_TEMP"/*.zip
       - name: 재현
+        timeout-minutes: 18
         run: bash brand/orb_drag_mac.sh "$RUNNER_TEMP/old.zip" "$RUNNER_TEMP/new.zip" "$RUNNER_TEMP/orb"
       - uses: actions/upload-artifact@v4
         if: always()

@@ -11,7 +11,10 @@ DOM=app.dropfit.prototype
 DX=-220; DY=160
 ROWS=(); FAILS=0
 log() { echo "$*" | tee -a "$OUT/log.txt"; }
-log "macOS $(sw_vers -productVersion) · $("$M" preflight)"
+# 멈출 수 있는 명령(권한 묻는 창 등)은 시간 제한을 둔다
+t() { local n="$1"; shift; perl -e 'alarm shift; exec @ARGV' "$n" "$@"; }
+PRE="$(t 10 "$M" preflight)"; log "macOS $(sw_vers -productVersion) · $PRE"
+shot() { case "$PRE" in *"화면 찍기 허용"*) t 5 screencapture -x "$1" 2>/dev/null;; esac; }
 
 reset_all() {
   pkill -x Dropfit 2>/dev/null; sleep 1; pkill -9 -x Dropfit 2>/dev/null
@@ -31,21 +34,21 @@ running() { ps -axo pid=,command= | grep "Dropfit.app/Contents/MacOS/Dropfit" | 
 wait_orb() {
   local tag="$1" answered="" i
   for i in $(seq 1 80); do
-    if [ "$("$M" orb)" != none ]; then
+    if [ "$(t 5 "$M" orb)" != none ]; then
       # 오브가 뜬 뒤에도 옮기기 질문 창이 함께 떠 있을 수 있으니 한 번 더 본다
       if "$M" wins | grep -q "^Dropfit · 층 0 "; then :; fi
       log "  · 오브 나타남 ($((i/2))초) · 답한 창: ${answered:-없음} · 실행 중: $(running)"
       return 0
     fi
-    local w; w="$("$M" wins)"
+    local w; w="$(t 5 "$M" wins)"
     if echo "$w" | grep -q "^CoreServicesUIAgent"; then
-      screencapture -x "$OUT/$tag-gatekeeper.png" 2>/dev/null
-      "$M" key return; answered="$answered Gatekeeper(열기)"; sleep 1.5; continue
+      shot "$OUT/$tag-gatekeeper.png"
+      t 5 "$M" key return; answered="$answered Gatekeeper(열기)"; sleep 1.5; continue
     fi
     if echo "$w" | grep -q "^Dropfit "; then
-      screencapture -x "$OUT/$tag-alert.png" 2>/dev/null
+      shot "$OUT/$tag-alert.png"
       echo "$w" | grep "^Dropfit " >>"$OUT/$tag-alert-wins.txt"
-      "$M" key return; answered="$answered 옮길까요(옮기기)"; sleep 2; continue
+      t 5 "$M" key return; answered="$answered 옮길까요(옮기기)"; sleep 2; continue
     fi
     sleep 0.5
   done
@@ -60,8 +63,8 @@ drag_test() {
   [ "${b[0]}" = none ] && { put bad "$label: 오브 없음"; return; }
   local cx=$((b[0] + b[2] / 2)) cy=$((b[1] + b[3] / 2))
   local others; others="$("$M" wins | grep '^Dropfit ' | grep -v " ${b[2]}x${b[3]}$" | wc -l | tr -d ' ')"
-  screencapture -x "$OUT/$tag-before.png" 2>/dev/null
-  "$M" drag $cx $cy $DX $DY; sleep 1
+  shot "$OUT/$tag-before.png"
+  t 10 "$M" drag $cx $cy $DX $DY; sleep 1
   a=($("$M" orb))
   local mx=$((a[0] - b[0])) my=$((a[1] - b[1]))
   local saved; saved="$(defaults read $DOM orb.center 2>/dev/null || echo 없음)"
@@ -74,7 +77,7 @@ put() { local s="✓"; [ "$1" = ok ] || { s="✗"; FAILS=$((FAILS+1)); }; ROWS+=
 scenario_fresh() {   # 처음 설치: 다운로드 폴더에서 열기 → 옮기기 → 새 자리에서 다시 실행
   local v="$1" zip="$2" t="$1-처음"
   log "[$v] 처음 설치 (다운로드 폴더 → 옮기기), 2초 뒤와 10초 뒤 끌기"
-  reset_all; unpack "$zip"; open ~/Downloads/Dropfit/Dropfit.app
+  reset_all; unpack "$zip"; t 15 open ~/Downloads/Dropfit/Dropfit.app
   wait_orb "$t" || { put bad "[$v] 처음 설치: 오브가 뜨지 않음"; return; }
   sleep 2; drag_test "$t-2s" "[$v] 처음 설치, 안내 말풍선이 떠 있는 2초 뒤"
   sleep 8; drag_test "$t-10s" "[$v] 처음 설치, 말풍선이 닫힌 10초 뒤"
@@ -84,7 +87,7 @@ scenario_fresh() {   # 처음 설치: 다운로드 폴더에서 열기 → 옮�
 scenario_wait() {    # 처음 설치 후 아무것도 누르지 않고 기다렸다가 끌기
   local v="$1" zip="$2" t="$1-기다림"
   log "[$v] 처음 설치 후 12초 기다렸다가 처음 끌기"
-  reset_all; unpack "$zip"; open ~/Downloads/Dropfit/Dropfit.app
+  reset_all; unpack "$zip"; t 15 open ~/Downloads/Dropfit/Dropfit.app
   wait_orb "$t" || { put bad "[$v] 처음 설치(기다림): 오브가 뜨지 않음"; return; }
   sleep 12; drag_test "$t" "[$v] 처음 설치, 12초 뒤 첫 끌기"
 }
@@ -93,7 +96,7 @@ scenario_reinstall() {  # 지우고 다시 설치 (설정은 남음)
   local v="$1" zip="$2" t="$1-다시"
   log "[$v] 지웠다 다시 설치 (설정 남음)"
   pkill -x Dropfit; sleep 1; rm -rf /Applications/Dropfit.app
-  unpack "$zip"; open ~/Downloads/Dropfit/Dropfit.app
+  unpack "$zip"; t 15 open ~/Downloads/Dropfit/Dropfit.app
   wait_orb "$t" || { put bad "[$v] 다시 설치: 오브가 뜨지 않음"; return; }
   sleep 2; drag_test "$t" "[$v] 지웠다 다시 설치, 2초 뒤"
 }
@@ -102,7 +105,7 @@ scenario_stay() {    # '그대로 두기': 다운로드 폴더(임시 위치)에
   local v="$1" zip="$2" t="$1-그대로"
   log "[$v] 옮기지 않고 다운로드 폴더에서 실행 (임시 위치)"
   reset_all; unpack "$zip"; defaults write $DOM mover.dontAsk -bool true
-  open ~/Downloads/Dropfit/Dropfit.app
+  t 15 open ~/Downloads/Dropfit/Dropfit.app
   wait_orb "$t" || { put bad "[$v] 그대로 두기: 오브가 뜨지 않음"; return; }
   sleep 2; drag_test "$t-2s" "[$v] 옮기지 않고 실행, 2초 뒤"
   sleep 8; drag_test "$t-10s" "[$v] 옮기지 않고 실행, 10초 뒤"
@@ -113,16 +116,17 @@ scenario_update() {  # 0.6.6을 쓰던 Mac에 새 버전을 덮어씀 (자동 �
   log "[0.6.6→새 버전] 업데이트 · 0.6.6에서 오브를 옮겨 둔 적 $moved"
   reset_all; W="$OUT/old"; rm -rf "$W"; mkdir -p "$W"; ditto -x -k "$OLD" "$W"
   ditto "$W/Dropfit/Dropfit.app" /Applications/Dropfit.app
-  open /Applications/Dropfit.app; wait_orb "$t-old" || return
+  t 15 open /Applications/Dropfit.app; wait_orb "$t-old" || return
   sleep 9
   if [ "$moved" = 있음 ]; then drag_test "$t-old" "[0.6.6] 업데이트 전 옮겨 두기"; fi
   pkill -x Dropfit; sleep 2
   W2="$OUT/new"; rm -rf "$W2"; mkdir -p "$W2"; ditto -x -k "$NEW" "$W2"
   rm -rf /Applications/Dropfit.app; ditto "$W2/Dropfit/Dropfit.app" /Applications/Dropfit.app
-  open /Applications/Dropfit.app; wait_orb "$t" || { put bad "업데이트: 오브가 뜨지 않음"; return; }
+  t 15 open /Applications/Dropfit.app; wait_orb "$t" || { put bad "업데이트: 오브가 뜨지 않음"; return; }
   sleep 2; drag_test "$t" "[0.6.6→새 버전] 업데이트 후 2초 뒤 (옮겨 둔 자리 $moved)"
 }
 
+log "--- 시작 $(date +%T)"
 for pair in "0.6.6|$OLD" "새버전|$NEW"; do
   v="${pair%%|*}"; z="${pair#*|}"
   scenario_fresh "$v" "$z"
