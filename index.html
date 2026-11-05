@@ -677,22 +677,23 @@
   .fb-note a:hover { text-decoration: underline; }
   .po.sent > :not(.fb-done) { display: none; }
   .po.sent .fb-done { display: block; padding: 8px 0 0; animation: fbIn .6s var(--ease) both; }
-  /* 정식판 사전 신청 입력 줄 */
-  .po-row { display: flex; gap: 10px; }
-  .po-row input { flex: 1; min-width: 0; }
-  .po-row .pill { flex: none; border: 0; font: inherit; font-size: 16px; padding: 11px 24px; cursor: pointer; }
-  .po-row .pill[disabled] { opacity: .55; cursor: default; }
-  @media (max-width: 734px) { .po-row { flex-direction: column; } }
+  /* 신청 칸 하나: 버튼을 입력 칸 안 오른쪽에 (카드·맨 아래 공통) */
+  .po-field { position: relative; display: block; }
+  .po .po-field input[type=email] { padding-right: 136px; }
+  .po-field .pill { position: absolute; top: 5px; right: 5px; bottom: 5px; border: 0; font: inherit; font-size: 14px; padding: 0 16px; cursor: pointer; }
+  .po-field .pill[disabled] { opacity: .55; cursor: default; }
+  .po-opt .po-sel { font-style: normal; color: var(--ink-3); }
+  .po-opt > span { display: block; }
+  .po-opt .po-sub { display: block; margin: 1px 0 0; font-size: 12.5px; color: var(--ink-3); }
   /* 출시 전 의견 메일: 선택 동의 체크 (기본 비어 있음) */
-  .po-opt { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 14px; color: var(--ink-2); cursor: pointer; text-align: left; }
-  .po-opt input { appearance: none; -webkit-appearance: none; flex: none; width: 18px; height: 18px; margin: 0; border-radius: 5px; background: #fff; cursor: pointer;
+  .po-opt { display: inline-flex; align-items: flex-start; gap: 8px; margin-top: 14px; font-size: 14px; color: var(--ink-2); cursor: pointer; text-align: left; }
+  .po-opt input { appearance: none; -webkit-appearance: none; flex: none; width: 18px; height: 18px; margin: 2px 0 0; border-radius: 5px; background: #fff; cursor: pointer;
     box-shadow: inset 0 0 0 1.2px rgba(18, 28, 45, .22); display: grid; place-content: center; transition: background .28s var(--ease), box-shadow .28s var(--ease); }
   .po-opt input::after { content: ""; width: 9px; height: 5px; border: solid #fff; border-width: 0 0 2px 2px; transform: rotate(-45deg) translate(1px, -1px); opacity: 0; transition: opacity .2s var(--ease); }
   .po-opt input:checked { background: var(--sky-deep); box-shadow: none; }
   .po-opt input:checked::after { opacity: 1; }
   .po-opt input:focus-visible { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(163, 196, 230, .35); }
   .po-opt input:disabled { opacity: .55; cursor: default; }
-  .po-opt .po-sub { font-size: 13px; color: #8a929e; margin-left: 6px; }
   @media (max-width: 734px) { .fb { padding: 22px 18px; border-radius: 20px; } .rate { gap: 6px; } .rate label { font-size: 13.5px; padding: 8px 12px; } }
   /* 다운로드 뒤 신청 카드: 다운로드 버튼(메뉴·첫 화면·맨 아래) 어느 것을 눌러도 같은 카드가 화면 아래에 뜬다. 다운로드는 막지 않는다 */
   .dl-card { position: fixed; z-index: 70; left: 50%; bottom: 24px; width: min(440px, calc(100% - 32px)); padding: 20px 22px 18px; border-radius: 22px; text-align: left;
@@ -711,19 +712,17 @@
   .dl-head span { display: block; margin-top: 1px; font-size: 13px; color: var(--ink-3); }
   .dl-head a { color: var(--link); }
   .dl-head a:hover { text-decoration: underline; }
-  .dl-card .po { max-width: none; margin: 18px 0 0; }
-  .dl-t { margin: 0 0 10px; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
-  .dl-card .po input[type=email] { font-size: 15px; padding: 10px 16px; }
-  .dl-card .po-row .pill { font-size: 15px; padding: 10px 18px; }
+  .dl-card .po { max-width: none; margin: 16px 0 0; }
+  .dl-card .po input[type=email] { font-size: 15px; padding-block: 11px; }
   .dl-card .po-opt { margin-top: 12px; font-size: 13.5px; }
   .dl-card .po .fb-note { margin-top: 10px; font-size: 12px; }
-  .dl-card .po.sent .fb-done { text-align: left; padding: 2px 0 0; }
-  .dl-card .po.sent .fb-done b { font-size: 15px; margin-bottom: 2px; }
+  .dl-card .po.sent .fb-done { text-align: left; padding: 0 0 2px 52px; }
+  .dl-card .po.sent .fb-done b { font-size: 15px; margin-bottom: 0; }
   .dl-card .po.sent .fb-done p { font-size: 13px; }
   .dl-signed { display: none; margin: 12px 0 0 52px; font-size: 13px; color: var(--ink-2); }
   .dl-card.signed .po { display: none; }
   .dl-card.signed .dl-signed { display: block; }
-  @media (max-width: 734px) { .dl-card { bottom: 16px; padding: 18px 18px 16px; } .dl-card .po-row { flex-direction: row; } }
+  @media (max-width: 734px) { .dl-card { bottom: 16px; padding: 18px 18px 16px; } }
   @media (prefers-reduced-motion: reduce) { .dl-card, .dl-card.show { transition: none; } }
 </style>
 </head>
@@ -828,15 +827,15 @@
   <div class="wrap po-stack">
     <h2 class="sec-title reveal" id="po-title">정식판 출시 알림</h2>
     <form class="po reveal" id="poForm" novalidate>
-      <label class="po-row">
+      <label class="po-field">
         <span class="sr">알림 받을 이메일</span>
         <input type="email" name="email" id="poEmail" maxlength="200" autocomplete="email" required placeholder="name@example.com">
         <button class="pill" type="submit" id="poSend">출시 알림 받기</button>
       </label>
       <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <label class="po-opt" for="poOpt"><input type="checkbox" name="optin" id="poOpt" value="1"><span id="poOptLabel">만드는 과정, 같이 나누기 (선택)<span class="po-sub">출시 전 의견 메일</span></span></label>
+      <label class="po-opt" for="poOpt"><input type="checkbox" name="optin" id="poOpt" value="1"><span id="poOptLabel">만드는 과정, 같이 나누기 <i class="po-sel">(선택)</i><span class="po-sub">출시 전 두 번, 의견을 여쭙습니다</span></span></label>
       <p class="fb-note" id="poNote" role="status">출시 메일을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
-      <div class="fb-done" role="status"><b>신청되었습니다.</b><p id="poDoneMsg" data-done-msg>출시되면 이 주소로 메일을 보냅니다.</p></div>
+      <div class="fb-done" role="status"><b>고맙습니다.</b><p id="poDoneMsg" data-done-msg>정식판이 나오면 이 주소로 알려 드리겠습니다.</p></div>
     </form>
   </div>
 </section>
@@ -855,16 +854,15 @@
     <div><b>다운로드를 시작했습니다.</b><span>시작되지 않았다면 <a href="Dropfit-macOS.zip" download>다시 받기</a></span></div>
   </div>
   <form class="po" id="dlForm" novalidate>
-    <p class="dl-t">정식판 출시 알림</p>
-    <label class="po-row">
+    <label class="po-field">
       <span class="sr">알림 받을 이메일</span>
       <input type="email" name="email" maxlength="200" autocomplete="email" required placeholder="name@example.com">
       <button class="pill" type="submit">출시 알림 받기</button>
     </label>
     <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-    <label class="po-opt"><input type="checkbox" name="optin" value="1"><span>만드는 과정, 같이 나누기 (선택)<span class="po-sub">출시 전 의견 메일</span></span></label>
+    <label class="po-opt"><input type="checkbox" name="optin" value="1"><span>만드는 과정, 같이 나누기 <i class="po-sel">(선택)</i><span class="po-sub">출시 전 두 번, 의견을 여쭙습니다</span></span></label>
     <p class="fb-note" role="status">출시 메일을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
-    <div class="fb-done" role="status"><b>신청되었습니다.</b><p data-done-msg>출시되면 이 주소로 메일을 보냅니다.</p></div>
+    <div class="fb-done" role="status"><b>고맙습니다.</b><p data-done-msg>정식판이 나오면 이 주소로 알려 드리겠습니다.</p></div>
   </form>
   <p class="dl-signed">출시 알림은 이미 신청하셨습니다.</p>
 </aside>
@@ -922,7 +920,7 @@
     function poDone(optin) {
       poForms.forEach(function (f) {
         var m = f.querySelector('[data-done-msg]');
-        if (m && optin) m.textContent = '출시 전 의견 메일과 출시 메일을 이 주소로 보냅니다.';
+        if (m && optin) m.textContent = '출시 전에 의견을 여쭙고, 정식판이 나오면 알려 드리겠습니다.';
         f.classList.add('sent');
       });
     }
@@ -938,7 +936,7 @@
         data.set('event', 'preorder'); data.set('version', opt && opt.checked ? VERSION.slice(0, 17) + ' 의견' : VERSION);
         btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note'; if (opt) opt.disabled = true;
         fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
-          .then(function () { markSigned(); poDone(opt && opt.checked); })
+          .then(function () { markSigned(); poDone(opt && opt.checked); if (po.id === 'dlForm') { clearTimeout(cardTimer); cardTimer = setTimeout(closeCard, 6000); } })
           .catch(function () {
             btn.disabled = false; btn.textContent = btnText; if (opt) opt.disabled = false;
             note.textContent = '신청할 수 없습니다. 잠시 후 다시 시도하십시오.'; note.className = 'fb-note err';
