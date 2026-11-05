@@ -10,12 +10,12 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       <sparkle:version>30</sparkle:version>
       <sparkle:shortVersionString>0.6.7</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 05 Nov 2026 08:53:41 +0000</pubDate>
+      <pubDate>Thu, 05 Nov 2026 12:52:24 +0000</pubDate>
       <description><![CDATA[<ul><li>macOS 14·15의 Finder 목록과 작은 크기에서 앱 아이콘이 다르게 보이던 문제를 해결합니다.</li><li>화면 위쪽에 둔 Dropfit으로 파일을 드래그하면 Dropfit이 아래로 밀리던 문제를 해결합니다.</li><li>처음 실행할 때 안내가 떠 있으면 Dropfit을 끌어도 옮겨지지 않던 문제를 해결합니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.7-30.zip" type="application/octet-stream" sparkle:edSignature="HcUA6/8ntNGJ9NNDavYsiWNiXeq2678mDGqyhCBTnqWCNYGOADyMihm/bxnMU08bkzSxbosP2rdFayCNASkwBQ==" length="3312330"></enclosure>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.7-30.zip" type="application/octet-stream" sparkle:edSignature="ZQCTagdym2yuVCUqxM4vlzK5z06RiAFOvYBD2j7TanmHCGf5PblOr+Grc8jZmRb+LGVK+LNodW5Oa8bKcNAADw==" length="3312326"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: ebGD/WeyISsHAo5XoahovpZfRdCUMTyvpECZdt91SDfFQP5TnOw9Ddp5b0ASQ33B0ZZLsqhi6EjCBvkcrbijAw==
+edSignature: DPJ7Aa1KUU8n7S6oDZOfuZj9hZUneJs2Xe6BgLMuKRdFgGaTPcQjKC0o1SdWPo7a5zmcZ2LmHT6E9YLELRadBQ==
 length: 1595
 -->
