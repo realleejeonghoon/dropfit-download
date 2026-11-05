@@ -9,6 +9,10 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 M="$OUT/orb_mouse"; swiftc -O "$HERE/orb_mouse.swift" -o "$M" 2>"$OUT/swiftc.txt" || { cat "$OUT/swiftc.txt"; exit 1; }
 DOM=app.dropfit.prototype
 DX=-220; DY=160
+# 이름표: zip 속 앱의 버전(빌드). 옛 줄은 비교용이라 실패로 세지 않는다
+zver() { local d; d="$(mktemp -d)"; ditto -x -k "$1" "$d"; local pl="$d/Dropfit/Dropfit.app/Contents/Info.plist"
+  echo "$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$pl")($(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' "$pl"))"; rm -rf "$d"; }
+OV="공개 $(zver "$OLD")"; NV="새 $(zver "$NEW")"
 ROWS=(); FAILS=0
 log() { echo "$*" | tee -a "$OUT/log.txt"; }
 # 멈출 수 있는 명령(권한 묻는 창 등)은 시간 제한을 둔다
@@ -79,8 +83,8 @@ drag_test() {
   put $verdict "$label: 이동 ($mx, $my)pt / 기대 ($DX, $DY) · 말풍선 등 다른 Dropfit 창 끌기 전 ${others}개→뒤 ${after}개 · 저장된 자리 $saved"
 }
 
-# 실패로 치는 것은 이 PR의 새 버전뿐 (0.6.6 줄은 비교용 기록)
-put() { local s="✓"; [ "$1" = ok ] || { s="✗"; case "$2" in "[0.6.6]"*) ;; *) FAILS=$((FAILS+1));; esac; }; ROWS+=("$s $2"); log "  $s $2"; }
+# 실패로 치는 것은 이 PR의 새 버전뿐 (공개 버전 줄은 비교용 기록)
+put() { local s="✓"; [ "$1" = ok ] || { s="✗"; case "$2" in "[$OV]"*) ;; *) FAILS=$((FAILS+1));; esac; }; ROWS+=("$s $2"); log "  $s $2"; }
 
 scenario_fresh() {   # 처음 설치: 다운로드 폴더에서 열기 → 옮기기 → 새 자리에서 다시 실행
   local v="$1" zip="$2" t="$1-처음"
@@ -120,31 +124,32 @@ scenario_stay() {    # '그대로 두기': 다운로드 폴더(임시 위치)에
   sleep 8; drag_test "$t-10s" "[$v] 옮기지 않고 실행, 10초 뒤"
 }
 
-scenario_update() {  # 0.6.6을 쓰던 Mac에 새 버전을 덮어씀 (자동 업데이트처럼 같은 자리 교체)
+scenario_update() {  # 공개 버전을 쓰던 Mac에 새 버전을 덮어씀 (자동 업데이트처럼 같은 자리 교체)
   local moved="$1" t="업데이트-$1"
-  log "[0.6.6→새 버전] 업데이트 · 0.6.6에서 오브를 옮겨 둔 적 $moved"
+  log "[$OV→$NV] 업데이트 · 옛 버전에서 오브를 옮겨 둔 적 $moved"
   reset_all; W="$OUT/old"; rm -rf "$W"; mkdir -p "$W"; ditto -x -k "$OLD" "$W"
   ditto "$W/Dropfit/Dropfit.app" /Applications/Dropfit.app
   (open /Applications/Dropfit.app &); wait_orb "$t-old" || return
   sleep 9
-  if [ "$moved" = 있음 ]; then drag_test "$t-old" "[0.6.6] 업데이트 전 옮겨 두기"; fi
+  if [ "$moved" = 있음 ]; then drag_test "$t-old" "[$OV] 업데이트 전 옮겨 두기"; fi
   pkill -x Dropfit; sleep 2
   W2="$OUT/new"; rm -rf "$W2"; mkdir -p "$W2"; ditto -x -k "$NEW" "$W2"
   rm -rf /Applications/Dropfit.app; ditto "$W2/Dropfit/Dropfit.app" /Applications/Dropfit.app
   (open /Applications/Dropfit.app &); wait_orb "$t" || { put bad "업데이트: 오브가 뜨지 않음"; return; }
-  sleep 2; drag_test "$t" "[0.6.6→새 버전] 업데이트 후 2초 뒤 (옮겨 둔 자리 $moved)"
+  sleep 2; drag_test "$t" "[$OV→$NV] 업데이트 후 2초 뒤 (옮겨 둔 자리 $moved)"
 }
 
 log "--- 시작 $(date +%T)"
-for pair in "0.6.6|$OLD" "새버전|$NEW"; do  # 매일 점검에서는 둘 다 공개 버전
+# 매일 점검(공개 버전 하나)에서는 같은 zip이므로 한 번만, 실패로 센다
+PAIRS=("$OV|$OLD" "$NV|$NEW"); cmp -s "$OLD" "$NEW" && { NV="공개 $(zver "$NEW")"; OV="같은 버전"; PAIRS=("$NV|$NEW"); }
+for pair in "${PAIRS[@]}"; do
   v="${pair%%|*}"; z="${pair#*|}"
   scenario_fresh "$v" "$z"
   scenario_reinstall "$v" "$z"
   scenario_wait "$v" "$z"
   scenario_stay "$v" "$z"
 done
-scenario_update 있음
-scenario_update 없음
+if [ ${#PAIRS[@]} -gt 1 ]; then scenario_update 있음; scenario_update 없음; fi
 reset_all
 
 { echo "### 오브 끌어 옮기기 재현 · macOS $(sw_vers -productVersion) · $("$M" preflight)"; echo; for r in "${ROWS[@]}"; do echo "- $r"; done; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
