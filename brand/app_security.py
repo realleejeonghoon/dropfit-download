@@ -186,25 +186,34 @@ def check_net_runtime(app_src, out):
     time.sleep(2); stop.set(); th.join(3)
     if tcp: tcp.terminate()
     run('pkill', '-x', 'Dropfit')
-    # tcpdump(pktap)은 프로세스 이름을 줄에 함께 적는다. Dropfit 쪽 줄의 상대 주소만 모은다
+    # tcpdump(pktap)은 프로세스 이름(proc·eproc)을 줄에 함께 적는다. Dropfit 쪽 줄에서 이 Mac이 아닌 쪽 주소를 모은다
+    _, ifc, _ = run('ifconfig')
+    mine = set(re.findall(r'inet6? ([0-9a-f.:]+)', ifc))
+    shown = []
     try:
         for line in open(os.path.join(out, 'tcpdump.txt'), errors='replace'):
-            if not any(f'proc {n}' in line or f'{n}:' in line for n in names): continue
-            m = re.search(r'> (\S+?)\.(\d+):', line) or re.search(r'> \[?([0-9a-f:.]+)\]?\.(\d+)', line)
-            if m: seen.setdefault(f'{m.group(1)}:{m.group(2)}', 'tcpdump')
+            if not any(f'{n}:' in line for n in names): continue
+            m = re.search(r' ([0-9a-f.:]+)\.(\d+) > ([0-9a-f.:]+)\.(\d+):', line)
+            if not m: continue
+            if len(shown) < 12: shown.append(line.strip()[:220])
+            a, b = (m.group(1), m.group(2)), (m.group(3), m.group(4))
+            far = b if a[0] in mine else a if b[0] in mine else None
+            if far: seen.setdefault(f'{far[0]}:{far[1]}', 'tcpdump')
     except OSError: pass
+    if shown: print('--- tcpdump에서 Dropfit 쪽 줄 (처음 12개) ---\n' + '\n'.join(shown) + '\n')
     def addr(s): return s.rsplit(':', 1)[0].strip('[]')
     allowed = [ipaddress.ip_network(c) for c in CFG['net_allowed_cidrs']]
-    good, local, bad = [], [], []
+    good, local, dns, bad = [], [], [], []
     for s in seen:
         try: ip = ipaddress.ip_address(addr(s))
         except ValueError: bad.append(s); continue
         if ip.is_loopback: local.append(s)
+        elif s.endswith(':53'): dns.append(s)          # 주소 이름 조회(GitHub 주소를 찾는 단계)
         elif any(ip in n for n in allowed): good.append(s)
         else: bad.append(s)
     json.dump({'connections': seen}, open(os.path.join(out, 'connections.json'), 'w'), ensure_ascii=False, indent=1)
     qa_ok = os.path.exists(os.path.join(out, 'qa.txt'))
-    put(ok(not bad), '바깥 연결', f'실행 25초 + 화면 동작 점검({"끝남" if qa_ok else "보고서 없음"}) 동안 바깥 연결: GitHub(업데이트 확인) {len(good)}건 · 그 밖 0건'
+    put(ok(not bad), '바깥 연결', f'실행 25초 + 화면 동작 점검({"끝남" if qa_ok else "보고서 없음"}) 동안 바깥 연결: GitHub(업데이트 확인) {len(good)}건 · 주소 조회 {len(dns)}건 · 그 밖 0건'
         if not bad else f'허용 밖 연결 {len(bad)}건: {bad[:4]} (GitHub {len(good)}건)')
 
 # ───────── 비밀
