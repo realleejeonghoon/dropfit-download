@@ -84,7 +84,7 @@ drag_test() {
 }
 
 # 실패로 치는 것은 이 PR의 새 버전뿐 (공개 버전 줄은 비교용 기록)
-put() { local s="✓"; [ "$1" = ok ] || { s="✗"; case "$2" in "[$OV]"*) ;; *) FAILS=$((FAILS+1));; esac; }; ROWS+=("$s $2"); log "  $s $2"; }
+put() { local s="✓"; [ "$1" = ok ] || { s="✗"; case "$2" in "[${OV}]"*) ;; *) FAILS=$((FAILS+1));; esac; }; ROWS+=("$s $2"); log "  $s $2"; }
 
 scenario_fresh() {   # 처음 설치: 다운로드 폴더에서 열기 → 옮기기 → 새 자리에서 다시 실행
   local v="$1" zip="$2" t="$1-처음"
@@ -126,22 +126,22 @@ scenario_stay() {    # '그대로 두기': 다운로드 폴더(임시 위치)에
 
 scenario_update() {  # 공개 버전을 쓰던 Mac에 새 버전을 덮어씀 (자동 업데이트처럼 같은 자리 교체)
   local moved="$1" t="업데이트-$1"
-  log "[$OV→$NV] 업데이트 · 옛 버전에서 오브를 옮겨 둔 적 $moved"
+  log "[${OV}→${NV}] 업데이트 · 옛 버전에서 오브를 옮겨 둔 적 $moved"
   reset_all; W="$OUT/old"; rm -rf "$W"; mkdir -p "$W"; ditto -x -k "$OLD" "$W"
   ditto "$W/Dropfit/Dropfit.app" /Applications/Dropfit.app
   (open /Applications/Dropfit.app &); wait_orb "$t-old" || return
   sleep 9
-  if [ "$moved" = 있음 ]; then drag_test "$t-old" "[$OV] 업데이트 전 옮겨 두기"; fi
+  if [ "$moved" = 있음 ]; then drag_test "$t-old" "[${OV}] 업데이트 전 옮겨 두기"; fi
   pkill -x Dropfit; sleep 2
   W2="$OUT/new"; rm -rf "$W2"; mkdir -p "$W2"; ditto -x -k "$NEW" "$W2"
   rm -rf /Applications/Dropfit.app; ditto "$W2/Dropfit/Dropfit.app" /Applications/Dropfit.app
   (open /Applications/Dropfit.app &); wait_orb "$t" || { put bad "업데이트: 오브가 뜨지 않음"; return; }
-  sleep 2; drag_test "$t" "[$OV→$NV] 업데이트 후 2초 뒤 (옮겨 둔 자리 $moved)"
+  sleep 2; drag_test "$t" "[${OV}→${NV}] 업데이트 후 2초 뒤 (옮겨 둔 자리 $moved)"
 }
 
 log "--- 시작 $(date +%T)"
 # 매일 점검(공개 버전 하나)에서는 같은 zip이므로 한 번만, 실패로 센다
-PAIRS=("$OV|$OLD" "$NV|$NEW"); cmp -s "$OLD" "$NEW" && { NV="공개 $(zver "$NEW")"; OV="같은 버전"; PAIRS=("$NV|$NEW"); }
+PAIRS=("${OV}|$OLD" "${NV}|$NEW"); cmp -s "$OLD" "$NEW" && { NV="공개 $(zver "$NEW")"; OV="같은 버전"; PAIRS=("${NV}|$NEW"); }
 for pair in "${PAIRS[@]}"; do
   v="${pair%%|*}"; z="${pair#*|}"
   scenario_fresh "$v" "$z"
