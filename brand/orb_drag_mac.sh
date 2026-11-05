@@ -74,11 +74,13 @@ drag_test() {
   a=($("$M" orb))
   local mx=$((a[0] - b[0])) my=$((a[1] - b[1]))
   local saved; saved="$(defaults read $DOM orb.center 2>/dev/null || echo 없음)"
+  local after; after="$("$M" wins | grep '^Dropfit ' | grep -v " ${a[2]}x${a[3]}$" | wc -l | tr -d ' ')"
   local verdict=bad; [ $mx -eq $DX ] && [ $my -eq $DY ] && verdict=ok
-  put $verdict "$label: 이동 ($mx, $my)pt / 기대 ($DX, $DY) · 오브 말고 떠 있던 Dropfit 창 ${others}개 · 저장된 자리 $saved"
+  put $verdict "$label: 이동 ($mx, $my)pt / 기대 ($DX, $DY) · 말풍선 등 다른 Dropfit 창 끌기 전 ${others}개→뒤 ${after}개 · 저장된 자리 $saved"
 }
 
-put() { local s="✓"; [ "$1" = ok ] || { s="✗"; FAILS=$((FAILS+1)); }; ROWS+=("$s $2"); log "  $s $2"; }
+# 실패로 치는 것은 이 PR의 새 버전뿐 (0.6.6 줄은 비교용 기록)
+put() { local s="✓"; [ "$1" = ok ] || { s="✗"; case "$2" in "[0.6.6]"*) ;; *) FAILS=$((FAILS+1));; esac; }; ROWS+=("$s $2"); log "  $s $2"; }
 
 scenario_fresh() {   # 처음 설치: 다운로드 폴더에서 열기 → 옮기기 → 새 자리에서 다시 실행
   local v="$1" zip="$2" t="$1-처음"
@@ -86,7 +88,8 @@ scenario_fresh() {   # 처음 설치: 다운로드 폴더에서 열기 → 옮�
   reset_all; unpack "$zip"; (open ~/Downloads/Dropfit/Dropfit.app &)
   wait_orb "$t" || { put bad "[$v] 처음 설치: 오브가 뜨지 않음"; return; }
   sleep 2; drag_test "$t-2s" "[$v] 처음 설치, 안내 말풍선이 떠 있는 2초 뒤"
-  sleep 8; drag_test "$t-10s" "[$v] 처음 설치, 말풍선이 닫힌 10초 뒤"
+  sleep 0.5; drag_test "$t-4s" "[$v] 처음 설치, 바로 한 번 더 (약 4초 뒤)"
+  sleep 5; drag_test "$t-10s" "[$v] 처음 설치, 말풍선이 닫힌 10초 뒤"
   log "  · 설정: $(defaults read $DOM 2>/dev/null | tr -s ' \n' ' ')"
 }
 
@@ -133,7 +136,7 @@ scenario_update() {  # 0.6.6을 쓰던 Mac에 새 버전을 덮어씀 (자동 �
 }
 
 log "--- 시작 $(date +%T)"
-for pair in "0.6.6|$OLD" "새버전|$NEW"; do
+for pair in "0.6.6|$OLD" "새버전|$NEW"; do  # 매일 점검에서는 둘 다 공개 버전
   v="${pair%%|*}"; z="${pair#*|}"
   scenario_fresh "$v" "$z"
   scenario_reinstall "$v" "$z"
@@ -145,5 +148,6 @@ scenario_update 없음
 reset_all
 
 { echo "### 오브 끌어 옮기기 재현 · macOS $(sw_vers -productVersion) · $("$M" preflight)"; echo; for r in "${ROWS[@]}"; do echo "- $r"; done; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
-echo; printf '%s\n' "${ROWS[@]}"
-exit 0
+echo; printf '%s\n' "${ROWS[@]}"; echo
+[ $FAILS -eq 0 ] && echo "새 버전 통과" || echo "새 버전 ${FAILS}건 다름"
+exit $([ $FAILS -eq 0 ] && echo 0 || echo 1)
