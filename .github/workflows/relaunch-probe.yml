@@ -1,0 +1,24 @@
+name: 다시 열기 시험
+
+# macOS 14에서 '옮기기' 뒤 Dropfit이 다시 열리지 않는 원인 확인용. 시험 앱(화면 없음)으로 다시 열기 방식 A·B·C를 비교한다.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/**']
+    paths: ['brand/relaunch_probe/**', '.github/workflows/relaunch-probe.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  mac:
+    name: 다시 열기 ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash brand/relaunch_probe/run.sh 20 | tee "$RUNNER_TEMP/probe.txt"; { echo '### 다시 열기 시험'; sed 's/^/- /' "$RUNNER_TEMP/probe.txt"; } >> "$GITHUB_STEP_SUMMARY"
