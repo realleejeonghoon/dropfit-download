@@ -694,12 +694,12 @@
   .po-opt input:focus-visible { outline: 0; box-shadow: inset 0 0 0 1.5px var(--sky-deep), 0 0 0 4px rgba(163, 196, 230, .35); }
   .po-opt input:disabled { opacity: .55; cursor: default; }
   @media (max-width: 734px) { .fb { padding: 22px 18px; border-radius: 20px; } .rate { gap: 6px; } .rate label { font-size: 13.5px; padding: 8px 12px; } }
-  /* 다운로드 뒤 신청 카드: 다운로드 버튼(메뉴·첫 화면·맨 아래) 어느 것을 눌러도 같은 카드가 화면 아래에 뜬다. 다운로드는 막지 않는다 */
-  .dl-card { position: fixed; z-index: 70; left: 50%; bottom: 24px; width: min(440px, calc(100% - 32px)); padding: 20px 22px 18px; border-radius: 22px; text-align: left;
+  /* 다운로드 뒤 신청 카드: 다운로드 버튼(메뉴·첫 화면·맨 아래) 어느 것을 눌러도 같은 카드가 화면 가운데에 뜨고, 스크롤해도 가운데에 머문다. 다운로드는 막지 않는다 */
+  .dl-card { position: fixed; z-index: 70; left: 50%; top: 50%; width: min(440px, calc(100% - 32px)); padding: 20px 22px 18px; border-radius: 22px; text-align: left;
     background: rgba(255, 255, 255, .92); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
     box-shadow: 0 0 0 .6px rgba(18, 28, 45, .15), 0 10px 30px rgba(18, 28, 45, .12);
-    opacity: 0; visibility: hidden; transform: translate(-50%, 16px); transition: opacity .45s var(--ease), transform .45s var(--ease), visibility 0s linear .45s; }
-  .dl-card.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition: opacity .45s var(--ease), transform .45s var(--ease); }
+    opacity: 0; visibility: hidden; transform: translate(-50%, calc(-50% + 16px)); transition: opacity .45s var(--ease), transform .45s var(--ease), visibility 0s linear .45s; }
+  .dl-card.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%); transition: opacity .45s var(--ease), transform .45s var(--ease); }
   .dl-x { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border: 0; border-radius: 50%; padding: 0; background: transparent; color: var(--ink-3); cursor: pointer;
     display: grid; place-content: center; transition: background .2s var(--ease), color .2s var(--ease); }
   .dl-x:hover { background: var(--paper); color: var(--ink-2); }
@@ -721,7 +721,7 @@
   .dl-signed { display: none; margin: 12px 0 0 52px; font-size: 13px; color: var(--ink-2); }
   .dl-card.signed .po { display: none; }
   .dl-card.signed .dl-signed { display: block; }
-  @media (max-width: 734px) { .dl-card { bottom: 16px; padding: 18px 18px 16px; } }
+  @media (max-width: 734px) { .dl-card { padding: 18px 18px 16px; } }
   @media (prefers-reduced-motion: reduce) { .dl-card, .dl-card.show { transition: none; } }
 </style>
 </head>
