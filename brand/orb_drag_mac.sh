@@ -10,6 +10,11 @@ OLD="$1"; NEW="$2"; OUT="$3"; mkdir -p "$OUT"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 M="$OUT/orb_mouse"; swiftc -O "$HERE/orb_mouse.swift" -o "$M" 2>"$OUT/swiftc.txt" || { cat "$OUT/swiftc.txt"; exit 1; }
 DOM=app.dropfit.prototype
+# 처음부터 끝까지 시스템 기록을 받아 둔다(다시 열기 실패 원인용): sh(다시 열기 도우미)·open·Dropfit, launchd·runningboardd가 Dropfit을 언급한 줄
+sudo -n log stream --style compact --info --debug \
+  --predicate 'process == "sh" OR process == "open" OR process == "Dropfit" OR process == "xattr" OR ((process == "launchd" OR process == "runningboardd" OR process == "syspolicyd" OR process == "launchservicesd") AND (eventMessage CONTAINS[c] "dropfit" OR eventMessage CONTAINS[c] "/bin/sh"))' \
+  >"$OUT/stream.txt" 2>&1 &
+STREAM_PID=$!
 DX=-220; DY=160
 # 이름표: zip 속 앱의 버전(빌드). 옛 줄은 비교용이라 실패로 세지 않는다
 zver() { local d; d="$(mktemp -d)"; ditto -x -k "$1" "$d"; local pl="$d/Dropfit/Dropfit.app/Contents/Info.plist"
@@ -70,7 +75,8 @@ wait_orb() {
     echo "    앱 위치: /Applications $( [ -d /Applications/Dropfit.app ] && echo 있음 || echo 없음 ) · 다운로드 $( [ -d "$HOME/Downloads/Dropfit/Dropfit.app" ] && echo 있음 || echo 없음 )"
     echo "    격리 표시(/Applications): $(xattr -p com.apple.quarantine /Applications/Dropfit.app 2>/dev/null || echo 없음)"
     echo "    관련 프로세스:"; ps -axo pid,ppid,stat,lstart,command | grep -i 'dropfit\|/usr/bin/open\|kill -0' | grep -v grep | sed 's/^/      /'
-    echo "    시스템 기록(최근 60초, open·sh·Dropfit·LaunchServices·실행 정책):"
+    echo "    받아 둔 시스템 기록(마지막 120줄):"; grep -v 'orb_mouse' "$OUT/stream.txt" | tail -120 | sed 's/^/      /'
+    echo "    시스템 기록(최근 90초, open·sh·Dropfit·LaunchServices·실행 정책):"
     sudo -n log show --last 90s --style compact --info \
       --predicate 'process == "open" OR process == "sh" OR process == "Dropfit" OR subsystem == "com.apple.launchservices" OR (process == "syspolicyd" AND eventMessage CONTAINS[c] "dropfit") OR (process == "launchd" AND eventMessage CONTAINS[c] "dropfit") OR (process == "runningboardd" AND eventMessage CONTAINS[c] "dropfit")' \
       2>&1 | grep -v 'orb_mouse\|XPC_ERROR on connection from our client\|re-boostrap client' | tail -150 | sed 's/^/      /'
