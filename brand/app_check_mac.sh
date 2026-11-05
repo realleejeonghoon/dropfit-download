@@ -47,8 +47,22 @@ echo "처음 자리 설정: $(defaults read $DOM 2>&1 | tr '\n' ' ')" >"$OUT/pos
 defaults write $DOM orb.homeFraction "{0.5, 0.5}"; defaults write $DOM orb.center "$MID"
 echo "한가운데 설정(orb.center): $MID" >>"$OUT/position.txt"
 "$APP/Contents/MacOS/Dropfit" --qa "$OUT/ui-center.txt" >"$OUT/qa-center-run.txt" 2>&1 &
-QP=$!; for _ in $(seq 1 300); do kill -0 $QP 2>/dev/null || break; sleep 1; done
-kill -0 $QP 2>/dev/null && kill $QP; wait $QP 2>/dev/null; RC2=$?
+QP=$!
+# 창 크기·자리 기록: 화면 서버가 아는 Dropfit 창 테두리(왼쪽 위 기준)를 0.05초마다 재서, 바뀔 때만 남긴다
+osascript -l JavaScript >"$OUT/window-frames.txt" 2>&1 <<'JXA' &
+ObjC.import('CoreGraphics'); ObjC.import('Foundation');
+var last = '', out = [], t0 = Date.now();
+for (var i = 0; i < 1200; i++) {
+  var list = ObjC.deepUnwrap(ObjC.castRefToObject($.CGWindowListCopyWindowInfo($.kCGWindowListOptionOnScreenOnly, 0))) || [];
+  var b = list.filter(function (w) { return w.kCGWindowOwnerName === 'Dropfit'; })
+              .map(function (w) { var r = w.kCGWindowBounds; return r.X + ',' + r.Y + ' ' + r.Width + 'x' + r.Height; }).join(' | ');
+  if (b !== last) { out.push(((Date.now() - t0) / 1000).toFixed(2) + 's ' + (b || '(없음)')); last = b; }
+  $.NSThread.sleepForTimeInterval(0.05);
+}
+out.slice(0, 80).join('\n');
+JXA
+WP=$!; for _ in $(seq 1 300); do kill -0 $QP 2>/dev/null || break; sleep 1; done
+kill -0 $QP 2>/dev/null && kill $QP; wait $QP 2>/dev/null; RC2=$?; wait $WP 2>/dev/null
 defaults delete $DOM orb.homeFraction 2>/dev/null; defaults delete $DOM orb.center 2>/dev/null
 NOTE="참고: 오브를 화면 한가운데 두면 화면 동작 점검 $([ $RC2 -eq 0 ] && echo 통과 || echo "문제 $(grep -c "✗" "$OUT/ui-center.txt" 2>/dev/null || echo ?)건")"
 
@@ -93,5 +107,5 @@ else put bad "앱 아이콘을 꺼내지 못함"; fi
 
 pkill -x Dropfit 2>/dev/null
 { echo "### Dropfit 앱 실행 점검 · macOS $OS · 화면 ${SCREEN:-알 수 없음} · $(cat "$DIR/version.txt" 2>/dev/null)"; echo; for l in "${LINES[@]}"; do echo "- $l"; done; echo "- $NOTE"; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
-printf '%s\n' "${LINES[@]}"; echo "· $NOTE"; echo; echo "--- 화면 동작 점검 보고서 (화면 ${SCREEN:-?}) ---"; cat "$OUT/ui.txt" 2>/dev/null; echo; echo "--- 참고: 화면 한가운데에서 ---"; cat "$OUT/position.txt" 2>/dev/null; grep "✗\|결과" "$OUT/ui-center.txt" 2>/dev/null; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "${FAILS}건 다름 · macOS $OS"
+printf '%s\n' "${LINES[@]}"; echo "· $NOTE"; echo; echo "--- 화면 동작 점검 보고서 (화면 ${SCREEN:-?}) ---"; cat "$OUT/ui.txt" 2>/dev/null; echo; echo "--- 참고: 화면 한가운데에서 ---"; cat "$OUT/position.txt" 2>/dev/null; echo "창 테두리 변화(처음 80개):"; cat "$OUT/window-frames.txt" 2>/dev/null; grep "✗\|결과" "$OUT/ui-center.txt" 2>/dev/null; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "${FAILS}건 다름 · macOS $OS"
 exit $([ $FAILS -eq 0 ] && echo 0 || echo 1)
