@@ -17,7 +17,7 @@ PRE="$(t 10 "$M" preflight)"; log "macOS $(sw_vers -productVersion) · $PRE"
 shot() { case "$PRE" in *"화면 찍기 허용"*) t 5 screencapture -x "$1" 2>/dev/null;; esac; }
 
 reset_all() {
-  pkill -x Dropfit 2>/dev/null; sleep 1; pkill -9 -x Dropfit 2>/dev/null
+  pkill -x Dropfit 2>/dev/null; pkill -x CoreServicesUIAgent 2>/dev/null; sleep 1; pkill -9 -x Dropfit 2>/dev/null
   rm -rf /Applications/Dropfit.app ~/Applications/Dropfit.app ~/Downloads/Dropfit
   defaults delete $DOM >/dev/null 2>&1
 }
@@ -25,7 +25,9 @@ reset_all() {
 unpack() {   # Safari처럼 다운로드 폴더에 풀고 격리 표시
   rm -rf ~/Downloads/Dropfit
   ditto -x -k "$1" ~/Downloads
-  xattr -r -w com.apple.quarantine "0083;$(printf %x "$(date +%s)");Safari;" ~/Downloads/Dropfit
+  # 00c3 = 인터넷에서 받음 + 사용자가 Gatekeeper 창에서 [열기]를 이미 누름. (CI에서는 그 창의 버튼을 누를 수 없어 누른 뒤 상태로 시작)
+  # 이 상태에서도 macOS는 앱을 임시 위치(App Translocation)에서 실행한다 = 실제 사용자의 첫 실행과 같다
+  xattr -r -w com.apple.quarantine "00c3;$(printf %x "$(date +%s)");Safari;" ~/Downloads/Dropfit
 }
 
 running() { ps -axo pid=,command= | grep "Dropfit.app/Contents/MacOS/Dropfit" | grep -v grep | sed 's/^ *//' | awk '{p=$1; $1=""; print p":"$0}' | tr '\n' ';'; }
@@ -99,7 +101,7 @@ scenario_wait() {    # 처음 설치 후 아무것도 누르지 않고 기다렸
 scenario_reinstall() {  # 지우고 다시 설치 (설정은 남음)
   local v="$1" zip="$2" t="$1-다시"
   log "[$v] 지웠다 다시 설치 (설정 남음)"
-  pkill -x Dropfit; sleep 1; rm -rf /Applications/Dropfit.app
+  pkill -x Dropfit; pkill -x CoreServicesUIAgent 2>/dev/null; sleep 1; rm -rf /Applications/Dropfit.app
   unpack "$zip"; (open ~/Downloads/Dropfit/Dropfit.app &)
   wait_orb "$t" || { put bad "[$v] 다시 설치: 오브가 뜨지 않음"; return; }
   sleep 2; drag_test "$t" "[$v] 지웠다 다시 설치, 2초 뒤"
