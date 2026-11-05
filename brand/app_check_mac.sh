@@ -3,6 +3,8 @@
 #   bash brand/app_check_mac.sh 폴더      (폴더 안에 Dropfit-macOS.zip — app_check.py --out 이 남김)
 # 재는 것: 인터넷에서 받은 것처럼 격리 표시를 붙인 뒤 서명·공증·Gatekeeper, 응용 프로그램에 설치 후 실행·종료·충돌 보고서,
 # 화면 동작 점검(Dropfit --qa), 이 macOS가 실제로 보여 주는 앱 아이콘이 기준 그림(둥근 판, 고리 포함)과 같은지.
+# 이 점검은 /Applications의 Dropfit을 지우고 새로 깔며 Dropfit 설정을 초기화한다. GitHub의 깨끗한 Mac에서만 돈다
+if [ "${GITHUB_ACTIONS:-}" != true ]; then echo "멈춤: 이 점검은 GitHub의 깨끗한 Mac 전용입니다(설치된 Dropfit을 지우고 설정을 초기화함). 실제로 쓰는 Mac에서는 돌리지 마세요."; exit 3; fi
 set -u
 DIR="$(cd "$1" && pwd)"; HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="$DIR/report"; mkdir -p "$OUT"

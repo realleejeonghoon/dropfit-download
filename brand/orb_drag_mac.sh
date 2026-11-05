@@ -3,6 +3,8 @@
 #   bash brand/orb_drag_mac.sh 옛zip 새zip 보고서폴더
 # 사람처럼 다운로드 폴더에 받은 앱(격리 표시)을 열고, 뜨는 창(Gatekeeper·응용 프로그램 폴더로 옮기기)에 답한 뒤
 # 실제 마우스로 오브를 (-220, +160)pt 끌어 창이 실제로 옮겨졌는지 화면 서버 기준으로 잰다.
+# 이 점검은 /Applications의 Dropfit을 지우고 새로 깔며 Dropfit 설정을 초기화한다. GitHub의 깨끗한 Mac에서만 돈다
+if [ "${GITHUB_ACTIONS:-}" != true ]; then echo "멈춤: 이 점검은 GitHub의 깨끗한 Mac 전용입니다(설치된 Dropfit을 지우고 설정을 초기화함). 실제로 쓰는 Mac에서는 돌리지 마세요."; exit 3; fi
 set -u
 OLD="$1"; NEW="$2"; OUT="$3"; mkdir -p "$OUT"
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -63,6 +65,17 @@ wait_orb() {
   done
   log "  ✗ 40초 안에 오브가 나타나지 않음 · 실행 중: $(running)"; t 5 "$M" wins >"$OUT/$tag-nowin.txt"
   log "    화면에 있는 창:"; sed 's/^/      /' "$OUT/$tag-nowin.txt" | tee -a "$OUT/log.txt"
+  # 원인 기록: 앱이 어디에 있는지(옮기기가 됐는지), 남은 프로세스, 다시 열기(open) 앞뒤 시스템 기록
+  {
+    echo "    앱 위치: /Applications $( [ -d /Applications/Dropfit.app ] && echo 있음 || echo 없음 ) · 다운로드 $( [ -d "$HOME/Downloads/Dropfit/Dropfit.app" ] && echo 있음 || echo 없음 )"
+    echo "    격리 표시(/Applications): $(xattr -p com.apple.quarantine /Applications/Dropfit.app 2>/dev/null || echo 없음)"
+    echo "    관련 프로세스:"; ps -axo pid,ppid,stat,lstart,command | grep -i 'dropfit\|/usr/bin/open\|kill -0' | grep -v grep | sed 's/^/      /'
+    echo "    시스템 기록(최근 60초, open·sh·Dropfit·LaunchServices·실행 정책):"
+    sudo -n log show --last 60s --style compact --info \
+      --predicate 'process == "open" OR process == "sh" OR process == "Dropfit" OR subsystem == "com.apple.launchservices" OR (process == "syspolicyd" AND eventMessage CONTAINS[c] "dropfit") OR (process == "launchd" AND eventMessage CONTAINS[c] "dropfit") OR (process == "runningboardd" AND eventMessage CONTAINS[c] "dropfit")' \
+      2>&1 | tail -80 | sed 's/^/      /'
+  } >"$OUT/$tag-diag.txt" 2>&1
+  tee -a "$OUT/log.txt" <"$OUT/$tag-diag.txt"
   return 1
 }
 
