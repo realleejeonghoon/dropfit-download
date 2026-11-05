@@ -1,0 +1,14 @@
+{
+  "_설명": "확정 색. 새 색은 정훈 확정 후에만 여기와 ledger.json에 더한다.",
+  "light": {
+    "page": "#FBFBFD", "frost": "#F6F6F8", "veil": "#F0F1F4", "pearl": "#FAFAFC",
+    "ink": "#1D1D1F", "sub": "#6E6E73",
+    "body_top": "#FCFCFA", "body_bottom": "#F3F2EE",
+    "sky_top": "#CCE1F5", "sky_bottom": "#A3C4E6", "sky_text": "#3C608A",
+    "icon_line_top": "#DAE9F7", "icon_line_bottom": "#BED5EC",
+    "shadow": "rgba(18,28,45,α)"
+  },
+  "dark": {
+    "page": "#1D1D1F", "card": "#2C2C2E", "ink": "#F6F6F8", "sky": "#A3C4E6"
+  }
+}
