@@ -1,0 +1,27 @@
+{
+  "_설명": "앱 보안 점검(brand/app_security.py)의 기준값. 바꾸면 보안 기준이 바뀌므로 정훈 님 확정 뒤에만 고친다.",
+  "team": "D4DNRRVUGV",
+  "public_key_sha256_12": "a069dac8ed49",
+  "feed": "https://realleejeonghoon.github.io/dropfit-download/appcast.xml",
+  "sparkle_min": "2.10.1",
+  "code": [
+    "Contents/MacOS/Dropfit",
+    "Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle",
+    "Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate",
+    "Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater"
+  ],
+  "entitlements_allowed": [],
+  "entitlements_banned": [
+    "com.apple.security.get-task-allow",
+    "com.apple.security.cs.disable-library-validation",
+    "com.apple.security.cs.allow-dyld-environment-variables",
+    "com.apple.security.cs.allow-unsigned-executable-memory",
+    "com.apple.security.cs.disable-executable-page-protection",
+    "com.apple.security.cs.allow-jit",
+    "com.apple.security.cs.debugger"
+  ],
+  "net_symbols": ["NSURLSession", "NSURLConnection", "CFHTTPMessage", "CFReadStreamCreateWithFTPURL", "CFStreamCreatePairWithSocket", "_socket", "_connect", "_nw_connection", "_nw_endpoint", "WKWebView", "_getaddrinfo"],
+  "url_hosts_allowed": ["realleejeonghoon.github.io", "github.com", "www.apple.com", "apple.com", "certs.apple.com", "crl.apple.com", "ocsp.apple.com", "sparkle-project.org", "www.andymatuschak.org"],
+  "mail_allowed": ["leejeonghoon.official@gmail.com"],
+  "net_allowed_cidrs": ["185.199.108.0/22", "140.82.112.0/20", "2606:50c0::/32"]
+}
