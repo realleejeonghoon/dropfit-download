@@ -6,16 +6,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
     <language>ko</language>
     <item>
-      <title>Dropfit 0.6.7</title>
-      <sparkle:version>30</sparkle:version>
-      <sparkle:shortVersionString>0.6.7</sparkle:shortVersionString>
+      <title>Dropfit 0.6.8</title>
+      <sparkle:version>31</sparkle:version>
+      <sparkle:shortVersionString>0.6.8</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 05 Nov 2026 12:52:24 +0000</pubDate>
-      <description><![CDATA[<ul><li>macOS 14·15의 Finder 목록과 작은 크기에서 앱 아이콘이 다르게 보이던 문제를 해결합니다.</li><li>화면 위쪽에 둔 Dropfit으로 파일을 드래그하면 Dropfit이 아래로 밀리던 문제를 해결합니다.</li><li>처음 실행할 때 안내가 떠 있으면 Dropfit을 끌어도 옮겨지지 않던 문제를 해결합니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.7-30.zip" type="application/octet-stream" sparkle:edSignature="ZQCTagdym2yuVCUqxM4vlzK5z06RiAFOvYBD2j7TanmHCGf5PblOr+Grc8jZmRb+LGVK+LNodW5Oa8bKcNAADw==" length="3312326"></enclosure>
+      <pubDate>Thu, 05 Nov 2026 13:39:30 +0000</pubDate>
+      <description><![CDATA[<ul><li>처음 설치할 때 응용 프로그램 폴더로 옮긴 뒤 Dropfit이 다시 열리지 않던 문제를 해결합니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.8-31.zip" type="application/octet-stream" sparkle:edSignature="8MBI/DPPGPwwvvkfSBYIBlKMMVkuoOz81xNKDFzQs4PmE7dClEvyoDACMfbqy0fTQaiEBxlI5+02SgWaxzf5CA==" length="3312747"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: DPJ7Aa1KUU8n7S6oDZOfuZj9hZUneJs2Xe6BgLMuKRdFgGaTPcQjKC0o1SdWPo7a5zmcZ2LmHT6E9YLELRadBQ==
-length: 1595
+edSignature: hFH0myVsasDWWGtBwggeubdnuz7B3/ETt/O1J2LuUo/ngjsENC6yZqcgMTsC8Le0nyXl5JUYUq8tgU2LQPjlAw==
+length: 1354
 -->
