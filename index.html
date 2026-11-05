@@ -835,7 +835,7 @@
       <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <label class="po-opt" for="poOpt"><input type="checkbox" name="optin" id="poOpt" value="1"><span id="poOptLabel">만드는 과정, 같이 나누기 <i class="po-sel">(선택)</i><span class="po-sub">출시 전 두 번, 의견을 여쭙습니다</span></span></label>
       <p class="fb-note" id="poNote" role="status">출시 메일을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
-      <div class="fb-done" role="status"><b>고맙습니다.</b><p id="poDoneMsg" data-done-msg>정식판이 나오면 이 주소로 알려 드리겠습니다.</p></div>
+      <div class="fb-done" role="status"><b>감사합니다.</b><p id="poDoneMsg" data-done-msg>정식판이 나오면 이 주소로 메일을 보냅니다.</p></div>
     </form>
   </div>
 </section>
@@ -862,7 +862,7 @@
     <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <label class="po-opt"><input type="checkbox" name="optin" value="1"><span>만드는 과정, 같이 나누기 <i class="po-sel">(선택)</i><span class="po-sub">출시 전 두 번, 의견을 여쭙습니다</span></span></label>
     <p class="fb-note" role="status">출시 메일을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
-    <div class="fb-done" role="status"><b>고맙습니다.</b><p data-done-msg>정식판이 나오면 이 주소로 알려 드리겠습니다.</p></div>
+    <div class="fb-done" role="status"><b>감사합니다.</b><p data-done-msg>정식판이 나오면 이 주소로 메일을 보냅니다.</p></div>
   </form>
   <p class="dl-signed">출시 알림은 이미 신청하셨습니다.</p>
 </aside>
@@ -920,7 +920,7 @@
     function poDone(optin) {
       poForms.forEach(function (f) {
         var m = f.querySelector('[data-done-msg]');
-        if (m && optin) m.textContent = '출시 전에 의견을 여쭙고, 정식판이 나오면 알려 드리겠습니다.';
+        if (m && optin) m.textContent = '출시 전에 의견을 여쭙고, 정식판이 나오면 메일을 보냅니다.';
         f.classList.add('sent');
       });
     }
