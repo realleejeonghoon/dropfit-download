@@ -6,16 +6,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
     <language>ko</language>
     <item>
-      <title>Dropfit 0.6.6</title>
-      <sparkle:version>27</sparkle:version>
-      <sparkle:shortVersionString>0.6.6</sparkle:shortVersionString>
+      <title>Dropfit 0.6.7</title>
+      <sparkle:version>30</sparkle:version>
+      <sparkle:shortVersionString>0.6.7</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Wed, 04 Nov 2026 08:31:51 +0000</pubDate>
-      <description><![CDATA[<ul><li>어두운 모드에서 바탕화면 Dropfit 위에 포인터를 두면 그림 둘레가 다시 은은하게 빛납니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.6-27.zip" type="application/octet-stream" sparkle:edSignature="zYiTcfuVwwJi3jxBiHlxND3DQgQqGcTSqBj6LTzx7NtNVFRNwvhJvVv42q1rZc3NaS2MVZh4PpwOGqzC37oCDg==" length="4188038"></enclosure>
+      <pubDate>Thu, 05 Nov 2026 12:52:24 +0000</pubDate>
+      <description><![CDATA[<ul><li>macOS 14·15의 Finder 목록과 작은 크기에서 앱 아이콘이 다르게 보이던 문제를 해결합니다.</li><li>화면 위쪽에 둔 Dropfit으로 파일을 드래그하면 Dropfit이 아래로 밀리던 문제를 해결합니다.</li><li>처음 실행할 때 안내가 떠 있으면 Dropfit을 끌어도 옮겨지지 않던 문제를 해결합니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.7-30.zip" type="application/octet-stream" sparkle:edSignature="ZQCTagdym2yuVCUqxM4vlzK5z06RiAFOvYBD2j7TanmHCGf5PblOr+Grc8jZmRb+LGVK+LNodW5Oa8bKcNAADw==" length="3312326"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: qP/m1QethdSNVccU3woEQZcqnUxkBVsehDhfd5XkFaU4o+KSx6K4crHHCp99fRe7hEBl7QXG25HzsVHHZNswDw==
-length: 1352
+edSignature: DPJ7Aa1KUU8n7S6oDZOfuZj9hZUneJs2Xe6BgLMuKRdFgGaTPcQjKC0o1SdWPo7a5zmcZ2LmHT6E9YLELRadBQ==
+length: 1595
 -->

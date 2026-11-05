@@ -1,0 +1,23 @@
+{
+  "_설명": "사용자 눈에 닿는 랜딩 쪽 접점 장부. 새 그림·새 페이지를 더하면 여기에 먼저 올린다. 앱 쪽 접점은 Mac의 Support/tools/control.sh가 맡는다.",
+  "icons": [
+    {"path": "icon.png",                  "where": "GitHub README, 공유 시 기본 그림", "type": "rounded", "size": 1024},
+    {"path": "assets/icon-256.png",       "where": "404 화면",                        "type": "rounded", "size": 256},
+    {"path": "assets/icon-128.png",       "where": "상단 메뉴 로고(랜딩·처리방침)",    "type": "rounded", "size": 128},
+    {"path": "assets/apple-touch-icon.png","where": "iPhone 홈 화면·공유",            "type": "full",    "size": 180},
+    {"path": "assets/favicon-96.png",     "where": "브라우저 탭(고해상도)",           "type": "tab",     "size": 96},
+    {"path": "assets/favicon-32.png",     "where": "브라우저 탭",                     "type": "tab",     "size": 32}
+  ],
+  "pages": ["index.html", "privacy.html", "404.html"],
+  "page_icons": {
+    "icon32": "favicon-32.png",
+    "icon96": "favicon-96.png",
+    "apple": "apple-touch-icon.png"
+  },
+  "watched": [
+    "index.html", "privacy.html", "404.html", "logo.js", "demo.js", "README.md", "appcast.xml",
+    "icon.png", "assets/og.png", "assets/icon-128.png", "assets/icon-256.png", "assets/apple-touch-icon.png",
+    "assets/favicon-32.png", "assets/favicon-96.png", "Dropfit-macOS.zip"
+  ],
+  "color_files": ["index.html", "privacy.html", "404.html", "logo.js", "demo.js"]
+}

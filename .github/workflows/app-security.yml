@@ -1,0 +1,48 @@
+name: 앱 보안 점검
+
+# 매일 09:15 KST: 공개 중인 Dropfit zip을 깨끗한 Mac에서 보안 점검 (서명·업데이트 안전장치·바깥 연결·비밀 키·Sparkle 결함).
+# 업데이트 PR(zip·점검 도구가 바뀔 때): 새 배포 파일로 같은 점검. 기준값 brand/security.json.
+on:
+  schedule:
+    - cron: '15 0 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'Dropfit-macOS.zip'
+      - 'updates/**'
+      - 'brand/app_security.py'
+      - 'brand/security.json'
+      - '.github/workflows/app-security.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  mac:
+    name: 보안 ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: python3 -m pip install --quiet --break-system-packages cryptography || python3 -m pip install --quiet cryptography
+      - name: 보안 점검
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 brand/app_security.py ${{ github.event_name != 'pull_request' && '--live' || '' }} --out "$RUNNER_TEMP/sec"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: app-security-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/sec/summary.md
+            ${{ runner.temp }}/sec/connections.json
+            ${{ runner.temp }}/sec/tcpdump.txt
+            ${{ runner.temp }}/sec/qa.txt
+            ${{ runner.temp }}/sec/gitleaks.json
+          retention-days: 30
