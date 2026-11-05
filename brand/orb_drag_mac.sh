@@ -161,6 +161,15 @@ scenario_update() {  # 공개 버전을 쓰던 Mac에 새 버전을 덮어씀 (�
 log "--- 시작 $(date +%T)"
 # 매일 점검(공개 버전 하나)에서는 같은 zip이므로 한 번만, 실패로 센다
 PAIRS=("${OV}|$OLD" "${NV}|$NEW"); cmp -s "$OLD" "$NEW" && { NV="공개 $(zver "$NEW")"; OV="같은 버전"; PAIRS=("${NV}|$NEW"); }
+if [ -n "${ORB_ONLY_FRESH:-}" ]; then
+  # 반복 시험(다시 열기): 이 작업의 첫 장면으로 한 버전만 처음 설치. 시스템이 덜 데워진 첫 장면에서 실패가 잦았다
+  if [ "$ORB_ONLY_FRESH" = old ]; then v="$OV"; z="$OLD"; else v="$NV"; z="$NEW"; fi
+  scenario_fresh "$v" "$z"
+  sleep 3; n="$(pgrep -f 'Dropfit.app/Contents/MacOS/Dropfit' | wc -l | tr -d ' ')"
+  [ "$n" -le 1 ] && put ok "[$v] 처음 설치 뒤 Dropfit ${n}개 실행 중" || put bad "[$v] 처음 설치 뒤 Dropfit ${n}개 실행 중(겹쳐 열림)"
+  case "$(running)" in *" /Applications/Dropfit.app/"*) put ok "[$v] 응용 프로그램 폴더의 Dropfit으로 실행 중";; *) put bad "[$v] 응용 프로그램 폴더에서 실행되지 않음: $(running)";; esac
+  [ "$ORB_ONLY_FRESH" = old ] && FAILS=0
+else
 for pair in "${PAIRS[@]}"; do
   v="${pair%%|*}"; z="${pair#*|}"
   scenario_fresh "$v" "$z"
@@ -169,6 +178,7 @@ for pair in "${PAIRS[@]}"; do
   scenario_stay "$v" "$z"
 done
 if [ ${#PAIRS[@]} -gt 1 ]; then scenario_update 있음; scenario_update 없음; fi
+fi
 reset_all
 
 { echo "### 오브 끌어 옮기기 재현 · macOS $(sw_vers -productVersion) · $("$M" preflight)"; echo; for r in "${ROWS[@]}"; do echo "- $r"; done; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
