@@ -919,7 +919,6 @@
     function poDone(optin) {
       poForms.forEach(function (f) {
         var m = f.querySelector('[data-done-msg]');
-        if (m && optin) m.textContent = '출시 전에 두 번, 그리고 정식판이 나오면 메일을 보내 드립니다.';
         f.classList.add('sent');
       });
     }
