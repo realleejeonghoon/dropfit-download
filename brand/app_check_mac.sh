@@ -7,7 +7,8 @@ set -u
 DIR="$(cd "$1" && pwd)"; HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="$DIR/report"; mkdir -p "$OUT"
 OS="$(sw_vers -productVersion)"
-SCREEN="$(system_profiler SPDisplaysDataType 2>/dev/null | awk -F': ' '/Resolution/{print $2; exit}')"
+# 화면 크기(점 단위): 전체 / 메뉴 막대·Dock을 뺀 영역. 오브 자리·펼침 배치가 여기에 따라 달라진다
+SCREEN="$(osascript -l JavaScript -e 'ObjC.import("AppKit"); var s=$.NSScreen.mainScreen; var f=s.frame, v=s.visibleFrame; f.size.width+"x"+f.size.height+" (보이는 영역 "+v.size.width+"x"+v.size.height+", 위쪽 "+(f.size.height-v.origin.y-v.size.height)+"pt)"' 2>/dev/null)"
 FAILS=0; LINES=()
 put() { if [ "$1" = ok ]; then LINES+=("✓ $2"); else LINES+=("✗ $2"); FAILS=$((FAILS+1)); fi; }
 
@@ -38,6 +39,15 @@ else wait $QP; RC=$?
   N_OK=$(grep -c "✓\|통과" "$OUT/ui.txt" 2>/dev/null || echo 0); N_BAD=$(grep -c "✗\|실패" "$OUT/ui.txt" 2>/dev/null || echo 0)
   [ $RC -eq 0 ] && put ok "화면 동작 점검(--qa) 통과 (확인 ${N_OK}줄)" || put bad "화면 동작 점검(--qa) 실패 ${N_BAD}줄: $(grep -m2 "✗\|실패" "$OUT/ui.txt" | tr '\n' ' ')"
 fi
+
+# 참고(합격 판정에 넣지 않음): 같은 점검을 오브를 화면 한가운데 두고 한 번 더. 처음 설치한 자리(오른쪽 위)에서만 다르면 자리 탓
+DOM=app.dropfit.prototype
+defaults write $DOM orb.homeFraction "{0.5, 0.5}"; defaults delete $DOM orb.center 2>/dev/null
+"$APP/Contents/MacOS/Dropfit" --qa "$OUT/ui-center.txt" >"$OUT/qa-center-run.txt" 2>&1 &
+QP=$!; for _ in $(seq 1 300); do kill -0 $QP 2>/dev/null || break; sleep 1; done
+kill -0 $QP 2>/dev/null && kill $QP; wait $QP 2>/dev/null; RC2=$?
+defaults delete $DOM orb.homeFraction 2>/dev/null
+NOTE="참고: 오브를 화면 한가운데 두면 화면 동작 점검 $([ $RC2 -eq 0 ] && echo 통과 || echo "문제 $(grep -c "✗" "$OUT/ui-center.txt" 2>/dev/null || echo ?)건")"
 
 CR=$(find ~/Library/Logs/DiagnosticReports /Library/Logs/DiagnosticReports -name 'Dropfit*' -newermt "@$START" 2>/dev/null | head -3)
 [ -z "$CR" ] && put ok "충돌 보고서 0개" || { put bad "충돌 보고서: $CR"; cp $CR "$OUT/" 2>/dev/null; }
@@ -79,6 +89,6 @@ PY
 else put bad "앱 아이콘을 꺼내지 못함"; fi
 
 pkill -x Dropfit 2>/dev/null
-{ echo "### Dropfit 앱 실행 점검 · macOS $OS · 화면 ${SCREEN:-알 수 없음} · $(cat "$DIR/version.txt" 2>/dev/null)"; echo; for l in "${LINES[@]}"; do echo "- $l"; done; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
-printf '%s\n' "${LINES[@]}"; echo; echo "--- 화면 동작 점검 보고서 (화면 ${SCREEN:-?}) ---"; cat "$OUT/ui.txt" 2>/dev/null; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "${FAILS}건 다름 · macOS $OS"
+{ echo "### Dropfit 앱 실행 점검 · macOS $OS · 화면 ${SCREEN:-알 수 없음} · $(cat "$DIR/version.txt" 2>/dev/null)"; echo; for l in "${LINES[@]}"; do echo "- $l"; done; echo "- $NOTE"; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
+printf '%s\n' "${LINES[@]}"; echo "· $NOTE"; echo; echo "--- 화면 동작 점검 보고서 (화면 ${SCREEN:-?}) ---"; cat "$OUT/ui.txt" 2>/dev/null; echo; echo "--- 참고: 화면 한가운데에서 ---"; grep "✗\|결과" "$OUT/ui-center.txt" 2>/dev/null; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "${FAILS}건 다름 · macOS $OS"
 exit $([ $FAILS -eq 0 ] && echo 0 || echo 1)
