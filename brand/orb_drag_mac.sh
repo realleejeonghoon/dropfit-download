@@ -71,9 +71,9 @@ wait_orb() {
     echo "    격리 표시(/Applications): $(xattr -p com.apple.quarantine /Applications/Dropfit.app 2>/dev/null || echo 없음)"
     echo "    관련 프로세스:"; ps -axo pid,ppid,stat,lstart,command | grep -i 'dropfit\|/usr/bin/open\|kill -0' | grep -v grep | sed 's/^/      /'
     echo "    시스템 기록(최근 60초, open·sh·Dropfit·LaunchServices·실행 정책):"
-    sudo -n log show --last 60s --style compact --info \
+    sudo -n log show --last 90s --style compact --info \
       --predicate 'process == "open" OR process == "sh" OR process == "Dropfit" OR subsystem == "com.apple.launchservices" OR (process == "syspolicyd" AND eventMessage CONTAINS[c] "dropfit") OR (process == "launchd" AND eventMessage CONTAINS[c] "dropfit") OR (process == "runningboardd" AND eventMessage CONTAINS[c] "dropfit")' \
-      2>&1 | tail -80 | sed 's/^/      /'
+      2>&1 | grep -v 'orb_mouse\|XPC_ERROR on connection from our client\|re-boostrap client' | tail -150 | sed 's/^/      /'
   } >"$OUT/$tag-diag.txt" 2>&1
   tee -a "$OUT/log.txt" <"$OUT/$tag-diag.txt"
   return 1
