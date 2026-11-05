@@ -805,7 +805,7 @@
       <div class="hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <label class="po-opt" for="poOpt"><input type="checkbox" name="optin" id="poOpt" value="1"><span id="poOptLabel">만드는 과정, 같이 나누기 (선택)<span class="po-sub">출시 전 의견 메일</span></span></label>
       <p class="fb-note" id="poNote" role="status">출시 메일을 보낸 뒤 주소는 삭제합니다. <a href="privacy.html">개인정보 처리방침</a></p>
-      <div class="fb-done" role="status"><b>신청되었습니다.</b><p id="poDoneMsg">출시되면 이 주소로 메일을 보내드립니다.</p></div>
+      <div class="fb-done" role="status"><b>신청되었습니다.</b><p id="poDoneMsg">출시되면 이 주소로 메일을 보내 드립니다.</p></div>
     </form>
   </div>
 </section>
@@ -860,7 +860,7 @@
       btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note'; if (opt) opt.disabled = true;
       fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
         .then(function () {
-          if (opt && opt.checked) document.getElementById('poDoneMsg').textContent = '출시 전 의견 메일과 출시 메일을 이 주소로 보내드립니다.';
+          if (opt && opt.checked) document.getElementById('poDoneMsg').textContent = '출시 전 의견 메일과 출시 메일을 이 주소로 보내 드립니다.';
           po.classList.add('sent');
         })
         .catch(function () {

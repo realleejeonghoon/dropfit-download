@@ -3,7 +3,7 @@
  "zip_bytes": 3306698,
  "_설명": "정훈이 확정한 상태의 지문. 바꾸려면 확정 후 python3 brand/check.py --confirm",
  "files": {
-  "index.html": "727e3df35b1bb147c0a736a45cd6af4222c969f0ae35d83c8354a6f717ef3cdf",
+  "index.html": "93e56188a9520c967d17db2dc7b62697ef61d04c73372997f5d5ce8485bd7906",
   "privacy.html": "2b35fae5dd45a5afcae0996880add6917371eca74555549c35adb4d99d61a2de",
   "404.html": "99833ccc3f1d3fffcafa370eef0b5928b023342e997c3a3f9a514ea47d5add78",
   "logo.js": "c4f4203ffb1b0e4c288da5bdca5fec6a817ffea1590dc07726ec33b1dee23a42",
