@@ -883,7 +883,7 @@
     // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.6 seasoning'
     var FROM = '';
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
-    var VERSION = '0.6.7' + (FROM ? ' ' + FROM : '');
+    var VERSION = '0.6.8' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     // 다운로드 뒤 신청 카드: 기본 동작(다운로드)은 막지 않고 카드만 띄운다. 신청한 적이 있으면 짧은 확인만 보이고 4초 뒤 닫힌다
     var card = document.getElementById('dlCard'), cardTimer;
