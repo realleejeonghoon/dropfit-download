@@ -43,7 +43,8 @@ def main():
     z = zipfile.ZipFile(__import__('io').BytesIO(dl))
     names = [n for n in z.namelist() if not n.endswith('/')]
     top = sorted({n.split('/')[1] for n in names if n.startswith('Dropfit/') and n.count('/') >= 1})
-    put(all(n.startswith('Dropfit/') for n in names) and 'Dropfit.app' in top, 'zip 구성', f'Dropfit 폴더 안: {", ".join(top)}')
+    show = lambda n: n.encode('cp437').decode('utf-8', 'replace') if not n.isascii() else n   # ditto zip은 한글 이름 표시 깃발이 없음
+    put(all(n.startswith('Dropfit/') for n in names) and 'Dropfit.app' in top, 'zip 구성', f'Dropfit 폴더 안: {", ".join(map(show, top))}')
     info = plistlib.loads(z.read('Dropfit/Dropfit.app/Contents/Info.plist'))
     ver, build = info['CFBundleShortVersionString'], info['CFBundleVersion']
 
