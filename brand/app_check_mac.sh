@@ -7,6 +7,7 @@ set -u
 DIR="$(cd "$1" && pwd)"; HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="$DIR/report"; mkdir -p "$OUT"
 OS="$(sw_vers -productVersion)"
+SCREEN="$(system_profiler SPDisplaysDataType 2>/dev/null | awk -F': ' '/Resolution/{print $2; exit}')"
 FAILS=0; LINES=()
 put() { if [ "$1" = ok ]; then LINES+=("✓ $2"); else LINES+=("✗ $2"); FAILS=$((FAILS+1)); fi; }
 
@@ -78,6 +79,6 @@ PY
 else put bad "앱 아이콘을 꺼내지 못함"; fi
 
 pkill -x Dropfit 2>/dev/null
-{ echo "### Dropfit 앱 실행 점검 · macOS $OS · $(cat "$DIR/version.txt" 2>/dev/null)"; echo; for l in "${LINES[@]}"; do echo "- $l"; done; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
-printf '%s\n' "${LINES[@]}"; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "$FAILS건 다름 · macOS $OS"
+{ echo "### Dropfit 앱 실행 점검 · macOS $OS · 화면 ${SCREEN:-알 수 없음} · $(cat "$DIR/version.txt" 2>/dev/null)"; echo; for l in "${LINES[@]}"; do echo "- $l"; done; echo; } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}" >"$OUT/summary.md"
+printf '%s\n' "${LINES[@]}"; echo; echo "--- 화면 동작 점검 보고서 (화면 ${SCREEN:-?}) ---"; cat "$OUT/ui.txt" 2>/dev/null; echo; [ $FAILS -eq 0 ] && echo "통과 · macOS $OS" || echo "${FAILS}건 다름 · macOS $OS"
 exit $([ $FAILS -eq 0 ] && echo 0 || echo 1)
