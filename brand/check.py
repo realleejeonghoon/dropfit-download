@@ -137,6 +137,17 @@ def check_words():
         hit = [w for w in BANNED if w in txt]
         (bad if hit else ok)('문안', f'{f}: ' + ('금지어 ' + ', '.join(hit) if hit else f'금지어 {len(BANNED)}개 없음'))
 
+# ---------- 문안: 말씨 (11/5 정훈 "우아함을 추구하는 만큼 언어도 매너 있는 수준") ----------
+# 사용자에게 무엇을 해 드리는 말은 높여 쓰고(보냅니다 → 보내드립니다), 어색한 옛말은 쓰지 않는다.
+# 화면에 보이는 글자는 스크립트 안 문자열까지 본다(신청 뒤 문구처럼 JS가 바꿔 넣는 글).
+MANNER = {'보냅니다': '보내드립니다', '알립니다': '알려드립니다', '알려줍니다': '알려드립니다',
+          '여쭙': '어색한 말, 다른 말로(예: 의견을 듣고 싶습니다)'}
+def check_manner():
+    for f in TP['pages'] + ['README.md']:
+        txt = re.sub(r'<style[\s\S]*?</style>|<!--[\s\S]*?-->', '', read(f))
+        hit = [f'{w}→{MANNER[w]} {txt.count(w)}곳' for w in MANNER if w in txt]
+        (bad if hit else ok)('문안', f'{f}: ' + ('말씨 ' + ', '.join(hit) if hit else f'말씨 {len(MANNER)}가지 없음'))
+
 # ---------- 화면: 휴대폰 폭 가로 넘침 ----------
 def check_render():
     try:
@@ -230,6 +241,6 @@ if __name__ == '__main__':
     if '--live' in sys.argv:
         check_live()
     else:
-        check_icons(); check_pages(); check_version(); check_words(); check_ledger()
+        check_icons(); check_pages(); check_version(); check_words(); check_manner(); check_ledger()
         if '--no-render' not in sys.argv: check_render()
     sys.exit(report())
