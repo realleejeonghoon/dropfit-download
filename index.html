@@ -31,7 +31,7 @@
 {"@type":"Question","name":"맥에서 PDF 여러 개를 하나로 합치려면?","acceptedAnswer":{"@type":"Answer","text":"PDF 파일들을 한꺼번에 골라 Dropfit으로 드래그해 PDF 칸에 놓으면 고른 순서대로 한 권이 됩니다. 사진이 섞여 있어도 함께 묶입니다. 원본은 그대로 두고, 같은 폴더에 새 PDF가 생깁니다."}},
 {"@type":"Question","name":"맥북 사진(HEIC)을 JPG로 한 번에 바꾸려면?","acceptedAnswer":{"@type":"Answer","text":"사진을 여러 장 고르거나 폴더째 Dropfit으로 드래그해 JPG 칸에 놓으면 됩니다. 원본 HEIC는 그대로 남습니다."}},
 {"@type":"Question","name":"맥북 사진 여러 장을 PDF 하나로 만들려면?","acceptedAnswer":{"@type":"Answer","text":"사진을 골라 PDF 칸으로 드래그하면 합치기 · 나누기가 나옵니다. 합치기에 놓으면 PDF 한 권, 나누기에 놓으면 장마다 PDF 한 개씩 만듭니다."}},
-{"@type":"Question","name":"파일이 인터넷에 올라가나요?","acceptedAnswer":{"@type":"Answer","text":"아니요. 변환은 모두 Mac 안에서 이루어지고, 파일은 어디에도 전송되지 않습니다."}}
+{"@type":"Question","name":"파일이 인터넷에 올라가나요?","acceptedAnswer":{"@type":"Answer","text":"아니요. 변환은 모두 Mac 안에서 하고, 파일은 어디로도 보내지 않습니다."}}
 ]}
 </script>
 <style>
@@ -792,7 +792,7 @@
 <section class="gray block" id="install" aria-labelledby="install-title">
   <div class="wrap">
     <div class="sec-head">
-      <h2 class="sec-title reveal" id="install-title">1분이면 충분합니다.</h2>
+      <h2 class="sec-title reveal" id="install-title">설치는 1분이면 됩니다.</h2>
       <p class="sec-sub reveal">Apple 공증을 받은 앱입니다. <span class="nb">처음 한 번만 확인 창이 뜹니다.</span></p>
     </div>
     <div class="how reveal">
@@ -883,7 +883,7 @@
     // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.6 seasoning'
     var FROM = '';
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
-    var VERSION = '0.6.7' + (FROM ? ' ' + FROM : '');
+    var VERSION = '0.6.8' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     // 다운로드 뒤 신청 카드: 기본 동작(다운로드)은 막지 않고 카드만 띄운다. 신청한 적이 있으면 짧은 확인만 보이고 4초 뒤 닫힌다
     var card = document.getElementById('dlCard'), cardTimer;
@@ -926,7 +926,7 @@
       var noteBase = note.innerHTML, btnText = btn.textContent; // 오류 뒤 처음 안내(방침 링크 포함)로 되돌릴 때 쓴다
       po.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (!email.value.trim() || !email.checkValidity()) { note.textContent = '이메일 주소를 확인하십시오.'; note.className = 'fb-note err'; email.focus(); return; }
+        if (!email.value.trim() || !email.checkValidity()) { note.textContent = '이메일 주소를 다시 확인해 주세요.'; note.className = 'fb-note err'; email.focus(); return; }
         var data = new URLSearchParams(new FormData(po));
         // 의견 메일 동의는 시트의 '버전·경로' 칸 끝에 ' 의견'으로 남긴다 (Apps Script 20자 제한 안에 맞춤)
         data.delete('optin');
@@ -936,7 +936,7 @@
           .then(function () { markSigned(); poDone(opt && opt.checked); if (po.id === 'dlForm') { clearTimeout(cardTimer); cardTimer = setTimeout(closeCard, 6000); } })
           .catch(function () {
             btn.disabled = false; btn.textContent = btnText; if (opt) opt.disabled = false;
-            note.textContent = '신청할 수 없습니다. 잠시 후 다시 시도하십시오.'; note.className = 'fb-note err';
+            note.textContent = '신청할 수 없습니다. 잠시 후 다시 시도해 주세요.'; note.className = 'fb-note err';
           });
       });
       po.addEventListener('input', function () {

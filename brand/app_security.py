@@ -291,6 +291,9 @@ def check_secrets(app, pk, out):
         put('△', '비밀', f'gitleaks를 돌리지 못함({type(e).__name__}) · 위 직접 검사로 대신함')
 
 def main():
+    # 이 점검은 /Applications의 Dropfit을 지우고 새로 깔며 Dropfit 설정을 초기화한다. GitHub의 깨끗한 Mac에서만 돈다
+    if os.environ.get('GITHUB_ACTIONS') != 'true':
+        print('멈춤: 이 점검은 GitHub의 깨끗한 Mac 전용입니다(설치된 Dropfit을 지우고 설정을 초기화함). 실제로 쓰는 Mac에서는 돌리지 마세요.'); sys.exit(3)
     out = sys.argv[sys.argv.index('--out') + 1] if '--out' in sys.argv else os.path.join(ROOT, '.sec-out')
     live = '--live' in sys.argv
     os.makedirs(out, exist_ok=True)
