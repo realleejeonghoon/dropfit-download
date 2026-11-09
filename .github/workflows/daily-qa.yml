@@ -77,13 +77,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: 출시 차단 위험 표 받기 (비공개 소스 SECURITY.md, 읽기 전용 열쇠)
+        continue-on-error: true
+        env:
+          KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+        run: |
+          [ -n "$KEY" ] || { echo "열쇠 없음: 위험 줄은 빼고 보고"; exit 0; }
+          K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"; printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$K/known"
+          export GIT_SSH_COMMAND="ssh -i $K/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$K/known -o StrictHostKeyChecking=yes"
+          git clone -q --no-checkout --filter=blob:none git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"; rm -f "$K/id"
+          for b in main claude/engine-check; do
+            git -C "$RUNNER_TEMP/src" show "origin/$b:docs/1-Required/SECURITY.md" > "$RUNNER_TEMP/SECURITY.md" 2>/dev/null && { echo "SECURITY.md: $b"; break; }
+          done
+          rm -rf "$RUNNER_TEMP/src"
       - name: 결과 모으기
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs?per_page=50" > "$RUNNER_TEMP/jobs.json"
           gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" > "$RUNNER_TEMP/run.json"
-          python3 brand/qa_report.py "$RUNNER_TEMP/jobs.json" "$RUNNER_TEMP/run.json" appcast.xml "$RUNNER_TEMP/report.json"
+          python3 brand/qa_report.py "$RUNNER_TEMP/jobs.json" "$RUNNER_TEMP/run.json" appcast.xml "$RUNNER_TEMP/report.json" "$RUNNER_TEMP/SECURITY.md"
           cat "$RUNNER_TEMP/report.json"
       - name: 집계 서버로 보내기
         env:
