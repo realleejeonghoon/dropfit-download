@@ -63,9 +63,16 @@ jobs:
     with:
       from: 0f57c49
 
+  # 비공개 소스의 변환 엔진: 결과물 품질·Pro 기능·망가진 파일 (화면·토큰·정훈 Mac 쓰지 않음)
+  engine:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/engine-check.yml
+    secrets: inherit
+
   report:
     name: 시트에 기록
-    needs: [gate, brand, app, security, orb, update, update-old]
+    needs: [gate, brand, app, security, orb, update, update-old, engine]
     if: always() && needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:
