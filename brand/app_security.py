@@ -18,7 +18,9 @@ import base64, hashlib, io, ipaddress, json, os, plistlib, re, shutil, subproces
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CFG = json.load(open(os.path.join(ROOT, 'brand', 'security.json'), encoding='utf-8'))
 LIVE = 'https://realleejeonghoon.github.io/dropfit-download/'
-GITLEAKS = 'https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_darwin_arm64.tar.gz'
+import platform
+# Intel Mac 점검 기계(macos-15-intel)에서는 x64판
+GITLEAKS = 'https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_darwin_' + ('x64' if platform.machine() == 'x86_64' else 'arm64') + '.tar.gz'
 results = []
 def put(mark, area, msg): results.append((mark, area, msg))
 ok = lambda c: '✓' if c else '✗'

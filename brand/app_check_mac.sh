@@ -27,6 +27,13 @@ grep -q "accepted" "$OUT/spctl.txt" && grep -q "Notarized Developer ID" "$OUT/sp
 # stapler는 확인할 때 Apple 서버에도 묻는다. 서버·망이 잠깐 안 될 때(Error 68 등)는 5초 간격으로 세 번까지
 ST=bad; for TRY in 1 2 3; do xcrun stapler validate "$APP_SRC" >"$OUT/stapler.txt" 2>&1 && { ST=ok; break; }; sleep 5; done
 [ $ST = ok ] && put ok "공증 티켓 첨부 확인(오프라인에서도 열림$([ $TRY -gt 1 ] && echo ", ${TRY}번째 확인"))" || put bad "공증 티켓 없음(3번 확인): $(tail -1 "$OUT/stapler.txt")"
+# 서명 인증서 남은 기간: 만료되면 새로 받는 분이 Gatekeeper에 막히므로 90일 전부터 실패로 알린다
+CD="$W/certs"; mkdir -p "$CD"; (cd "$CD" && codesign -d --extract-certificates "$APP_SRC" >/dev/null 2>&1)
+if [ -f "$CD/codesign0" ]; then
+  END="$(openssl x509 -inform DER -in "$CD/codesign0" -noout -enddate 2>/dev/null | cut -d= -f2)"
+  DAYS=$(python3 -c 'import sys,datetime as d; e=d.datetime.strptime(" ".join(sys.argv[1].split()),"%b %d %H:%M:%S %Y %Z"); print((e-d.datetime.utcnow()).days)' "$END" 2>/dev/null || echo -1)
+  [ "$DAYS" -ge 90 ] && put ok "서명 인증서 남은 기간 ${DAYS}일(${END})" || put bad "서명 인증서 만료가 가까움: ${DAYS}일 남음(${END:-읽지 못함})"
+else put bad "서명 인증서를 꺼내지 못함"; fi
 
 APP=/Applications/Dropfit.app
 rm -rf "$APP"; ditto "$APP_SRC" "$APP"

@@ -9,13 +9,15 @@ import json, re, sys
 from datetime import datetime, timedelta, timezone
 
 KST = timezone(timedelta(hours=9))
-# 시트 칸 순서. (작업 이름 앞부분, 이름에 들어갈 글자) → 칸 이름
+# 시트 칸 순서. (칸 이름, 작업 이름 앞부분, 찾을 글자). macos-… 는 이름 끝으로 맞춰 macos-15와 macos-15-intel이 섞이지 않게
 COLUMNS = [
     ('랜딩 통일', 'brand /', '공개 사이트'),
     ('앱 macOS 15', 'app /', 'macos-15'),
     ('앱 macOS 26', 'app /', 'macos-26'),
+    ('앱 Intel Mac', 'app /', 'macos-15-intel'),
     ('보안 macOS 15', 'security /', 'macos-15'),
     ('보안 macOS 26', 'security /', 'macos-26'),
+    ('보안 Intel Mac', 'security /', 'macos-15-intel'),
     ('끌어 옮기기 macOS 15', 'orb /', 'macos-15'),
     ('끌어 옮기기 macOS 26', 'orb /', 'macos-26'),
 ]
@@ -40,7 +42,7 @@ def main(jobs_path, run_path, appcast_path, out_path):
 
     checks, problems = {}, []
     for col, prefix, needle in COLUMNS:
-        hit = [j for j in jobs if j['name'].startswith(prefix) and needle in j['name']]
+        hit = [j for j in jobs if j['name'].startswith(prefix) and (j['name'].endswith(needle) if needle.startswith('macos') else needle in j['name'])]
         if not hit:
             checks[col] = '없음'
             problems.append(f'{col}: 작업이 만들어지지 않음')
