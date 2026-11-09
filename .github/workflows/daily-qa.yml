@@ -55,9 +55,17 @@ jobs:
     if: needs.gate.outputs.run == 'true'
     uses: ./.github/workflows/update-check.yml
 
+  # 오래 업데이트하지 않은 사용자: Sparkle이 처음 들어간 0.6(빌드 20, 10/30 공개)에서 최신으로 한 번에
+  update-old:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/update-check.yml
+    with:
+      from: 0f57c49
+
   report:
     name: 시트에 기록
-    needs: [gate, brand, app, security, orb, update]
+    needs: [gate, brand, app, security, orb, update, update-old]
     if: always() && needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:

@@ -23,6 +23,9 @@ COLUMNS = [
     ('업데이트 macOS 15', 'update /', 'macos-15'),
     ('업데이트 macOS 26', 'update /', 'macos-26'),
     ('업데이트 Intel Mac', 'update /', 'macos-15-intel'),
+    ('0.6에서 업데이트 macOS 15', 'update-old /', 'macos-15'),
+    ('0.6에서 업데이트 macOS 26', 'update-old /', 'macos-26'),
+    ('0.6에서 업데이트 Intel Mac', 'update-old /', 'macos-15-intel'),
 ]
 WORD = {'success': '통과', 'failure': '실패', 'cancelled': '취소', 'skipped': '건너뜀',
         'timed_out': '시간 초과', None: '끝나지 않음'}
