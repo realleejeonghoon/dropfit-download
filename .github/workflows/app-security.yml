@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15, macos-26]   # GitHub가 11/6부터 macos-14를 내주지 않음
+        os: [macos-15, macos-26, macos-15-intel]   # GitHub가 11/6부터 macos-14를 내주지 않음. Intel Mac 사용자용으로 macos-15-intel
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
