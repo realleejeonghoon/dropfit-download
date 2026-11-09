@@ -1,0 +1,78 @@
+name: 매일 9시 점검
+
+# 매일 09:00 KST, 공개 중인 Dropfit과 랜딩을 한 번에 점검하고 결과를 구글 시트 '점검 기록' 탭에 한 줄로 남긴다.
+# 실행: 정훈 님 Mac이 09:00에 이 점검을 부른다(정각). Mac이 꺼져 있던 날은 아래 GitHub 예약이 대신 돈다
+#       (GitHub 예약은 몇 시간 늦게 돌 수 있음). 같은 날 이미 돌았으면 예약 쪽은 건너뛴다.
+# 결과: 실패·취소가 하나라도 있으면 집계 서버가 정훈 님 메일로 바로 알린다.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'   # 09:00 KST 예비
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: daily-qa
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: 오늘 이미 돌았는지
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.g.outputs.run }}
+    steps:
+      - id: g
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then echo run=true >> "$GITHUB_OUTPUT"; exit 0; fi
+          today=$(TZ=Asia/Seoul date +%F)
+          n=$(gh api "repos/${{ github.repository }}/actions/workflows/daily-qa.yml/runs?per_page=20" \
+              --jq "[.workflow_runs[] | select(.id != ${{ github.run_id }}) | select(.conclusion != \"skipped\") | select((.created_at | fromdateiso8601 + 32400 | strftime(\"%Y-%m-%d\")) == \"$today\")] | length")
+          if [ "$n" -gt 0 ]; then echo "오늘($today) 이미 $n번 돌아 건너뜀"; echo run=false >> "$GITHUB_OUTPUT"; else echo run=true >> "$GITHUB_OUTPUT"; fi
+
+  brand:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/brand-check.yml
+  app:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/app-check.yml
+  security:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/app-security.yml
+  orb:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/orb-drag.yml
+
+  report:
+    name: 시트에 기록
+    needs: [gate, brand, app, security, orb]
+    if: always() && needs.gate.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 결과 모으기
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs?per_page=50" > "$RUNNER_TEMP/jobs.json"
+          gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" > "$RUNNER_TEMP/run.json"
+          python3 brand/qa_report.py "$RUNNER_TEMP/jobs.json" "$RUNNER_TEMP/run.json" appcast.xml "$RUNNER_TEMP/report.json"
+          cat "$RUNNER_TEMP/report.json"
+      - name: 집계 서버로 보내기
+        env:
+          QA_TOKEN: ${{ secrets.QA_TOKEN }}
+        run: |
+          url=$(grep -o 'https://script.google.com/macros/s/[^"'"'"']*/exec' index.html | head -1)
+          [ -n "$url" ] || { echo "집계 서버 주소를 index.html에서 찾지 못함"; exit 1; }
+          body=$(curl -sS -L --max-time 60 --data-urlencode event=qa --data-urlencode "token=$QA_TOKEN" \
+                 --data-urlencode "payload@$RUNNER_TEMP/report.json" "$url")
+          echo "응답: $body"
+          [ "$body" = "ok" ] || { echo "::error::시트 기록 실패: $body"; exit 1; }

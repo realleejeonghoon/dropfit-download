@@ -3,8 +3,7 @@ name: 앱 점검
 # 매일 09:10 KST: 공개 중인 Dropfit을 깨끗한 Mac(macOS 14·15)에 실제로 받아 설치·실행해 본다.
 # 업데이트 PR(zip·appcast·점검 도구가 바뀔 때): 새 배포 파일로 같은 점검 = 출시 리허설.
 on:
-  schedule:
-    - cron: '10 0 * * *'
+  workflow_call:   # 매일 9시 점검 묶음(daily-qa.yml)이 부름
   workflow_dispatch:
   pull_request:
     paths:
@@ -23,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-15]
+        os: [macos-15, macos-26]   # GitHub가 11/6부터 macos-14를 내주지 않음
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:

@@ -4,9 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
-  schedule:
-    - cron: '0 0 * * *'   # 매일 09:00 KST
   workflow_dispatch:
+  workflow_call:   # 매일 9시 점검 묶음(daily-qa.yml)이 부름
 
 permissions:
   contents: read
@@ -14,7 +13,7 @@ permissions:
 jobs:
   repo:
     name: 저장소 점검 (아이콘·페이지·버전·문안·확정값·색·휴대폰 폭)
-    if: github.event_name != 'schedule'
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +22,7 @@ jobs:
 
   live:
     name: 공개 사이트 대조 (main과 같은지)
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name != 'pull_request' && github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
