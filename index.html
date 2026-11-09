@@ -881,9 +881,34 @@
     }
     // 다운로드 수: 버튼을 누를 때 시각·버전·유입 채널만 보낸다 (개인정보 없음). 주소가 비어 있으면 아무것도 하지 않는다
     // 유입 채널: 공유 링크의 ?from= 태그(영소문자·숫자·하이픈, 12자 이내)를 버전 칸에 붙여 보낸다. 예: '0.6 seasoning'
-    var FROM = '';
+    // 태그는 이 탭에서만 기억한다(sessionStorage, 탭을 닫으면 사라짐). 처리방침에 다녀오거나 새로고침해도 처음 경로가 남는다
+    // 태그가 없으면 들어온 사이트 이름을 'r-' 뒤에 적는다. 브라우저가 넘겨주는 사이트 주소(글 주소·개인 정보 없음)만 쓴다
+    var FROM = '', SRC = '';
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
-    var VERSION = '0.6.8' + (FROM ? ' ' + FROM : '');
+    function siteTag(ref) {
+      var h = '';
+      try { h = new URL(ref).hostname.toLowerCase(); } catch (e) { return ''; }
+      if (!h || h === location.hostname) return '';
+      var known = [
+        [/(^|\.)blog\.naver\.com$/, 'naverblog'], [/(^|\.)cafe\.naver\.com$/, 'navercafe'], [/(^|\.)naver\.(com|me)$/, 'naver'],
+        [/(^|\.)threads\.(com|net)$/, 'threads'], [/(^|\.)instagram\.com$/, 'insta'], [/(^|\.)facebook\.com$/, 'facebook'],
+        [/(^|\.)(t\.co|x\.com|twitter\.com)$/, 'x'], [/(^|\.)kakao\.com$/, 'kakao'], [/(^|\.)daum\.net$/, 'daum'],
+        [/google/, 'google'], [/(^|\.)bing\.com$/, 'bing'], [/(^|\.)hada\.io$/, 'geeknews'], [/(^|\.)disquiet\.io$/, 'disquiet'],
+        [/(^|\.)notefolio\.net$/, 'notefolio'], [/(^|\.)ppomppu\.co\.kr$/, 'ppomppu'], [/(^|\.)clien\.net$/, 'clien'],
+        [/(^|\.)damoang\.net$/, 'damoang'], [/(^|\.)reddit\.com$/, 'reddit'], [/(^|\.)producthunt\.com$/, 'ph'], [/(^|\.)github\.com$/, 'github']
+      ];
+      for (var i = 0; i < known.length; i++) if (known[i][0].test(h)) return 'r-' + known[i][1];
+      var p = h.split('.'), n = p.length;
+      var name = n >= 3 && /^(co|or|ne|go|ac|com|net|org)$/.test(p[n - 2]) ? p[n - 3] : (n >= 2 ? p[n - 2] : p[0]);
+      name = name.replace(/[^a-z0-9-]/g, '').slice(0, 9);
+      return name ? 'r-' + name : '';
+    }
+    try {
+      var KEY = 'dropfit-src', saved = (sessionStorage.getItem(KEY) || '').replace(/[^a-z0-9-]/g, '').slice(0, 12);
+      SRC = FROM || saved || siteTag(document.referrer);
+      if (SRC && SRC !== saved) sessionStorage.setItem(KEY, SRC);
+    } catch (e) { SRC = FROM || siteTag(document.referrer); }
+    var VERSION = '0.6.8' + (SRC ? ' ' + SRC : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     // 메일 속 링크 방문: 보내 드린 메일의 링크에는 메일마다 다른 무작위 표시(?m=, 영소문자·숫자 12자)가 붙는다. 표시만 보내고 주소창에서는 바로 지운다
     try {
@@ -965,7 +990,7 @@
       document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (e) {} t.remove();
     }
     document.querySelectorAll('[data-copy-link]').forEach(function (b) {
-      b.addEventListener('click', function () { copy(location.origin + location.pathname + (FROM ? '?from=' + FROM : ''), '링크를 복사했습니다'); });
+      b.addEventListener('click', function () { var tag = FROM || (SRC.indexOf('r-') === 0 ? '' : SRC); copy(location.origin + location.pathname + (tag ? '?from=' + tag : ''), '링크를 복사했습니다'); });
     });
     document.querySelectorAll('[data-copy]').forEach(function (b) {
       b.addEventListener('click', function () { copy(document.querySelector(b.dataset.copy).textContent, '명령어를 복사했습니다'); });
