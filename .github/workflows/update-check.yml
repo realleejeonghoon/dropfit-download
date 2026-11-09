@@ -2,9 +2,18 @@ name: 자동 업데이트 점검
 
 # 매일 9시 점검(daily-qa.yml)이 부름: 바로 앞 공개 버전을 깨끗한 Mac에 깔고 '자동으로 업데이트'를 켠 채 실행해,
 # Sparkle이 공개 appcast에서 새 버전을 받아 설치하고 새 버전으로 열리는지 사용자와 같은 길로 확인한다.
+# from: 'prev' = 바로 앞 공개 버전. 커밋을 주면 그때의 공개 zip에서 출발(오래 업데이트하지 않은 사용자의 길)
 on:
   workflow_call:
+    inputs:
+      from:
+        type: string
+        default: prev
   workflow_dispatch:
+    inputs:
+      from:
+        type: string
+        default: prev
   pull_request:
     paths:
       - 'brand/update_check_mac.sh'
@@ -26,10 +35,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: 바로 앞 공개 버전 꺼내기
+      - name: 출발 버전 꺼내기
+        env:
+          FROM: ${{ inputs.from || 'prev' }}
         run: |
-          prev=$(git log origin/main --format=%H -2 -- Dropfit-macOS.zip | tail -1)
-          git show "$prev:Dropfit-macOS.zip" > "$RUNNER_TEMP/old.zip"
+          if [ "$FROM" = prev ]; then src=$(git log origin/main --format=%H -2 -- Dropfit-macOS.zip | tail -1); else src="$FROM"; fi
+          git show "$src:Dropfit-macOS.zip" > "$RUNNER_TEMP/old.zip"
           ls -l "$RUNNER_TEMP/old.zip"
       - name: 자동 업데이트 실제 과정
         timeout-minutes: 12
@@ -37,6 +48,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: update-check-${{ matrix.os }}
+          name: update-check-${{ inputs.from || 'prev' }}-${{ matrix.os }}
           path: ${{ runner.temp }}/upd
           retention-days: 14

@@ -1,0 +1,61 @@
+name: 엔진 점검
+
+# 매일 9시 점검(daily-qa.yml)이 부름: 비공개 소스(Dropfit)의 변환 엔진을 화면 없이 돌려
+# 결과물 품질·Pro 기능(용량 맞추기·규격·PDF 합치기/나누기·자르기)·망가진/악성 파일 입구를 확인한다.
+# 소스는 읽기 전용 배포 키(시크릿 DROPFIT_SOURCE_KEY, 11/9 정훈 승인)로만 받는다.
+# 공개 저장소이므로 소스·만든 도구는 아티팩트로 올리지 않고, 결과 줄(✓/✗)만 남긴다.
+on:
+  workflow_call:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/engine-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  mac:
+    name: 엔진 ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - name: 비공개 소스 받기 (읽기 전용 열쇠)
+        env:
+          KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
+          K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
+          printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$K/known"
+          export GIT_SSH_COMMAND="ssh -i $K/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$K/known -o StrictHostKeyChecking=yes"
+          git clone -q --no-checkout git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"
+          rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
+          cd "$RUNNER_TEMP/src"
+          # main에 엔진 점검이 합쳐지기 전까지는 작업 가지에서
+          for b in main claude/engine-check; do
+            if git cat-file -e "origin/$b:Support/tools/engine-check/run.sh" 2>/dev/null; then
+              git checkout -q "origin/$b"; echo "소스: $b $(git rev-parse --short HEAD) · $(git log -1 --format=%cd --date=iso)"; break
+            fi
+          done
+          test -f Support/tools/engine-check/run.sh || { echo "::error::소스에 엔진 점검 도구가 없음"; exit 1; }
+      - name: Sparkle 묶음 받기 (엔진과 함께 컴파일할 때만 필요)
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          mkdir -p Support/Sparkle
+          curl -sSfL --retry 3 -o Support/Sparkle/Sparkle-2.10.1.tar.xz https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
+      - name: 엔진 점검
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          set -o pipefail
+          bash Support/tools/engine-check/run.sh --report "$RUNNER_TEMP/engine.txt" | tee "$RUNNER_TEMP/engine-out.txt"
+      - name: 요약
+        if: always()
+        run: |
+          OS="$(sw_vers -productVersion)"
+          { echo "### 엔진 점검 · macOS $OS"; echo; grep -E '^(■|✓|✗|–)' "$RUNNER_TEMP/engine-out.txt" 2>/dev/null | sed 's/^/- /'; } >> "$GITHUB_STEP_SUMMARY"
+          rm -rf "$RUNNER_TEMP/src"
