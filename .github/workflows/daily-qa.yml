@@ -50,10 +50,14 @@ jobs:
     needs: gate
     if: needs.gate.outputs.run == 'true'
     uses: ./.github/workflows/orb-drag.yml
+  update:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/update-check.yml
 
   report:
     name: 시트에 기록
-    needs: [gate, brand, app, security, orb]
+    needs: [gate, brand, app, security, orb, update]
     if: always() && needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:

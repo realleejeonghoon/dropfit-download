@@ -20,6 +20,9 @@ COLUMNS = [
     ('보안 Intel Mac', 'security /', 'macos-15-intel'),
     ('끌어 옮기기 macOS 15', 'orb /', 'macos-15'),
     ('끌어 옮기기 macOS 26', 'orb /', 'macos-26'),
+    ('업데이트 macOS 15', 'update /', 'macos-15'),
+    ('업데이트 macOS 26', 'update /', 'macos-26'),
+    ('업데이트 Intel Mac', 'update /', 'macos-15-intel'),
 ]
 WORD = {'success': '통과', 'failure': '실패', 'cancelled': '취소', 'skipped': '건너뜀',
         'timed_out': '시간 초과', None: '끝나지 않음'}
