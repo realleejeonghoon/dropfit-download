@@ -885,6 +885,16 @@
     try { FROM = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12); } catch (e) {}
     var VERSION = '0.6.8' + (FROM ? ' ' + FROM : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
+    // 메일 속 링크 방문: 보내 드린 메일의 링크에는 메일마다 다른 무작위 표시(?m=, 영소문자·숫자 12자)가 붙는다. 표시만 보내고 주소창에서는 바로 지운다
+    try {
+      var MAILMARK = (new URLSearchParams(location.search).get('m') || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12);
+      if (MAILMARK) {
+        var mv = new URLSearchParams({ event: 'mailvisit', m: MAILMARK });
+        if (!(navigator.sendBeacon && navigator.sendBeacon(COUNT_URL, mv))) fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: mv, keepalive: true });
+        var q = new URLSearchParams(location.search); q.delete('m');
+        history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash);
+      }
+    } catch (e) {}
     // 다운로드 뒤 신청 카드: 기본 동작(다운로드)은 막지 않고 카드만 띄운다. 신청한 적이 있으면 짧은 확인만 보이고 4초 뒤 닫힌다
     var card = document.getElementById('dlCard'), cardTimer;
     function hasSigned() { try { return localStorage.getItem('dropfit-preorder') === '1'; } catch (e) { return false; } }
