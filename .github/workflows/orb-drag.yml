@@ -4,8 +4,7 @@ name: Dropfit 끌어 옮기기 점검
 # 깨끗한 Mac에서 공개 중인 버전(main)과 이 PR의 새 버전을 사람처럼 받아 열고, 실제 마우스로 끌어 본다.
 # 재발 방지: 업데이트 PR(zip이 바뀔 때)마다, 그리고 매일 09:20 KST 공개 버전으로.
 on:
-  schedule:
-    - cron: '20 0 * * *'
+  workflow_call:   # 매일 9시 점검 묶음(daily-qa.yml)이 부름
   workflow_dispatch:
   pull_request:
     paths:
@@ -22,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-15]
+        os: [macos-15, macos-26]   # GitHub가 11/6부터 macos-14를 내주지 않음
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:

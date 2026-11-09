@@ -85,7 +85,10 @@ from PIL import Image
 out, master = sys.argv[1], sys.argv[2]
 ref = Image.open(master).convert('RGBA')
 res = []
-for s, tol in ((512, 3.0), (32, 4.0)):
+import platform
+major = int(platform.mac_ver()[0].split('.')[0] or 0)
+# 32px 허용: macOS 26은 작은 아이콘에 시스템 효과를 더해 그리므로 5.0 (11/9 정훈 확정), 그 밖은 4.0
+for s, tol in ((512, 3.0), (32, 5.0 if major >= 26 else 4.0)):
     im = Image.open(f'{out}/os-icon-{s}.png').convert('RGBA').resize((s, s))
     a = np.asarray(im); corner = int(max(a[0, 0, 3], a[0, -1, 3], a[-1, 0, 3], a[-1, -1, 3]))
     r = ref.resize((s, s), Image.LANCZOS)
