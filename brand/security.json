@@ -21,7 +21,7 @@
     "com.apple.security.cs.debugger"
   ],
   "net_symbols": ["NSURLSession", "NSURLConnection", "CFHTTPMessage", "CFReadStreamCreateWithFTPURL", "CFStreamCreatePairWithSocket", "_socket", "_connect", "_nw_connection", "_nw_endpoint", "WKWebView", "_getaddrinfo"],
-  "url_hosts_allowed": ["realleejeonghoon.github.io", "github.com", "www.apple.com", "apple.com", "certs.apple.com", "crl.apple.com", "ocsp.apple.com", "sparkle-project.org", "www.andymatuschak.org"],
+  "url_hosts_allowed": ["realleejeonghoon.github.io", "github.com", "www.apple.com", "apple.com", "certs.apple.com", "crl.apple.com", "ocsp.apple.com", "sparkle-project.org", "www.andymatuschak.org", "www.w3.org"],
   "mail_allowed": ["leejeonghoon.official@gmail.com"],
   "net_allowed_cidrs": ["185.199.108.0/22", "140.82.112.0/20", "2606:50c0::/32"]
 }
