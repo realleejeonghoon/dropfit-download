@@ -908,7 +908,7 @@
       SRC = FROM || saved || siteTag(document.referrer);
       if (SRC && SRC !== saved) sessionStorage.setItem(KEY, SRC);
     } catch (e) { SRC = FROM || siteTag(document.referrer); }
-    var VERSION = '0.6.9' + (SRC ? ' ' + SRC : '');
+    var VERSION = '0.6.10' + (SRC ? ' ' + SRC : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     // 메일 속 링크 방문: 보내 드린 메일의 링크에는 메일마다 다른 무작위 표시(?m=, 영소문자·숫자 12자)가 붙는다. 표시만 보내고 주소창에서는 바로 지운다
     try {

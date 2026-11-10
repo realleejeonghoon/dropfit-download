@@ -1,15 +1,15 @@
 {
  "og_v": "10",
- "zip_bytes": 3337668,
+ "zip_bytes": 3400205,
  "_설명": "정훈이 확정한 상태의 지문. 바꾸려면 확정 후 python3 brand/check.py --confirm",
  "files": {
-  "index.html": "1475e16286ef7364a837f2a4a52554f7ef9b349fd51e30f156f91ef85f878031",
+  "index.html": "c4094ef6637831e1ae6f92f4657e1fbe396bbd8f6296d325b2d6f53f4a89e3bc",
   "privacy.html": "094bf072edcc8d29996812584acd3037d5000c5dfddc7737f33c4657a320cd45",
   "404.html": "99833ccc3f1d3fffcafa370eef0b5928b023342e997c3a3f9a514ea47d5add78",
   "logo.js": "c4f4203ffb1b0e4c288da5bdca5fec6a817ffea1590dc07726ec33b1dee23a42",
   "demo.js": "d56e740685fccd49d95e556fdf636b2486eb4d6b96e5f5f1b268c243b9b869d5",
   "README.md": "f3c770e4194487cafb18b2fdeae94d43de1796bf61f9d6e908523a36e6abb8f7",
-  "appcast.xml": "5c21e0e766d054f4ac37fa636e4518e8bf6acc575991ba3d327f14f37de0ed96",
+  "appcast.xml": "e3a033fbc6dc4944bb5c3ce68caa3794898afa8cb660e10cfa8bb0adcc671d4f",
   "icon.png": "8a23dd454d7be841ef1efb9e35dec9a828d16cb743108069a503a40d5d9433a7",
   "assets/og.png": "8484a170f813121ee32a9c88b63af559d6b986ca1aa64e35b57929afc6ba3f93",
   "assets/icon-128.png": "a2a74e036cabb86236fff198f2b19eb60110a8faea43dd7ab892cdb5a01d8f9d",
@@ -17,7 +17,7 @@
   "assets/apple-touch-icon.png": "1564de6365edfe58896c68a4fd47f49d1b29557b84d8f1f11126daf82a598280",
   "assets/favicon-32.png": "010b3a764e71e4f0fe9a560a115458bf153ae9b1d8993f0be20459b06abc3532",
   "assets/favicon-96.png": "3ab026ef766541220ef457250d03a8d6eee12862a40f753355c210b341b3e275",
-  "Dropfit-macOS.zip": "b4bb192863880f2ba0d2a426f7c9e2f380456e0519f107f5dfcd5c8d8931bf76"
+  "Dropfit-macOS.zip": "88580c81fe17a3ae923a27bb159d1d5f3745efe6bf8e83ede529abad3575a4f7"
  },
  "colors": {
   "index.html": [
