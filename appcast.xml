@@ -6,16 +6,17 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
     <language>ko</language>
     <item>
-      <title>Dropfit 0.6.8</title>
-      <sparkle:version>31</sparkle:version>
-      <sparkle:shortVersionString>0.6.8</sparkle:shortVersionString>
+      <title>Dropfit 0.6.9</title>
+      <sparkle:version>32</sparkle:version>
+      <sparkle:shortVersionString>0.6.9</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 05 Nov 2026 13:39:30 +0000</pubDate>
+      <pubDate>Tue, 10 Nov 2026 09:03:15 +0000</pubDate>
+      <sparkle:phasedRolloutInterval>86400</sparkle:phasedRolloutInterval>
       <description><![CDATA[<ul><li>처음 설치할 때 응용 프로그램 폴더로 옮긴 뒤 Dropfit이 다시 열리지 않던 문제를 해결합니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.8-31.zip" type="application/octet-stream" sparkle:edSignature="8MBI/DPPGPwwvvkfSBYIBlKMMVkuoOz81xNKDFzQs4PmE7dClEvyoDACMfbqy0fTQaiEBxlI5+02SgWaxzf5CA==" length="3312747"></enclosure>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.9-32.zip" type="application/octet-stream" sparkle:edSignature="sndwpYewjpK2gmhWeoEJVABVDVRDl+pTw3UKCLjxwRlDdJPAiCuyBL7yb9Kydoo+t0kMBh+N/ee908MJnY5nAw==" length="3333463"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: hFH0myVsasDWWGtBwggeubdnuz7B3/ETt/O1J2LuUo/ngjsENC6yZqcgMTsC8Le0nyXl5JUYUq8tgU2LQPjlAw==
-length: 1354
+edSignature: KGB51Ki7uAgdw0wxdtW2PWKjlAAsBPvC0HIcUHiyvocraujIt+wWzRXYd51hsDZwkNIIR4KluIF4n/rhKJH8CA==
+length: 1429
 -->
