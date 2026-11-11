@@ -37,6 +37,9 @@ defaults write $DOM SUEnableAutomaticChecks -bool YES
 defaults write $DOM SUAutomaticallyUpdate -bool YES
 defaults write $DOM SUHasLaunchedBefore -bool YES
 defaults write $DOM SULastCheckTime -date '2020-01-01 00:00:00 +0000'
+# 단계 공개(phasedRolloutInterval)의 첫 무리로 고정: Sparkle 무리 = SUUpdateGroupIdentifier % 7, 기다림 = 간격 × 무리.
+# 새 시험 Mac은 무리가 무작위라 공개 첫날엔 6/7 확률로 '아직 받을 차례 아님'이 되어 시험이 헛실패한다(11/11).
+defaults write $DOM SUUpdateGroupIdentifier -int 7
 defaults write $DOM orb.onboarded -bool YES
 
 "$APP/Contents/MacOS/Dropfit" >"$OUT/run1.txt" 2>&1 &
