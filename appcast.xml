@@ -6,17 +6,17 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
     <language>ko</language>
     <item>
-      <title>Dropfit 0.6.10</title>
-      <sparkle:version>33</sparkle:version>
-      <sparkle:shortVersionString>0.6.10</sparkle:shortVersionString>
+      <title>Dropfit 0.6.11</title>
+      <sparkle:version>34</sparkle:version>
+      <sparkle:shortVersionString>0.6.11</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Tue, 10 Nov 2026 13:31:31 +0000</pubDate>
+      <pubDate>Wed, 11 Nov 2026 09:22:44 +0000</pubDate>
       <sparkle:phasedRolloutInterval>86400</sparkle:phasedRolloutInterval>
-      <description><![CDATA[<ul><li>처음 설치할 때 응용 프로그램 폴더로 옮긴 뒤 Dropfit이 다시 열리지 않던 문제를 해결합니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.10-33.zip" type="application/octet-stream" sparkle:edSignature="8QwwiydcNDnxZHdNptZxsalM0Sjnt5Sixe5U6bE3tBg7gH6AFfeRsLoaBd4/tukAseUPNU54iAFHAnljykgjBw==" length="3395999"></enclosure>
+      <description><![CDATA[<ul><li>여러 파일을 PDF 한 권으로 합칠 때 순서와 파일 이름을 정할 수 있습니다.</li><li>순서 창에서 파일을 고르고 스페이스 바를 누르면 크게 볼 수 있습니다.</li><li>설정에서 '합치기 전에 순서 정하기'를 끄면 바로 합칩니다.</li><li>모니터가 여러 대일 때 처음 연 Dropfit이 보이지 않던 문제를 해결합니다.</li><li>Dock에서 Dropfit 아이콘을 우클릭하고 'Dropfit 찾기'를 누르면 빛과 소리로 위치를 알립니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.11-34.zip" type="application/octet-stream" sparkle:edSignature="WmsbMMesFL6004/7xDQHOWi+BViIZJtBjTfxBYB1FA3aM/QV42xdmIgGQAPNZf3LtCQ8L6nsLE/csniR0QttAg==" length="3550584"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: HT6/Gx6mGq/XsiwLe1w183ijkRp3srfitbiO3EtceO3M59KFK9DtoOV+OB9LMMccNg+jyiJquHgGX3Z/Y6hvCA==
-length: 1432
+edSignature: ATsfQi/jChVx97yfmOuzYtaVrlxQjWRJsDA3+LkgZFac2n6TvAI0KMw1yMo8M20d2JP4NDviKFqHjK70fmSHDw==
+length: 1830
 -->
