@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><!-- sparkle-sign-warning:
+IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
+--><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>Dropfit</title>
+    <link>https://realleejeonghoon.github.io/dropfit-download/appcast-now.xml</link>
+    <language>ko</language>
+    <item>
+      <title>Dropfit 0.6.12</title>
+      <sparkle:version>35</sparkle:version>
+      <sparkle:shortVersionString>0.6.12</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <pubDate>Thu, 12 Nov 2026 10:28:09 +0000</pubDate>
+      <description><![CDATA[<ul><li>Dock에서 Dropfit 아이콘을 우클릭하고 '업데이트 확인…'을 누르면 새로운 버전을 바로 다운로드합니다.</li><li>설정에서 '지금 확인'을 눌러도 새로운 버전을 다운로드하지 못하던 문제를 해결합니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.12-35.zip" type="application/octet-stream" sparkle:edSignature="3Ijq3y8HagqVbNFTuy48STAIP4XGjwMHqim1NNBan9TjdMLPLJWvI/8J8OGJNY6sHqZ9vRkbwhuRRat3M9KPAw==" length="3551476"></enclosure>
+    </item>
+  </channel>
+</rss><!-- sparkle-signatures:
+edSignature: 65iqDp/wmRWECVO6lxGEaiO5ABP8Nw+uBvP9OX7wBg7YycpgPrSbXGwRW9AsdSs+SuxLq8C8HKm1MnPNpmInAg==
+length: 1499
+-->
