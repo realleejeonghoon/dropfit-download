@@ -6,17 +6,17 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast.xml</link>
     <language>ko</language>
     <item>
-      <title>Dropfit 0.6.11</title>
-      <sparkle:version>34</sparkle:version>
-      <sparkle:shortVersionString>0.6.11</sparkle:shortVersionString>
+      <title>Dropfit 0.6.12</title>
+      <sparkle:version>35</sparkle:version>
+      <sparkle:shortVersionString>0.6.12</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Wed, 11 Nov 2026 09:22:44 +0000</pubDate>
+      <pubDate>Thu, 12 Nov 2026 10:28:09 +0000</pubDate>
       <sparkle:phasedRolloutInterval>86400</sparkle:phasedRolloutInterval>
-      <description><![CDATA[<ul><li>여러 파일을 PDF 한 권으로 합칠 때 순서와 파일 이름을 정할 수 있습니다.</li><li>순서 창에서 파일을 고르고 스페이스 바를 누르면 크게 볼 수 있습니다.</li><li>설정에서 '합치기 전에 순서 정하기'를 끄면 바로 합칩니다.</li><li>모니터가 여러 대일 때 처음 연 Dropfit이 보이지 않던 문제를 해결합니다.</li><li>Dock에서 Dropfit 아이콘을 우클릭하고 'Dropfit 찾기'를 누르면 빛과 소리로 위치를 알립니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.11-34.zip" type="application/octet-stream" sparkle:edSignature="WmsbMMesFL6004/7xDQHOWi+BViIZJtBjTfxBYB1FA3aM/QV42xdmIgGQAPNZf3LtCQ8L6nsLE/csniR0QttAg==" length="3550584"></enclosure>
+      <description><![CDATA[<ul><li>Dock에서 Dropfit 아이콘을 우클릭하고 '업데이트 확인…'을 누르면 새로운 버전을 바로 다운로드합니다.</li><li>설정에서 '지금 확인'을 눌러도 새로운 버전을 다운로드하지 못하던 문제를 해결합니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-0.6.12-35.zip" type="application/octet-stream" sparkle:edSignature="3Ijq3y8HagqVbNFTuy48STAIP4XGjwMHqim1NNBan9TjdMLPLJWvI/8J8OGJNY6sHqZ9vRkbwhuRRat3M9KPAw==" length="3551476"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: ATsfQi/jChVx97yfmOuzYtaVrlxQjWRJsDA3+LkgZFac2n6TvAI0KMw1yMo8M20d2JP4NDviKFqHjK70fmSHDw==
-length: 1830
+edSignature: cO+OFHtfsy5VGpe8eX/T3ID3HzIeBAm3Ha1rJfKtK0Pok+o8xBBw9Ba5/ydrwVSYrFMeeZ2QaOdDFDUgT3O8CQ==
+length: 1570
 -->
