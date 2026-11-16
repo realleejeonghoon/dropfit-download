@@ -975,9 +975,13 @@
         data.delete('optin');
         data.set('event', 'preorder'); data.set('version', opt && opt.checked ? VERSION.slice(0, 17) + ' 의견' : VERSION);
         btn.disabled = true; btn.textContent = '보내는 중…'; note.className = 'fb-note'; if (opt) opt.disabled = true;
-        fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data })
-          .then(function () { markSigned(); poDone(opt && opt.checked); if (po.id === 'dlForm') { clearTimeout(cardTimer); cardTimer = setTimeout(closeCard, 6000); } })
+        // 시트 기록과 감사 메일이 끝날 때까지(약 8초) 기다리지 않는다. 1초 뒤 완료를 보이고 기록은 keepalive로 끝까지 보낸다 (11/16 정훈 결정)
+        var shown = false, ok = function () { if (shown) return; shown = true; clearTimeout(soon); markSigned(); poDone(opt && opt.checked); if (po.id === 'dlForm') { clearTimeout(cardTimer); cardTimer = setTimeout(closeCard, 6000); } };
+        var soon = setTimeout(ok, 1000);
+        fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: data, keepalive: true })
+          .then(ok)
           .catch(function () {
+            clearTimeout(soon); if (shown) return;
             btn.disabled = false; btn.textContent = btnText; if (opt) opt.disabled = false;
             note.textContent = '신청할 수 없습니다. 잠시 후 다시 시도해 주세요.'; note.className = 'fb-note err';
           });
