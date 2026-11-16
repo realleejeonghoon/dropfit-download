@@ -910,6 +910,14 @@
     } catch (e) { SRC = FROM || siteTag(document.referrer); }
     var VERSION = '0.6.12' + (SRC ? ' ' + SRC : '');
     var COUNT_URL = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
+    // 방문 수: 이 탭에서 처음 열 때 한 번만 채널(SRC)을 보낸다. 시각·채널 말고는 보내지 않는다(개인정보 없음, F-013)
+    try {
+      if (COUNT_URL && !sessionStorage.getItem('dropfit-visit')) {
+        sessionStorage.setItem('dropfit-visit', '1');
+        var vb = new URLSearchParams({ event: 'visit', src: SRC });
+        if (!(navigator.sendBeacon && navigator.sendBeacon(COUNT_URL, vb))) fetch(COUNT_URL, { method: 'POST', mode: 'no-cors', body: vb, keepalive: true });
+      }
+    } catch (e) {}
     // 메일 속 링크 방문: 보내 드린 메일의 링크에는 메일마다 다른 무작위 표시(?m=, 영소문자·숫자 12자)가 붙는다. 표시만 보내고 주소창에서는 바로 지운다
     try {
       var MAILMARK = (new URLSearchParams(location.search).get('m') || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12);
