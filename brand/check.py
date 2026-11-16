@@ -184,7 +184,7 @@ def check_render():
     with sync_playwright() as pw:
         b = pw.chromium.launch(executable_path=os.environ.get('CHROME_PATH') or None)
         for page in TP['pages']:
-            for w in (400, 1280):
+            for w in (390, 1280):
                 pg = b.new_page(viewport={'width': w, 'height': 900}, reduced_motion='reduce')
                 pg.goto(base + page); pg.wait_for_timeout(600)
                 over = pg.evaluate('document.documentElement.scrollWidth - innerWidth')
