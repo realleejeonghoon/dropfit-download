@@ -124,7 +124,7 @@ def scan_tree():
         for no, line in enumerate(lines, 1):
             for name, head in scan_line(line, lines[no] if no < len(lines) else ''):
                 problems.append(f'{path}:{no}  {name}  ({head}…)')
-            if path.endswith('.gs'):
+            if path.endswith('.gs') and not path.startswith('Support/backup/'):   # 보관본은 지난 판 그대로 두므로 로그 규칙만 뺀다(키·토큰 모양은 계속 봄)
                 why = scan_gs_line(line)
                 if why:
                     problems.append(f'{path}:{no}  {why}')
