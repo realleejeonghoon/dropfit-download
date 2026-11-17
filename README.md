@@ -1,7 +1,7 @@
 <p align="center"><img src="icon.png" width="160" alt="Dropfit"></p>
 
-<h1 align="center">Dropfit</h1>
-<p align="center">끌어다 놓으면, 끝.<br>Mac용 이미지·PDF 변환 앱</p>
+<h1 align="center">드롭핏(Dropfit)</h1>
+<p align="center">끌어다 놓으면, 끝.<br>드롭핏(Dropfit)은 Mac용 이미지·PDF 변환 앱입니다. 영어 이름은 Dropfit for Mac입니다.<br>정식판 안내: <a href="https://dropfit.kr/?from=github">dropfit.kr</a></p>
 
 <p align="center">
   <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드</b></a>
