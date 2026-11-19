@@ -142,8 +142,26 @@ def check_net_static(app, code):
     _, und, _ = run('nm', '-u', main)
     syms = set(und.split())
     found = [s for s in CFG['net_symbols'] if (s in syms if s.startswith('_') else any(s in x for x in syms))]
-    put(ok(not found), '바깥 연결', f'앱 본체에 통신 기능 0개 (가져다 쓰는 기능 {len(syms)}개 중) · 통신은 Sparkle 업데이트만' if not found
-        else f'앱 본체가 통신 기능을 씀: {found}')
+    # WKWebView는 1.0 첫 실행 인트로(앱 안 HTML)만 띄운다(정훈 승인 2026-11-19). 앱 안 HTML이 모두
+    # CSP default-src 'none'이고 바깥 주소(http·https·//)를 부르지 않을 때만 통과, 하나라도 어기면 실패
+    web_ok, web_note = False, ''
+    if 'WKWebView' in found:
+        res = os.path.join(app, 'Contents/Resources')
+        pages = sorted(n for n in os.listdir(res) if n.endswith('.html'))
+        bad_pages = []
+        for n in pages:
+            t = open(os.path.join(res, n), encoding='utf-8', errors='replace').read()
+            csp = re.search(r'http-equiv="Content-Security-Policy" content="([^"]*)"', t)
+            policy = csp.group(1) if csp else ''
+            calls = re.findall(r'(?:src|href|action|url\()\s*=?\s*["\']?\s*(?:https?:)?//', t)
+            if "default-src 'none'" not in policy or re.search(r'-src[^;]*(https?:|\*|//)', policy) or calls:
+                bad_pages.append(n)
+        web_ok = bool(pages) and not bad_pages
+        web_note = (f"앱 안 화면 {len(pages)}개 모두 바깥 연결 차단(CSP default-src 'none')" if web_ok
+                    else f'앱 안 화면이 바깥을 부를 수 있음: {bad_pages or "HTML 없음"}')
+        if web_ok: found = [x for x in found if x != 'WKWebView']
+    put(ok(not found), '바깥 연결', (f'앱 본체에 통신 기능 0개 (가져다 쓰는 기능 {len(syms)}개 중) · 통신은 Sparkle 업데이트만' + (f' · 인트로: {web_note}' if web_ok else '')) if not found
+        else f'앱 본체가 통신 기능을 씀: {found}' + (f' · {web_note}' if web_note and not web_ok else ''))
     hosts, mails = {}, set()
     for d, _, files in os.walk(app):
         for n in files:

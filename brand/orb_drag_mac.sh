@@ -85,9 +85,23 @@ wait_orb() {
   return 1
 }
 
+# 1.0 첫 실행 인트로: 화면 크기 Dropfit 창이 떠 있으면 사람처럼 Esc로 닫는다. 닫히지 않으면 실패로 센다(정훈 승인 2026-11-19)
+intro_up() { "$M" wins | grep '^Dropfit ' | awk '{split($NF, s, "x"); if (s[1] >= 800 && s[2] >= 600) f=1} END {exit !f}'; }
+close_intro() {
+  local label="$1"
+  intro_up || return 0
+  shot "$OUT/$(echo "$label" | tr -c 'A-Za-z0-9가-힣' _)-intro.png"
+  t 5 "$M" key escape
+  # 인트로는 페이지가 0.6초, 창이 0.6초 흐려지며 닫힌다. 6초 안에 닫히지 않으면 실패
+  local i; for i in $(seq 12); do sleep 0.5; intro_up || break; done
+  if intro_up; then put bad "$label: 인트로가 Esc로 6초 안에 닫히지 않음"; return 1; fi
+  log "  · 인트로 떠 있음 → Esc로 닫힘 ($((i * 5 / 10)).$((i * 5 % 10))초)"
+}
+
 # 오브 한가운데를 눌러 끌고, 창이 실제로 옮겨졌는지
 drag_test() {
   local tag="$1" label="$2"
+  close_intro "$label" || return
   local b a; b=($("$M" orb))
   [ "${b[0]}" = none ] && { put bad "$label: 오브 없음"; return; }
   local cx=$((b[0] + b[2] / 2)) cy=$((b[1] + b[3] / 2))
