@@ -7,6 +7,11 @@ name: 엔진 점검
 on:
   workflow_call:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: '먼저 시험할 Dropfit 소스 가지 (비우면 main). 새 점검 항목을 main에 넣기 전에 돌려 볼 때'
+        required: false
+        default: ''
   pull_request:
     paths:
       - '.github/workflows/engine-check.yml'
@@ -27,7 +32,9 @@ jobs:
       - name: 비공개 소스 받기 (읽기 전용 열쇠)
         env:
           KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+          REF: ${{ inputs.ref }}
         run: |
+          [[ -z "$REF" || "$REF" =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "::error::가지 이름이 이상함"; exit 1; }
           [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
           K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
           printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
@@ -37,7 +44,7 @@ jobs:
           rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
           cd "$RUNNER_TEMP/src"
           # main에 엔진 점검이 합쳐지기 전까지는 작업 가지에서
-          for b in main claude/engine-check; do
+          for b in $REF main claude/engine-check; do
             if git cat-file -e "origin/$b:Support/tools/engine-check/run.sh" 2>/dev/null; then
               git checkout -q "origin/$b"; echo "소스: $b $(git rev-parse --short HEAD) · $(git log -1 --format=%cd --date=iso)"; break
             fi
