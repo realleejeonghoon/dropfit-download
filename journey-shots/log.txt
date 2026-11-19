@@ -16,8 +16,31 @@ macOS 15.8.2 · 화면
   📷 E-02-ko-preset-trial
   📷 E-02-ko-settings-preset-trial
   📷 D-05-ko-existing-user
-  ✗ 동그라미가 뜨지 않음
   📷 E-03-ko-ended-orb
   📷 E-03-ko-ended-slots
   📷 E-04-ko-settings-ended
   📷 G-07-ko-settings-ended-option
+  📷 D-06-ko-settings-lastday
+=== en
+  📷 C-02-en-gatekeeper
+  📷 C-03-en-move-alert
+  gatekeeper=1 move=1 intro=1
+  📷 D-01-en-intro-head
+  📷 D-02-en-intro-slide
+  📷 D-02-en-intro-slide2
+  📷 D-02-en-intro-closing
+  📷 E-01-en-orb-idle
+  📷 E-01-en-slots-open
+  📷 E-01-en-right-menu
+  📷 D-06-en-settings-trial
+  📷 G-07-en-settings-option
+  📷 G-06-en-activate-badkey
+  📷 E-02-en-preset-trial
+  📷 E-02-en-settings-preset-trial
+  📷 D-05-en-existing-user
+  📷 E-03-en-ended-orb
+  📷 E-03-en-ended-slots
+  📷 E-04-en-settings-ended
+  📷 G-07-en-settings-ended-option
+  📷 D-06-en-settings-lastday
+찍은 화면: 40

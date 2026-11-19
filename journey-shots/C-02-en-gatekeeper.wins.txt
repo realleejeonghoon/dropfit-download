@@ -1,0 +1,7 @@
+Spotlight · 층 25 · id 19 · 805,0 31x24
+Control Center · 층 25 · id 18 · 836,0 34x24
+Control Center · 층 25 · id 15 · 870,0 154x24
+Dock · 층 20 · id 83 · 0,0 1024x768
+CoreServicesUIAgent · 층 8 · id 92 · 382,130 260x264
+Finder · 층 -2147483603 · id 85 · 0,0 1024x768
+Dock · 층 -2147483624 · id 84 · 0,0 1024x768
