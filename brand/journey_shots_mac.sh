@@ -67,6 +67,8 @@ security create-keychain -p j "$HOME/Library/Keychains/journey.keychain-db" 2>/d
 security list-keychains -d user -s "$HOME/Library/Keychains/journey.keychain-db"
 security default-keychain -d user -s "$HOME/Library/Keychains/journey.keychain-db"
 security unlock-keychain -p j "$HOME/Library/Keychains/journey.keychain-db"; security set-keychain-settings "$HOME/Library/Keychains/journey.keychain-db"
+# 1024×768 화면에서 설정 창(높이 765) 맨 아래 줄이 Dock에 가리지 않게 Dock을 자동 숨김
+defaults write com.apple.dock autohide -bool true; defaults write com.apple.dock autohide-delay -float 1000; killall Dock 2>/dev/null; sleep 2
 log "macOS $(sw_vers -productVersion) · 화면 $(system_profiler SPDisplaysDataType 2>/dev/null | grep -m1 Resolution | sed 's/^ *//')"
 sample
 
