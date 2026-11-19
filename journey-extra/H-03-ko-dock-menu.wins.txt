@@ -1,10 +1,9 @@
-DockHelper · 층 101 · id 51 · 818,514 171x190
+DockHelper · 층 101 · id 59 · 818,514 171x190
 Spotlight · 층 25 · id 21 · 805,0 31x24
-Control Center · 층 25 · id 11 · 836,0 34x24
-Control Center · 층 25 · id 10 · 870,0 154x24
-Dock · 층 20 · id 30 · 0,0 1024x768
-DockHelper · 층 3 · id 50 · 837,704 43x59
-Dropfit · 층 3 · id 48 · 858,99 112x112
-Dropfit · 층 0 · id 49 · 511,25 368x371
+Control Center · 층 25 · id 12 · 836,0 34x24
+Control Center · 층 25 · id 11 · 870,0 154x24
+Dock · 층 20 · id 26 · 0,0 1024x768
+DockHelper · 층 3 · id 58 · 837,704 43x59
+Dropfit · 층 3 · id 57 · 858,99 112x112
 Finder · 층 -2147483603 · id 24 · 0,0 1024x768
-Dock · 층 -2147483624 · id 31 · 0,0 1024x768
+Dock · 층 -2147483624 · id 27 · 0,0 1024x768

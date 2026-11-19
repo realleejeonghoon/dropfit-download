@@ -1,7 +1,9 @@
 Spotlight · 층 25 · id 21 · 805,0 31x24
-Control Center · 층 25 · id 11 · 836,0 34x24
-Control Center · 층 25 · id 10 · 870,0 154x24
-Dock · 층 20 · id 54 · 0,0 1024x768
-Dropfit · 층 3 · id 68 · 858,99 112x112
-Finder · 층 -2147483603 · id 56 · 0,0 1024x768
-Dock · 층 -2147483624 · id 55 · 0,0 1024x768
+Control Center · 층 25 · id 12 · 836,0 34x24
+Control Center · 층 25 · id 11 · 870,0 154x24
+Dock · 층 20 · id 64 · 0,0 1024x768
+Dropfit · 층 3 · id 77 · 858,99 112x112
+Mail · 층 0 · id 88 · 302,174 420x344
+Mail · 층 0 · id 87 · 112,46 800x600
+Finder · 층 -2147483603 · id 66 · 0,0 1024x768
+Dock · 층 -2147483624 · id 65 · 0,0 1024x768
