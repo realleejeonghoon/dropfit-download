@@ -1,13 +1,18 @@
 macOS 15.8.2 · 화면 
 === ko
   📷 C-02-ko-gatekeeper
-  gatekeeper=1 move=0 intro=0
-  ✗ 동그라미가 뜨지 않음
+  📷 C-03-ko-move-alert
+  gatekeeper=1 move=1 intro=1
+  📷 D-01-ko-intro-head
+  📷 D-02-ko-intro-slide
+  📷 D-02-ko-intro-slide2
+  📷 D-02-ko-intro-closing
+  📷 E-01-ko-orb-idle
   📷 E-01-ko-slots-open
+  📷 E-01-ko-right-menu
   📷 D-06-ko-settings-trial
   📷 G-07-ko-settings-option
   📷 G-06-ko-activate-badkey
-  ✗ 동그라미가 뜨지 않음
   📷 E-02-ko-preset-trial
   📷 E-02-ko-settings-preset-trial
   📷 D-05-ko-existing-user
