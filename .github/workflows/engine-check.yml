@@ -60,6 +60,19 @@ jobs:
         run: |
           set -o pipefail
           bash Support/tools/engine-check/run.sh --report "$RUNNER_TEMP/engine.txt" | tee "$RUNNER_TEMP/engine-out.txt"
+      - name: 화질 비교 표본 (손으로 돌리고 가지를 고른 때만, macOS 26 한 대)
+        if: ${{ inputs.ref != '' && matrix.os == 'macos-26' }}
+        working-directory: ${{ runner.temp }}/src
+        run: build/engine-check/EngineCheck pdfq "$RUNNER_TEMP/pdfq" && ls -la "$RUNNER_TEMP/pdfq"
+      - name: 화질 비교 표본 올리기 (잘라 본 PNG·용량만, 소스 없음)
+        if: ${{ inputs.ref != '' && matrix.os == 'macos-26' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-quality
+          path: |
+            ${{ runner.temp }}/pdfq/*.png
+            ${{ runner.temp }}/pdfq/sizes.txt
+          retention-days: 3
       - name: 요약
         if: always()
         run: |
