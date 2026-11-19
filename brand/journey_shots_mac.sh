@@ -34,7 +34,6 @@ launch() {   # $1 = ko|en
 trial_start() {   # $1 = 며칠 전에 체험을 시작한 것으로 둘지
   local ts; ts=$(( $(date +%s) - $1 * 86400 ))
   defaults write $DOM pro.trialStart -date "$(date -u -r $ts '+%Y-%m-%d %H:%M:%S +0000')"
-  unlock; security add-generic-password -U -A -s app.dropfit.prototype.trial -a dropfit -w "$ts" "$KC" >/dev/null
 }
 preset_slots() {   # 칸 1 = 프리셋 '스마트스토어 · JPG · 2MB', 나머지는 기본 포맷 칸
   local name="$1" json
@@ -48,7 +47,10 @@ print(json.dumps(s,ensure_ascii=False))" "$name")
 }
 sample() { [ -f ~/Desktop/sample.png ] || sips -s format png "$(ls /System/Library/Desktop\ Pictures/*.heic 2>/dev/null | head -1)" --resampleWidth 1600 --out ~/Desktop/sample.png >/dev/null 2>&1 || screencapture -x ~/Desktop/sample.png; }
 front() { t 5 osascript -e 'tell application "Dropfit" to activate' >/dev/null 2>&1; sleep 0.6; }
-open_settings() { front; t 5 "$I" key comma cmd; sleep 1.5; }
+open_settings() { front; t 5 "$I" key comma cmd; sleep 1.5
+  local b; b=$(t 5 "$I" wins | grep "^Dropfit " | awk -F' · ' '{split($4,a," "); split(a[1],p,","); split(a[2],s,"x"); if (s[1]>300 && s[2]>300) print p[1]+s[1]/2, p[2]+s[2]/2}' | head -1)
+  [ -n "$b" ] && { set -- $b; t 5 "$I" scroll "$1" "$2" -40; sleep 0.8; }
+}
 lang() {   # 시스템 창(Gatekeeper 등)도 고객 언어로
   if [ "$1" = ko ]; then defaults write -g AppleLanguages -array ko-KR en-US; defaults write -g AppleLocale ko_KR; sudo defaults write /Library/Preferences/.GlobalPreferences AppleLanguages -array ko-KR en-US
   else defaults write -g AppleLanguages -array en-US; defaults write -g AppleLocale en_US; sudo defaults write /Library/Preferences/.GlobalPreferences AppleLanguages -array en-US; fi
@@ -86,7 +88,7 @@ for L in ko en; do
     sleep 0.5
   done
   log "  gatekeeper=$gk move=$mv_ intro=$intro"
-  if [ $intro -eq 1 ]; then sleep 3.6; shot "D-01-$L-intro-head"; sleep 5; shot "D-02-$L-intro-slide"; t 5 "$I" key right; sleep 1.2; shot "D-02-$L-intro-slide2"; t 5 "$I" key escape; sleep 0.3; shot "D-02-$L-intro-closing"; sleep 1.5; fi
+  if [ $intro -eq 1 ]; then sleep 1.2; shot "D-01-$L-intro-head"; sleep 7; shot "D-02-$L-intro-slide"; t 5 "$I" key right; sleep 1.2; shot "D-02-$L-intro-slide2"; t 5 "$I" key escape; sleep 0.3; shot "D-02-$L-intro-closing"; sleep 1.5; fi
   wait_orb && { sleep 1; shot "E-01-$L-orb-idle"; }
 
   # E-01·E-02(체험 중): 파일을 Dock/Finder에서 넘기면 동그라미 자리에서 칸이 펼쳐진다
@@ -121,7 +123,6 @@ for L in ko en; do
 
   # D-06: 체험 마지막 날 (13.5일 전 시작 → '1일 남음')
   quit_app; ts=$(( $(date +%s) - 1166400 )); defaults write $DOM pro.trialStart -date "$(date -u -r $ts '+%Y-%m-%d %H:%M:%S +0000')"
-  unlock; security add-generic-password -U -A -s app.dropfit.prototype.trial -a dropfit -w "$ts" "$KC" >/dev/null
   launch $L && sleep 1; open_settings; shot "D-06-$L-settings-lastday"; close_front
 done
 quit_app

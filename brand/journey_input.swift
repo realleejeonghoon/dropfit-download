@@ -44,6 +44,10 @@ case "rclick":
         let d = CGEvent(mouseEventSource: nil, mouseType: t, mouseCursorPosition: p, mouseButton: .right); d?.post(tap: .cghidEventTap); usleep(80_000)
         let e = CGEvent(mouseEventSource: nil, mouseType: u, mouseCursorPosition: p, mouseButton: .right); e?.post(tap: .cghidEventTap)
     }
+case "scroll":   // journey_input scroll X Y 줄수(음수 = 아래로)
+    mouse(.mouseMoved, CGPoint(x: Double(a[2])!, y: Double(a[3])!)); usleep(100_000)
+    let e = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 1, wheel1: Int32(a[4])!, wheel2: 0, wheel3: 0)
+    e?.post(tap: .cghidEventTap)
 case "move":
     mouse(.mouseMoved, CGPoint(x: Double(a[2])!, y: Double(a[3])!))
 case "key":
