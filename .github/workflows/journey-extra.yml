@@ -1,0 +1,31 @@
+name: 고객 여정 남은 화면 촬영
+
+# 첫 변환 뒤 말풍선·업데이트 창·Dock 메뉴·피드백 메일을 깨끗한 Mac에서 공개 zip 그대로 찍는다. 결과는 journey-extra/ 에([skip ci]).
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/project-thread-pwt9ao']
+    paths:
+      - 'brand/journey_extra_mac.sh'
+      - '.github/workflows/journey-extra.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: 촬영
+        timeout-minutes: 30
+        run: bash brand/journey_extra_mac.sh "$PWD/Dropfit-macOS.zip" "$PWD/updates/Dropfit-0.6.12-35.zip" "$RUNNER_TEMP/extra"
+      - name: 사진 올리기
+        if: always()
+        run: |
+          rm -rf journey-extra && mkdir journey-extra
+          cp "$RUNNER_TEMP"/extra/*.png "$RUNNER_TEMP"/extra/*.txt journey-extra/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add journey-extra && git commit -q -m "고객 여정 남은 화면 ($(date -u +%H:%M) UTC) [skip ci]" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase origin ${GITHUB_REF_NAME} && git push -q origin HEAD:${GITHUB_REF_NAME} && break; sleep 5; done
