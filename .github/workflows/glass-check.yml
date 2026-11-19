@@ -29,6 +29,12 @@ jobs:
           git clone -q --no-checkout git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"
           rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
           cd "$RUNNER_TEMP/src" && git checkout -q origin/claude/project-thread-fb6oxn && git log -1 --format='소스 %h'
+      - name: 사용 통계 점검 (화면 없음)
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          mkdir -p Support/Sparkle
+          curl -sSfL --retry 3 -o Support/Sparkle/Sparkle-2.10.1.tar.xz https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
+          bash Support/tools/usage-check/run.sh
       - name: 찍기
         working-directory: ${{ runner.temp }}/src
         run: |
