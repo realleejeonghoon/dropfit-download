@@ -1,0 +1,32 @@
+name: 고객 여정 실제 화면 촬영
+
+# 고객 여정 지도(접점 번호)에 넣을 앱·macOS 화면을 깨끗한 Mac에서 공개 zip 그대로 실행해 찍는다.
+# 정훈 님 Mac을 쓰지 않는다. 결과 사진은 이 가지의 journey-shots/ 에 올린다([skip ci]).
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/project-thread-pwt9ao']
+    paths:
+      - 'brand/journey_*'
+      - '.github/workflows/journey-shots.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: 촬영
+        timeout-minutes: 22
+        run: bash brand/journey_shots_mac.sh "$PWD/Dropfit-macOS.zip" "$RUNNER_TEMP/shots"
+      - name: 사진 올리기
+        if: always()
+        run: |
+          rm -rf journey-shots && mkdir journey-shots
+          cp "$RUNNER_TEMP"/shots/*.png "$RUNNER_TEMP"/shots/*.txt journey-shots/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add journey-shots
+          git commit -q -m "고객 여정 실제 화면 ($(date -u +%H:%M) UTC) [skip ci]" && git push origin HEAD:${GITHUB_REF_NAME} || echo "올릴 사진 없음"
