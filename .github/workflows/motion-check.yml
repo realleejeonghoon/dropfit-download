@@ -55,6 +55,8 @@ jobs:
           curl -sSfL --retry 3 -o Support/Sparkle/Sparkle-2.10.1.tar.xz https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
       - name: 녹화 (한·영)
         working-directory: ${{ runner.temp }}/src
+        env:
+          MOTION_SIDE: ${{ matrix.side }}
         run: bash Support/tools/motion-check/run.sh "$RUNNER_TEMP/rec"
       - name: 녹화 기록 (영상만 base64)
         if: always()
