@@ -45,14 +45,29 @@ print(json.dumps(s,ensure_ascii=False))" "$name")
   defaults write $DOM slots.v1 -data "$(printf '%s' "$json" | xxd -p | tr -d '\n')"
 }
 sample() { [ -f ~/Desktop/sample.png ] || sips -s format png "$(ls /System/Library/Desktop\ Pictures/*.heic 2>/dev/null | head -1)" --resampleWidth 1600 --out ~/Desktop/sample.png >/dev/null 2>&1 || screencapture -x ~/Desktop/sample.png; }
-open_settings() { (open "$APP" &); sleep 1.2; t 5 "$I" key comma cmd; sleep 1.5; }
+front() { t 5 osascript -e 'tell application "Dropfit" to activate' >/dev/null 2>&1; sleep 0.6; }
+open_settings() { front; t 5 "$I" key comma cmd; sleep 1.5; }
+lang() {   # 시스템 창(Gatekeeper 등)도 고객 언어로
+  if [ "$1" = ko ]; then defaults write -g AppleLanguages -array ko-KR en-US; defaults write -g AppleLocale ko_KR
+  else defaults write -g AppleLanguages -array en-US; defaults write -g AppleLocale en_US; fi
+  killall Finder Dock SystemUIServer CoreServicesUIAgent cfprefsd >/dev/null 2>&1; sleep 4
+}
+gk_open() {   # Gatekeeper 창의 '열기' 버튼(오른쪽 아래)을 사람처럼 누른다
+  local b; b=$(t 5 "$I" wins | grep "^CoreServicesUIAgent" | awk -F' · ' '{split($4,a," "); split(a[1],p,","); split(a[2],s,"x"); if (s[1]>150) print p[1]+s[1]*0.72, p[2]+s[2]-30}' | head -1)
+  [ -n "$b" ] && { set -- $b; t 5 "$I" click "$1" "$2"; }
+}
 close_front() { t 5 "$I" key escape; sleep 0.5; t 5 "$I" key w cmd 2>/dev/null; sleep 0.5; }
 
+# CI Mac의 로그인 키체인은 잠겨 있어 앱이 체험 기록을 쓸 때 암호 창이 뜬다 → 잠금 풀린 기본 키체인을 새로 둔다
+security create-keychain -p j "$HOME/Library/Keychains/journey.keychain-db" 2>/dev/null
+security list-keychains -d user -s "$HOME/Library/Keychains/journey.keychain-db"
+security default-keychain -d user -s "$HOME/Library/Keychains/journey.keychain-db"
+security unlock-keychain -p j "$HOME/Library/Keychains/journey.keychain-db"; security set-keychain-settings "$HOME/Library/Keychains/journey.keychain-db"
 log "macOS $(sw_vers -productVersion) · 화면 $(system_profiler SPDisplaysDataType 2>/dev/null | grep -m1 Resolution | sed 's/^ *//')"
 sample
 
 for L in ko en; do
-  log "=== $L"
+  log "=== $L"; lang $L
   # C-02·C-03·D-01·D-02: 처음 설치 (다운로드 폴더, 격리 표시 = 아직 Gatekeeper 창에서 열기를 누르지 않음)
   reset_all; rm -rf ~/Downloads/Dropfit; ditto -x -k "$ZIP" ~/Downloads
   xattr -r -w com.apple.quarantine "0083;$(printf %x "$(date +%s)");Safari;" ~/Downloads/Dropfit
@@ -60,7 +75,7 @@ for L in ko en; do
   gk=0; mv_=0; intro=0
   for _ in $(seq 1 80); do
     w="$(t 5 "$I" wins)"
-    if [ $gk -eq 0 ] && echo "$w" | grep -q "^CoreServicesUIAgent"; then sleep 1; shot "C-02-$L-gatekeeper"; t 5 "$I" key return; gk=1; sleep 2; continue; fi
+    if [ $gk -eq 0 ] && echo "$w" | grep -q "^CoreServicesUIAgent"; then sleep 1; shot "C-02-$L-gatekeeper"; gk_open; gk=1; sleep 2; continue; fi
     if [ $mv_ -eq 0 ]; then
       if echo "$w" | grep "^Dropfit " | awk -F' · ' '{split($4,a," "); split(a[2],s,"x"); if (s[1]>=380 && s[1]<=700 && s[2]>=120 && s[2]<=420) f=1} END{exit !f}'; then
         sleep 1; shot "C-03-$L-move-alert"; t 5 "$I" key return; mv_=1; sleep 4; continue; fi

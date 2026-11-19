@@ -16,11 +16,11 @@ permissions:
 jobs:
   mac:
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - name: 촬영
-        timeout-minutes: 22
+        timeout-minutes: 32
         run: bash brand/journey_shots_mac.sh "$PWD/Dropfit-macOS.zip" "$RUNNER_TEMP/shots"
       - name: 사진 올리기
         if: always()
