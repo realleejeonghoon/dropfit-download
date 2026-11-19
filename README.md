@@ -1,7 +1,7 @@
 <p align="center"><img src="icon.png" width="160" alt="Dropfit"></p>
 
 <h1 align="center">Dropfit</h1>
-<p align="center">끌어다 놓으면, 끝.<br>Mac용 이미지·PDF 변환 앱 · <a href="https://dropfit.kr">dropfit.kr</a></p>
+<p align="center">끌어다 놓으면, 끝.<br>드롭핏(Dropfit) · Mac용 이미지·PDF 변환 앱 · <a href="https://dropfit.kr">dropfit.kr</a></p>
 
 <p align="center">
   <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드</b></a>
