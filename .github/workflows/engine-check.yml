@@ -64,15 +64,11 @@ jobs:
         if: ${{ inputs.ref != '' && matrix.os == 'macos-26' }}
         working-directory: ${{ runner.temp }}/src
         run: build/engine-check/EngineCheck pdfq "$RUNNER_TEMP/pdfq" && ls -la "$RUNNER_TEMP/pdfq"
-      - name: 화질 비교 표본 올리기 (잘라 본 PNG·용량만, 소스 없음)
+      - name: 화질 비교 표본 기록 (잘라 본 PNG를 로그에 base64로, 소스 없음)
         if: ${{ inputs.ref != '' && matrix.os == 'macos-26' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: pdf-quality
-          path: |
-            ${{ runner.temp }}/pdfq/*.png
-            ${{ runner.temp }}/pdfq/sizes.txt
-          retention-days: 3
+        run: |
+          cat "$RUNNER_TEMP/pdfq/sizes.txt"
+          for f in "$RUNNER_TEMP"/pdfq/crop-*.png; do echo "=====BEGIN $(basename "$f")"; base64 -b 76 -i "$f"; echo "=====END"; done
       - name: 요약
         if: always()
         run: |
