@@ -2,6 +2,9 @@ name: 인트로 유리 비교
 # 작업 가지 전용(main에 넣지 않음). 색 띠 창 위에 인트로 바탕 후보를 띄워 찍고, 사진만 base64로 로그에 남긴다
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/glass-check.yml'
 permissions:
   contents: read
 jobs:
