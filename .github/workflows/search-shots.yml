@@ -1,0 +1,33 @@
+name: 검색 결과 화면 촬영
+
+# 고객 여정 A-01: 로그인 없는 새 브라우저로 검색 결과를 찍어 search-shots/ 에 올린다([skip ci]).
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/project-thread-pwt9ao']
+    paths:
+      - 'brand/search_shots.js'
+      - '.github/workflows/search-shots.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: 촬영
+        run: |
+          mkdir -p "$RUNNER_TEMP/s" && cd "$RUNNER_TEMP/s" && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null && npx playwright install --with-deps chromium >/dev/null
+          sudo apt-get install -y fonts-noto-cjk >/dev/null 2>&1 || true
+          cp "$GITHUB_WORKSPACE/brand/search_shots.js" . && node search_shots.js "$RUNNER_TEMP/s"
+      - name: 사진 올리기
+        if: always()
+        run: |
+          rm -rf search-shots && mkdir search-shots
+          cp "$RUNNER_TEMP"/s/A-01-* search-shots/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add search-shots && git commit -q -m "검색 결과 화면 ($(date -u +%H:%M) UTC) [skip ci]" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase origin ${GITHUB_REF_NAME} && git push -q origin HEAD:${GITHUB_REF_NAME} && break; sleep 5; done
