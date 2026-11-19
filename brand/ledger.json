@@ -4,7 +4,7 @@
  "_설명": "정훈이 확정한 상태의 지문. 바꾸려면 확정 후 python3 brand/check.py --confirm",
  "files": {
   "index.html": "088e5b615249c48f23ef8d45bcf71f122b079bb21172cbe981ed00233ffca3d7",
-  "privacy.html": "7e78fbed3d735da375f2dc4e61ecc258a45b2326e934e0d15245fd0e9f5420ca",
+  "privacy.html": "cf1269e57c8feb621cb0124b09f7ef8b6b5261828bde630dbe46070ca7e8618b",
   "404.html": "99833ccc3f1d3fffcafa370eef0b5928b023342e997c3a3f9a514ea47d5add78",
   "logo.js": "c4f4203ffb1b0e4c288da5bdca5fec6a817ffea1590dc07726ec33b1dee23a42",
   "demo.js": "d56e740685fccd49d95e556fdf636b2486eb4d6b96e5f5f1b268c243b9b869d5",
