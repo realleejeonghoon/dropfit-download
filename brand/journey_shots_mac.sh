@@ -26,13 +26,15 @@ reset_all() {
   for s in app.dropfit.prototype.trial app.dropfit.prototype.license; do security delete-generic-password -s $s -a dropfit >/dev/null 2>&1; done
 }
 install_direct() { W="$(mktemp -d)"; ditto -x -k "$ZIP" "$W"; ditto "$W/Dropfit/Dropfit.app" "$APP"; xattr -dr com.apple.quarantine "$APP" 2>/dev/null; }
+KC="$HOME/Library/Keychains/journey.keychain-db"
+unlock() { security unlock-keychain -p j "$KC" 2>/dev/null; }
 launch() {   # $1 = ko|en
-  (open --env DROPFIT_LANG="$1" "$APP" &); wait_orb
+  unlock; (open --env DROPFIT_LANG="$1" "$APP" &); wait_orb
 }
 trial_start() {   # $1 = 며칠 전에 체험을 시작한 것으로 둘지
   local ts; ts=$(( $(date +%s) - $1 * 86400 ))
   defaults write $DOM pro.trialStart -date "$(date -u -r $ts '+%Y-%m-%d %H:%M:%S +0000')"
-  security add-generic-password -U -A -s app.dropfit.prototype.trial -a dropfit -w "$ts" >/dev/null
+  unlock; security add-generic-password -U -A -s app.dropfit.prototype.trial -a dropfit -w "$ts" "$KC" >/dev/null
 }
 preset_slots() {   # 칸 1 = 프리셋 '스마트스토어 · JPG · 2MB', 나머지는 기본 포맷 칸
   local name="$1" json
@@ -48,8 +50,8 @@ sample() { [ -f ~/Desktop/sample.png ] || sips -s format png "$(ls /System/Libra
 front() { t 5 osascript -e 'tell application "Dropfit" to activate' >/dev/null 2>&1; sleep 0.6; }
 open_settings() { front; t 5 "$I" key comma cmd; sleep 1.5; }
 lang() {   # 시스템 창(Gatekeeper 등)도 고객 언어로
-  if [ "$1" = ko ]; then defaults write -g AppleLanguages -array ko-KR en-US; defaults write -g AppleLocale ko_KR
-  else defaults write -g AppleLanguages -array en-US; defaults write -g AppleLocale en_US; fi
+  if [ "$1" = ko ]; then defaults write -g AppleLanguages -array ko-KR en-US; defaults write -g AppleLocale ko_KR; sudo defaults write /Library/Preferences/.GlobalPreferences AppleLanguages -array ko-KR en-US
+  else defaults write -g AppleLanguages -array en-US; defaults write -g AppleLocale en_US; sudo defaults write /Library/Preferences/.GlobalPreferences AppleLanguages -array en-US; fi
   killall Finder Dock SystemUIServer CoreServicesUIAgent cfprefsd >/dev/null 2>&1; sleep 4
 }
 gk_open() {   # Gatekeeper 창의 '열기' 버튼(오른쪽 아래)을 사람처럼 누른다
@@ -71,13 +73,13 @@ for L in ko en; do
   # C-02·C-03·D-01·D-02: 처음 설치 (다운로드 폴더, 격리 표시 = 아직 Gatekeeper 창에서 열기를 누르지 않음)
   reset_all; rm -rf ~/Downloads/Dropfit; ditto -x -k "$ZIP" ~/Downloads
   xattr -r -w com.apple.quarantine "0083;$(printf %x "$(date +%s)");Safari;" ~/Downloads/Dropfit
-  (open --env DROPFIT_LANG="$L" ~/Downloads/Dropfit/Dropfit.app &)
+  unlock; (open --env DROPFIT_LANG="$L" ~/Downloads/Dropfit/Dropfit.app &)
   gk=0; mv_=0; intro=0
   for _ in $(seq 1 80); do
     w="$(t 5 "$I" wins)"
     if [ $gk -eq 0 ] && echo "$w" | grep -q "^CoreServicesUIAgent"; then sleep 1; shot "C-02-$L-gatekeeper"; gk_open; gk=1; sleep 2; continue; fi
     if [ $mv_ -eq 0 ]; then
-      if echo "$w" | grep "^Dropfit " | awk -F' · ' '{split($4,a," "); split(a[2],s,"x"); if (s[1]>=380 && s[1]<=700 && s[2]>=120 && s[2]<=420) f=1} END{exit !f}'; then
+      if echo "$w" | grep "^Dropfit " | awk -F' · ' '{split($4,a," "); split(a[2],s,"x"); split($2,l," "); if (l[2]==8 && s[1]>=200 && s[1]<=700 && s[2]>=120 && s[2]<=420) f=1} END{exit !f}'; then
         sleep 1; shot "C-03-$L-move-alert"; t 5 "$I" key return; mv_=1; sleep 4; continue; fi
     fi
     if echo "$w" | grep "^Dropfit " | awk -F' · ' '{split($4,a," "); split(a[2],s,"x"); if (s[1]>=800 && s[2]>=600) f=1} END{exit !f}'; then intro=1; break; fi
@@ -119,7 +121,7 @@ for L in ko en; do
 
   # D-06: 체험 마지막 날 (13.5일 전 시작 → '1일 남음')
   quit_app; ts=$(( $(date +%s) - 1166400 )); defaults write $DOM pro.trialStart -date "$(date -u -r $ts '+%Y-%m-%d %H:%M:%S +0000')"
-  security add-generic-password -U -A -s app.dropfit.prototype.trial -a dropfit -w "$ts" >/dev/null
+  unlock; security add-generic-password -U -A -s app.dropfit.prototype.trial -a dropfit -w "$ts" "$KC" >/dev/null
   launch $L && sleep 1; open_settings; shot "D-06-$L-settings-lastday"; close_front
 done
 quit_app
