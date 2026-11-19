@@ -1,0 +1,60 @@
+name: 동작 녹화
+
+# 설정 창·결과 알림의 움직임을 깨끗한 Mac에서 실제 창·실제 마우스로 녹화해 고치기 전(main)과 후(가지)를 나란히 본다.
+# 손으로만 돌린다. 공개 저장소이므로 소스는 올리지 않고, 녹화(화면 영상)만 로그에 base64로 남긴다(아티팩트는 Claude 작업 환경에서 받지 못함).
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: '고친 Dropfit 소스 가지'
+        required: true
+        default: 'claude/project-thread-fb6oxn'
+
+permissions:
+  contents: read
+
+jobs:
+  mac:
+    name: ${{ matrix.side }} ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { side: 'before', os: 'macos-15' }
+          - { side: 'after',  os: 'macos-15' }
+          - { side: 'after',  os: 'macos-26' }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - name: 비공개 소스 받기 (읽기 전용 열쇠)
+        env:
+          KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+          REF: ${{ inputs.ref }}
+          SIDE: ${{ matrix.side }}
+        run: |
+          [[ "$REF" =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "::error::가지 이름이 이상함"; exit 1; }
+          [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
+          K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
+          printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$K/known"
+          export GIT_SSH_COMMAND="ssh -i $K/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$K/known -o StrictHostKeyChecking=yes"
+          git clone -q --no-checkout git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"
+          rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
+          cd "$RUNNER_TEMP/src"
+          git checkout -q "origin/$REF"
+          # 고치기 전: 앱 코드만 main으로 되돌리고 녹화 도구는 가지 것을 쓴다
+          if [ "$SIDE" = before ]; then git checkout -q origin/main -- Dropfit; fi
+          echo "소스: $SIDE · 앱 코드 $( [ "$SIDE" = before ] && git rev-parse --short origin/main || git rev-parse --short HEAD )"
+      - name: Sparkle 묶음 받기
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          mkdir -p Support/Sparkle
+          curl -sSfL --retry 3 -o Support/Sparkle/Sparkle-2.10.1.tar.xz https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
+      - name: 녹화 (한·영)
+        working-directory: ${{ runner.temp }}/src
+        run: bash Support/tools/motion-check/run.sh "$RUNNER_TEMP/rec"
+      - name: 녹화 기록 (영상만 base64)
+        if: always()
+        run: |
+          for f in "$RUNNER_TEMP"/rec/*.mov; do [ -f "$f" ] || continue; echo "=====BEGIN ${{ matrix.side }}-${{ matrix.os }}-$(basename "$f")"; base64 -b 76 -i "$f"; echo "=====END"; done
+          rm -rf "$RUNNER_TEMP/src"
