@@ -1,0 +1,32 @@
+name: 인트로 바탕 비침 확인
+
+# 1.0 인트로의 흐림 막이 뒤 화면을 비추는지, 색 그림 창을 뒤에 두고 깨끗한 Mac에서 찍는다. 결과는 blur-check/ 에([skip ci]).
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/project-thread-pwt9ao']
+    paths:
+      - 'brand/blur_check_mac.sh'
+      - '.github/workflows/blur-check.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: 촬영
+        timeout-minutes: 8
+        run: bash brand/blur_check_mac.sh "$PWD/Dropfit-macOS.zip" "$RUNNER_TEMP/blur"
+      - name: 사진 올리기
+        if: always()
+        run: |
+          rm -rf blur-check && mkdir blur-check
+          cp "$RUNNER_TEMP"/blur/*.png "$RUNNER_TEMP"/blur/*.txt blur-check/ 2>/dev/null || true
+          rm -f blur-check/stripes.png
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blur-check && git commit -q -m "인트로 바탕 비침 확인 ($(date -u +%H:%M) UTC) [skip ci]" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase origin ${GITHUB_REF_NAME} && git push -q origin HEAD:${GITHUB_REF_NAME} && break; sleep 5; done
