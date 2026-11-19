@@ -10,12 +10,12 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       <sparkle:version>39</sparkle:version>
       <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 19 Nov 2026 08:23:10 +0000</pubDate>
-      <description><![CDATA[<ul><li>Dropfit 1.0입니다. 처음 실행하면 14일 동안 Pro를 모두 사용할 수 있습니다.</li><li>Pro 프리셋: 칸마다 이름, 포맷, 용량, 저장 위치를 정해 둘 수 있습니다. 설정에서 칸을 누르면 그 칸 바로 아래에 펼쳐집니다.</li><li>Pro 자르기: 여러 이미지를 같은 비율로 한 번에 자릅니다.</li><li>스캔한 PDF도 5MB처럼 작은 용량에 맞춥니다. 글씨가 읽히는 선(110dpi)까지만 줄입니다.</li><li>설정 창이 펼쳐지고 접힐 때 목록과 창이 한 움직임으로 부드럽게 바뀝니다.</li><li>변환, 폴더째 변환, PDF 합치기는 계속 무료로 사용할 수 있습니다.</li><li>설정에서 'Pro 구입…'을 누르면 바로 구입할 수 있고, 구입 메일의 버튼을 누르면 Pro가 활성화됩니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-39.zip" type="application/octet-stream" sparkle:edSignature="6AVUkIkGzLCASeHF7NHualC4I1EclxkvmkcacpMTWJf+J6K66BrKvCimrXRTjnZ5Q9uixk80oMbKbyfIjqzVBQ==" length="3991605"></enclosure>
+      <pubDate>Thu, 19 Nov 2026 11:19:25 +0000</pubDate>
+      <description><![CDATA[<ul><li>Dropfit 1.0입니다. 처음 실행하면 14일 동안 Pro를 모두 사용할 수 있습니다.</li><li>Pro 프리셋: 칸마다 이름, 포맷, 용량, 저장 위치를 정해 둘 수 있습니다. 설정에서 칸을 누르면 그 칸 바로 아래에 펼쳐집니다.</li><li>Pro 자르기: 여러 이미지를 같은 비율로 한 번에 자릅니다.</li><li>스캔한 PDF도 5MB처럼 작은 용량에 맞춥니다. 글씨가 읽히는 선(110dpi)까지만 줄입니다.</li><li>설정 창이 펼쳐지고 접힐 때 목록과 창이 한 움직임으로 부드럽게 바뀝니다.</li><li>설정에 '사용 통계 보내기'가 생겼습니다. 기능과 오류의 횟수만 보내며, 파일과 개인정보는 보내지 않습니다. 끄면 모아 둔 숫자도 지웁니다.</li><li>변환, 폴더째 변환, PDF 합치기는 계속 무료로 사용할 수 있습니다.</li><li>설정에서 'Pro 구입…'을 누르면 바로 구입할 수 있고, 구입 메일의 버튼을 누르면 Pro가 활성화됩니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-39.zip" type="application/octet-stream" sparkle:edSignature="mAm/PXZSGj/3hTloJVbqo64imNFX6ryhtDn4ex6FL+eJEUlpVHWjrAaxH/09J8LY8LyJoivVAPMRohvcZ/7iBA==" length="4031045"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: rrszefHpqXxU+5uhKCP2qOXuDKcdXXOsVk5272uOGAlMKDFcc5LYi+LhFqef8oFw56+I6qKq8adv/UnK0TcMAA==
-length: 2055
+edSignature: szI8SBXauy4yPJysQqXzZGwjqaJ+PYgZaZxMjuQbeFTXvOTIPGZTsZ4WjrWKsOOS35CeJU4eKwodgTLvvSJKCQ==
+length: 2252
 -->
