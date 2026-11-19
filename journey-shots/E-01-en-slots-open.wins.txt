@@ -1,6 +1,6 @@
-Dropfit · 층 101 · id 94 · 683,-76 462x462
-Spotlight · 층 25 · id 20 · 805,0 31x24
-Control Center · 층 25 · id 18 · 836,0 34x24
-Control Center · 층 25 · id 16 · 870,0 154x24
-Finder · 층 -2147483603 · id 83 · 0,0 1024x768
-Dock · 층 -2147483624 · id 82 · 0,0 1024x768
+Dropfit · 층 101 · id 106 · 683,-76 462x462
+Spotlight · 층 25 · id 19 · 805,0 31x24
+Control Center · 층 25 · id 11 · 836,0 34x24
+Control Center · 층 25 · id 10 · 870,0 154x24
+Finder · 층 -2147483603 · id 88 · 0,0 1024x768
+Dock · 층 -2147483624 · id 87 · 0,0 1024x768
