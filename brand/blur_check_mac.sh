@@ -7,6 +7,11 @@ ZIP="$1"; OUT="$2"; mkdir -p "$OUT"
 KC="$HOME/Library/Keychains/journey.keychain-db"
 security create-keychain -p j "$KC" 2>/dev/null; security list-keychains -d user -s "$KC"; security default-keychain -d user -s "$KC"; security unlock-keychain -p j "$KC"; security set-keychain-settings "$KC"
 defaults write -g AppleLanguages -array ko-KR en-US
+# GitHub Mac은 '투명도 줄이기'가 켜져 있다(1차 확인 1) → 끄고 찍는다. 끄지 못하면 그 결과도 남긴다
+defaults read com.apple.universalaccess reduceTransparency > "$OUT/reduce-transparency-before.txt" 2>&1
+defaults write com.apple.universalaccess reduceTransparency -bool false 2> "$OUT/reduce-transparency-write.txt"
+sudo defaults write /Library/Preferences/com.apple.universalaccess reduceTransparency -bool false 2>> "$OUT/reduce-transparency-write.txt"
+killall Dock SystemUIServer Finder cfprefsd >/dev/null 2>&1; sleep 4
 # 색 띠 그림(빨강·노랑·초록·파랑) 1600x1000
 python3 - "$OUT/stripes.ppm" <<'PY'
 import sys
@@ -24,5 +29,5 @@ defaults delete app.dropfit.prototype >/dev/null 2>&1
 sleep 1.5; screencapture -x "$OUT/blur-1-intro-head.png"
 sleep 6;   screencapture -x "$OUT/blur-2-intro-slide.png"
 system_profiler SPDisplaysDataType > "$OUT/display.txt" 2>&1
-defaults read com.apple.universalaccess reduceTransparency > "$OUT/reduce-transparency.txt" 2>&1
+defaults read com.apple.universalaccess reduceTransparency > "$OUT/reduce-transparency-after.txt" 2>&1
 ls "$OUT"
