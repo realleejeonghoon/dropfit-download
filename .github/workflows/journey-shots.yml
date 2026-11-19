@@ -29,4 +29,5 @@ jobs:
           cp "$RUNNER_TEMP"/shots/*.png "$RUNNER_TEMP"/shots/*.txt journey-shots/ 2>/dev/null || true
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add journey-shots
-          git commit -q -m "고객 여정 실제 화면 ($(date -u +%H:%M) UTC) [skip ci]" && git push origin HEAD:${GITHUB_REF_NAME} || echo "올릴 사진 없음"
+          git commit -q -m "고객 여정 실제 화면 ($(date -u +%H:%M) UTC) [skip ci]" || { echo "올릴 사진 없음"; exit 0; }
+          for i in 1 2 3 4; do git pull -q --rebase origin ${GITHUB_REF_NAME} && git push -q origin HEAD:${GITHUB_REF_NAME} && break; sleep 5; done
