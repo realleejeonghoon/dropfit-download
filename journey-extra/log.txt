@@ -1,0 +1,15 @@
+=== ko
+  📷 D-04-ko-after-first
+  📷 D-04-ko-after-first-2
+  📷 I-04-ko-menu
+  📷 I-04-ko-mail
+  📷 H-03-ko-dock-menu
+  📷 H-02-ko-update-window
+=== en
+  📷 D-04-en-after-first
+  📷 D-04-en-after-first-2
+  📷 I-04-en-menu
+  📷 I-04-en-mail
+  📷 H-03-en-dock-menu
+  📷 H-02-en-update-window
+찍은 화면: 12
