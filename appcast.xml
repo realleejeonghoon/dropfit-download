@@ -7,16 +7,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <language>ko</language>
     <item>
       <title>Dropfit 1.0</title>
-      <sparkle:version>38</sparkle:version>
+      <sparkle:version>39</sparkle:version>
       <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 19 Nov 2026 05:29:39 +0000</pubDate>
+      <pubDate>Thu, 19 Nov 2026 11:19:25 +0000</pubDate>
       <sparkle:phasedRolloutInterval>86400</sparkle:phasedRolloutInterval>
-      <description><![CDATA[<ul><li>Dropfit 1.0입니다. 처음 실행하면 14일 동안 Pro를 모두 사용할 수 있습니다.</li><li>Pro 프리셋: 칸마다 이름, 포맷, 용량, 저장 위치를 정해 둘 수 있습니다.</li><li>Pro 자르기: 여러 이미지를 같은 비율로 한 번에 자릅니다.</li><li>변환, 폴더째 변환, PDF 합치기는 계속 무료로 사용할 수 있습니다.</li><li>설정에서 'Pro 구입…'을 누르면 바로 구입할 수 있고, 구입 메일의 버튼을 누르면 Pro가 활성화됩니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-38.zip" type="application/octet-stream" sparkle:edSignature="PZY0wHreaw3m7Be52Urg4zL83OpFz15PAVhOmgGgxUxJcFzdW5tSVK3gRk233HJxfIKqrlSC42ptFwtisBNuBA==" length="3958730"></enclosure>
+      <description><![CDATA[<ul><li>Dropfit 1.0입니다. 처음 실행하면 14일 동안 Pro를 모두 사용할 수 있습니다.</li><li>Pro 프리셋: 칸마다 이름, 포맷, 용량, 저장 위치를 정해 둘 수 있습니다. 설정에서 칸을 누르면 그 칸 바로 아래에 펼쳐집니다.</li><li>Pro 자르기: 여러 이미지를 같은 비율로 한 번에 자릅니다.</li><li>스캔한 PDF도 5MB처럼 작은 용량에 맞춥니다. 글씨가 읽히는 선(110dpi)까지만 줄입니다.</li><li>설정 창이 펼쳐지고 접힐 때 목록과 창이 한 움직임으로 부드럽게 바뀝니다.</li><li>설정에 '사용 통계 보내기'가 생겼습니다. 기능과 오류의 횟수만 보내며, 파일과 개인정보는 보내지 않습니다. 끄면 모아 둔 숫자도 지웁니다.</li><li>변환, 폴더째 변환, PDF 합치기는 계속 무료로 사용할 수 있습니다.</li><li>설정에서 'Pro 구입…'을 누르면 바로 구입할 수 있고, 구입 메일의 버튼을 누르면 Pro가 활성화됩니다.</li></ul>]]></description>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-39.zip" type="application/octet-stream" sparkle:edSignature="mAm/PXZSGj/3hTloJVbqo64imNFX6ryhtDn4ex6FL+eJEUlpVHWjrAaxH/09J8LY8LyJoivVAPMRohvcZ/7iBA==" length="4031045"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: hQUV28BJg/FOgsA09Eo0Jwkg6JbzEQGB66C23cKyZ/AM6k4B09zZl3urCQVd9ky+Ca+a9imYbx2N26/StDjpBg==
-length: 1823
+edSignature: A8GWkJisbJL/m52IjMLqgElaZWW0KgRFX4CUsqYmVygrFRMKFVPT182Hz6HNW0EknzHLEIw4Q6nKNSnlQOKYBA==
+length: 2323
 -->
