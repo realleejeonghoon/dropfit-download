@@ -38,6 +38,7 @@ for st in "처음 설치:" "체험 중 3일째:3" "체험 끝:20"; do
   log ""; log "▸ $NAME"
   reset_all
   ditto --noextattr "$APP" /Applications/Dropfit.app
+  defaults write $DOM usage.enabled -bool NO   # 점검 Mac이 사용자 통계에 섞이지 않게
   if [ -n "$AGO" ]; then
     defaults write $DOM pro.trialStart -date "$(date -u -v-"${AGO}"d '+%Y-%m-%d %H:%M:%S +0000')"
     defaults write $DOM orb.onboarded -bool true   # 이미 쓰던 사용자: 첫 안내 없이 바로

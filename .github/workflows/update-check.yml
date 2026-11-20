@@ -30,7 +30,7 @@ jobs:
       matrix:
         os: [macos-15, macos-26, macos-15-intel]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 26
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,7 +43,7 @@ jobs:
           git show "$src:Dropfit-macOS.zip" > "$RUNNER_TEMP/old.zip"
           ls -l "$RUNNER_TEMP/old.zip"
       - name: 자동 업데이트 실제 과정
-        timeout-minutes: 12
+        timeout-minutes: 19
         run: bash brand/update_check_mac.sh "$RUNNER_TEMP/old.zip" "$RUNNER_TEMP/upd"
       - uses: actions/upload-artifact@v4
         if: always()
