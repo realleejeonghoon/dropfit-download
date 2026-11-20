@@ -5,6 +5,7 @@ name: 사용자 상태 점검
 #  1) 소스: 상태 7가지(처음·체험 중·마지막 날·체험 끝·시계 되돌림·Pro 키 둘)의 Pro·체험 판정과
 #     '화면이 읽는 값은 읽기만'(저장·키체인·다시 그리기 0번). 고치기 전 소스(빌드 42)에서 반드시 실패해야 점검이 산 것으로 본다.
 #  2) 공개 앱: 점검 모드 없이 처음 설치·체험 중·체험 끝으로 열어 CPU·메모리·설정 창 열림·체험 시각 저장·충돌을 잰다.
+#     빌드 42 공개 zip에서 반드시 실패해야 한다(11/20 첫 실행: 15·26 모두 설정 창 연 동안 CPU 55~66%로 재현).
 # 기준: Dropfit 저장소 docs/1-Required/QUALITY.md ⑦. 소스는 읽기 전용 배포 키(DROPFIT_SOURCE_KEY)로만 받고 결과 줄만 남긴다.
 on:
   workflow_call:   # 매일 9시 점검(daily-qa.yml)이 부름
@@ -72,7 +73,7 @@ jobs:
       - name: 점검이 살아 있는지 (고치기 전 소스에서 실패해야 함)
         run: |
           set -o pipefail
-          bash "$RUNNER_TEMP/tool/run.sh" "$RUNNER_TEMP/bad" > "$RUNNER_TEMP/bad.txt" 2>&1; code=$?
+          code=0; bash "$RUNNER_TEMP/tool/run.sh" "$RUNNER_TEMP/bad" > "$RUNNER_TEMP/bad.txt" 2>&1 || code=$?
           grep -E "▸|✗|결과" "$RUNNER_TEMP/bad.txt" | head -30
           [ $code = 1 ] && echo "✓ 고치기 전 소스(빌드 42)를 잡음" || { echo "::error::점검이 고치기 전 소스를 잡지 못함(끝 코드 $code) — 이 점검을 믿을 수 없음"; exit 1; }
       - name: 상태 판정·읽기만 (시험할 소스)
@@ -86,13 +87,13 @@ jobs:
       - name: 공개 앱 실제 사용자 모드 (점검 모드 없이)
         timeout-minutes: 10
         run: bash brand/state_app_mac.sh Dropfit-macOS.zip "$RUNNER_TEMP/app" "(이번 zip)"
-      - name: 참고 - 빌드 42 공개 앱도 같은 점검으로 (클라우드 Mac이 이 멈춤을 보는지 기록, 실패해도 통과)
-        if: always()
-        continue-on-error: true
+      - name: 점검이 살아 있는지 - 빌드 42 공개 앱 (실패해야 함)
         timeout-minutes: 10
         run: |
           git show "$KNOWN_BAD_ZIP:Dropfit-macOS.zip" > "$RUNNER_TEMP/b42.zip"
-          bash brand/state_app_mac.sh "$RUNNER_TEMP/b42.zip" "$RUNNER_TEMP/b42" "(참고: 빌드 42)" || echo "::warning::빌드 42 공개 앱에서 실패 = 클라우드 Mac이 이 멈춤을 잡음"
+          code=0; bash brand/state_app_mac.sh "$RUNNER_TEMP/b42.zip" "$RUNNER_TEMP/b42" "(고치기 전: 빌드 42)" > "$RUNNER_TEMP/b42.txt" 2>&1 || code=$?
+          grep -E "▸|✗|결과" "$RUNNER_TEMP/b42.txt" | head -20
+          [ $code = 1 ] && echo "✓ 고치기 전 공개 앱(빌드 42)을 잡음" || { echo "::error::공개 앱 점검이 빌드 42를 잡지 못함(끝 코드 $code) — 이 점검을 믿을 수 없음"; exit 1; }
       - name: 요약
         if: always()
         run: |

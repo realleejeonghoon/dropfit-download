@@ -14,7 +14,7 @@ P="$OUT/state_probe"; swiftc -O "$HERE/state_probe.swift" -o "$P" 2>"$OUT/swiftc
 DOM=app.dropfit.prototype
 t() { local n="$1"; shift; perl -e 'alarm shift; exec @ARGV' "$n" "$@"; }
 FAILS=0; ROWS=()
-put() { echo "$1 $2"; ROWS+=("$1 $2"); [ "$1" = "✗" ] && FAILS=$((FAILS+1)); }
+put() { echo "$1 $2"; ROWS+=("$1 $2"); if [ "$1" = "✗" ]; then FAILS=$((FAILS+1)); fi; return 0; }
 log() { echo "$*" | tee -a "$OUT/log.txt"; }
 cpu_s() { ps -o time= -p "$1" 2>/dev/null | awk -F'[:.]' '{ if (NF==3) print $1*60+$2+$3/100; else print $1*3600+$2*60+$3+$4/100 }'; }
 cpu_pct() { local a b; a=$(cpu_s "$1"); sleep "$2"; b=$(cpu_s "$1"); awk -v a="$a" -v b="$b" -v s="$2" 'BEGIN{ if (a==""||b=="") print -1; else printf "%.1f", (b-a)/s*100 }'; }
