@@ -1,5 +1,5 @@
 name: 설정 창 멈춤 점검
-# 작업 가지 전용(main에 넣지 않음). 체험 중 사용자 상태로 설정 창을 열어 응답하는지: 고친 소스(작업 가지)와 고치기 전(main)을 함께 (11/20)
+# 작업 가지 전용(main에 넣지 않음). 빌드 44: 화면 코드 점검 + 상태별(처음·체험·체험끝) 설정 창 + 엔진 점검 (11/20)
 on:
   workflow_dispatch:
   pull_request:
@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-15, macos-26]
-        src: [claude/project-thread-fb6oxn, main]
+        src: [claude/project-thread-fb6oxn]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
@@ -40,12 +40,21 @@ jobs:
           SRC=(); for f in Dropfit/*.swift; do case "$(basename "$f")" in AppDelegate.swift|QASelfTest.swift) ;; *) SRC+=("$f") ;; esac; done
           swiftc -O -parse-as-library -target "$(uname -m)-apple-macos14.0" -F build/Sparkle -framework Sparkle \
             -Xlinker -rpath -Xlinker "$PWD/build/Sparkle" -o "$RUNNER_TEMP/sc" "${SRC[@]}" "$RUNNER_TEMP/SettingsCheck.swift"
-      - name: 체험 중 설정 창 열기
+      - name: 화면 코드 점검
+        working-directory: ${{ runner.temp }}/src
+        run: python3 tools/화면코드점검.py
+      - name: 상태별 설정 창 열기 (처음·체험·체험끝)
         run: |
-          defaults delete app.dropfit.prototype 2>/dev/null || true
-          defaults delete SettingsCheck 2>/dev/null || true
-          perl -e 'alarm shift; exec @ARGV' 60 "$RUNNER_TEMP/sc"; code=$?
-          echo "끝 코드 $code"
-          rm -rf "$RUNNER_TEMP/src"
-          if [ "${{ matrix.src }}" = main ]; then [ $code -ne 0 ] && echo "✓ 고치기 전 소스는 멈춤 재현" || echo "::warning::고치기 전 소스에서 멈춤이 재현되지 않음"; exit 0; fi
-          exit $code
+          fail=0
+          for st in 처음 체험 체험끝; do
+            defaults delete SettingsCheck 2>/dev/null || true
+            perl -e 'alarm shift; exec @ARGV' 60 "$RUNNER_TEMP/sc" "$st" || fail=1
+          done
+          exit $fail
+      - name: 엔진 점검 (Pro·체험 판정 포함)
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          mkdir -p Support/Sparkle && cp "$RUNNER_TEMP/sp.tar.xz" Support/Sparkle/Sparkle-2.10.1.tar.xz
+          bash Support/tools/engine-check/run.sh 2>&1 | grep -E "^(■|✓|✗|–)|체험|Pro" | tail -40
+          bash Support/tools/engine-check/run.sh >/dev/null 2>&1; code=$?
+          rm -rf "$RUNNER_TEMP/src"; exit $code
