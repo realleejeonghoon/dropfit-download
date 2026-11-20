@@ -55,6 +55,6 @@ jobs:
         working-directory: ${{ runner.temp }}/src
         run: |
           mkdir -p Support/Sparkle && cp "$RUNNER_TEMP/sp.tar.xz" Support/Sparkle/Sparkle-2.10.1.tar.xz
-          bash Support/tools/engine-check/run.sh 2>&1 | grep -E "^(■|✓|✗|–)|체험|Pro" | tail -40
-          bash Support/tools/engine-check/run.sh >/dev/null 2>&1; code=$?
+          bash Support/tools/engine-check/run.sh > "$RUNNER_TEMP/e.txt" 2>&1; code=$?
+          grep -E "^(■|✗)|체험|Pro|통과|실패" "$RUNNER_TEMP/e.txt" | tail -40
           rm -rf "$RUNNER_TEMP/src"; exit $code
