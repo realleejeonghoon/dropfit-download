@@ -32,10 +32,16 @@ COLUMNS = [
     ('변환 품질 macOS 26', 'engine /', 'macos-26'),
     ('변환 품질 Intel Mac', 'engine /', 'macos-15-intel'),
 ]
+# 시트 칸은 그대로 두고(집계 서버 칸 순서와 같아야 함) 문제·매일 보고에만 넣는 점검 (2026-11-20 사용자 상태 점검)
+EXTRA = [
+    ('사용자 상태 macOS 15', 'state /', 'macos-15'),
+    ('사용자 상태 macOS 26', 'state /', 'macos-26'),
+]
 # 매일 보고: 사용자가 겪는 순서로 칸을 묶는다 (이름, 설명, 칸 이름 앞부분)
 BRIEF = [
     ('받기·설치·실행', '다운로드 파일, 서명, Apple 공증, 처음 열기, 기본 변환, 충돌', ['앱 ']),
     ('변환 품질', '결과물 화질·용량, Pro 기능, 망가진 파일', ['변환 품질 ']),
+    ('사용자 상태', '처음 설치·체험 중·체험 끝에서 멈춤·CPU·메모리·설정 창', ['사용자 상태 ']),
     ('Dropfit 끌어 옮기기', '바탕화면 동그라미 끌기', ['끌어 옮기기 ']),
     ('자동 업데이트', '바로 앞 버전과 0.6에서 최신으로', ['업데이트 ', '0.6에서 업데이트 ']),
     ('보안', '서명, 바깥 연결, 비밀 키', ['보안 ']),
@@ -59,11 +65,11 @@ def open_risks(path):
     return n
 
 
-def brief(out, risks):
-    ch = out['checks']
+def brief(out, risks, extra=None):
+    ch = {**out['checks'], **(extra or {})}
     lines, bad_total = [], 0
     for i, (name, what, prefixes) in enumerate(BRIEF, 1):
-        cols = [c for c in out['columns'] if any(c.startswith(p) for p in prefixes)]
+        cols = [c for c in out['columns'] + [e[0] for e in EXTRA] if any(c.startswith(p) for p in prefixes)]
         if not cols:
             continue
         bad = [c for c in cols if ch.get(c) != '통과']
@@ -109,7 +115,7 @@ def main(jobs_path, run_path, appcast_path, out_path, security_path=None):
         version = ''
 
     checks, problems = {}, []
-    for col, prefix, needle in COLUMNS:
+    for col, prefix, needle in COLUMNS + EXTRA:
         hit = [j for j in jobs if j['name'].startswith(prefix) and (j['name'].endswith(needle) if needle.startswith('macos') else needle in j['name'])]
         if not hit:
             checks[col] = '돌지 않음'
@@ -123,6 +129,7 @@ def main(jobs_path, run_path, appcast_path, out_path, security_path=None):
             why = f' ({step})' if step else (' (Mac을 받지 못함)' if word == '취소' and not j.get('steps') else '')
             problems.append(f'{col}: {word}{why}')
 
+    extra = {c: checks.pop(c) for c, _, _ in EXTRA}   # 시트 칸에는 넣지 않는다
     starts = [j['started_at'] for j in jobs if j.get('started_at')]
     ends = [j['completed_at'] for j in jobs if j.get('completed_at')]
     out = {
@@ -137,7 +144,7 @@ def main(jobs_path, run_path, appcast_path, out_path, security_path=None):
         'checks': checks,
         'problems': problems,
     }
-    brief(out, open_risks(security_path))
+    brief(out, open_risks(security_path), extra)
     json.dump(out, open(out_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 

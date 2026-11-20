@@ -70,9 +70,16 @@ jobs:
     uses: ./.github/workflows/engine-check.yml
     secrets: inherit
 
+  # 사용자 상태(처음 설치·체험 중·체험 끝·Pro)로 멈춤·CPU·메모리·설정 창 (점검 모드 없이, 2026-11-20)
+  state:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/state-check.yml
+    secrets: inherit
+
   report:
     name: 시트에 기록
-    needs: [gate, brand, app, security, orb, update, update-old, engine]
+    needs: [gate, brand, app, security, orb, update, update-old, engine, state]
     if: always() && needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:
