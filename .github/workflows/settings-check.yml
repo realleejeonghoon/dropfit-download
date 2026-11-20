@@ -1,0 +1,60 @@
+name: 설정 창 멈춤 점검
+# 작업 가지 전용(main에 넣지 않음). 빌드 46 소스 점검 (11/20)
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/settings-check.yml'
+permissions:
+  contents: read
+jobs:
+  mac:
+    name: 설정 ${{ matrix.os }} ${{ matrix.src }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+        src: [claude/project-thread-fb6oxn]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - name: 비공개 소스 받기 (읽기 전용 열쇠)
+        env:
+          KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
+          K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
+          printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$K/known"
+          export GIT_SSH_COMMAND="ssh -i $K/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$K/known -o StrictHostKeyChecking=yes"
+          git clone -q --no-checkout git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"
+          rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
+          cd "$RUNNER_TEMP/src" && git checkout -q "origin/${{ matrix.src }}" && git log -1 --format='소스 %h'
+          git show origin/claude/project-thread-fb6oxn:Support/tools/settings-check/SettingsCheck.swift > "$RUNNER_TEMP/SettingsCheck.swift"
+      - name: 컴파일
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          mkdir -p build/Sparkle
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/sp.tar.xz" https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
+          tar -xf "$RUNNER_TEMP/sp.tar.xz" -C build/Sparkle
+          SRC=(); for f in Dropfit/*.swift; do case "$(basename "$f")" in AppDelegate.swift|QASelfTest.swift) ;; *) SRC+=("$f") ;; esac; done
+          swiftc -O -parse-as-library -target "$(uname -m)-apple-macos14.0" -F build/Sparkle -framework Sparkle \
+            -Xlinker -rpath -Xlinker "$PWD/build/Sparkle" -o "$RUNNER_TEMP/sc" "${SRC[@]}" "$RUNNER_TEMP/SettingsCheck.swift"
+      - name: 화면 코드 점검
+        working-directory: ${{ runner.temp }}/src
+        run: python3 tools/화면코드점검.py
+      - name: 상태별 설정 창 열기 (처음·체험·체험끝)
+        run: |
+          fail=0
+          for st in 처음 체험 체험끝; do
+            defaults delete SettingsCheck 2>/dev/null || true
+            perl -e 'alarm shift; exec @ARGV' 60 "$RUNNER_TEMP/sc" "$st" || fail=1
+          done
+          exit $fail
+      - name: 엔진 점검 (Pro·체험 판정 포함)
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          mkdir -p Support/Sparkle && cp "$RUNNER_TEMP/sp.tar.xz" Support/Sparkle/Sparkle-2.10.1.tar.xz
+          bash Support/tools/engine-check/run.sh > "$RUNNER_TEMP/e.txt" 2>&1; code=$?
+          grep -E "^(■|✗)|체험|Pro|통과|실패" "$RUNNER_TEMP/e.txt" | tail -40
+          rm -rf "$RUNNER_TEMP/src"; exit $code
