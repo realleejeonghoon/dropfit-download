@@ -7,15 +7,15 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <language>ko</language>
     <item>
       <title>Dropfit 1.0</title>
-      <sparkle:version>42</sparkle:version>
+      <sparkle:version>43</sparkle:version>
       <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Fri, 20 Nov 2026 00:57:49 +0000</pubDate>
+      <pubDate>Fri, 20 Nov 2026 01:50:43 +0000</pubDate>
       <description><![CDATA[<ul><li>Dropfit 1.0입니다. 처음 실행하면 14일 동안 Pro를 모두 사용할 수 있습니다.</li><li>Pro 프리셋: 칸마다 이름, 포맷, 용량, 저장 위치를 정해 둘 수 있습니다. 설정에서 칸을 누르면 그 칸 바로 아래에 펼쳐집니다.</li><li>Pro 자르기: 여러 이미지를 같은 비율로 한 번에 자릅니다.</li><li>스캔한 PDF도 5MB처럼 작은 용량에 맞춥니다. 글씨가 읽히는 선(110dpi)까지만 줄입니다.</li><li>설정 창이 펼쳐지고 접힐 때 목록과 창이 한 움직임으로 부드럽게 바뀝니다.</li><li>설정에 '사용 통계 보내기'가 생겼습니다. 기능과 오류의 횟수만 보내며, 파일과 개인정보는 보내지 않습니다. 끄면 모아 둔 숫자도 지웁니다.</li><li>변환, 폴더째 변환, PDF 합치기는 계속 무료로 사용할 수 있습니다.</li><li>설정에서 'Pro 구입…'을 누르면 바로 구입할 수 있고, 구입 메일의 버튼을 누르면 Pro가 활성화됩니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-42.zip" type="application/octet-stream" sparkle:edSignature="zGEarMapq40pNqdILlOJM5GBBrkWom8xYkCC1R1oYTQ6P8P6ZBmbLgLsgg8YmPxlD9glHU5Vz3sm3hy4O8eYDg==" length="4031039"></enclosure>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-43.zip" type="application/octet-stream" sparkle:edSignature="ZO69M6VLqxvkpxyG+8Ibqrv0vsN14J8otlRjd05uYver+x8dzt3/h5ZnAbzJJNX0FeG6xTG6jgeD0PvrKqX/CQ==" length="4032681"></enclosure>
     </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: bDZfpWAc7rODg7XS5fTF8tM85xVHEG9Ol/6BpRDL6PrsH/bM/xEOmyP4/f2riHtl8AokPcdaIvzOS5jrrUdODw==
+edSignature: DKNpng8iFZ/mLa6jZMebZox+aAu3TiwhIWM8IEuPx/m6mlCwtb8z+DR4YnorX6HoslL9ZqdBnpgsCxueWFnBBQ==
 length: 2252
 -->
