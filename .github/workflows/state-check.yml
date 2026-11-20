@@ -64,7 +64,7 @@ jobs:
             fi
           done
           test -f "$RUNNER_TEMP/tool/run.sh" || { echo "::error::소스에 사용자 상태 점검 도구가 없음"; exit 1; }
-          SRC="${{ inputs.src || 'claude/project-thread-fb6oxn' }}"   # 시험 실행용, 머지 전 main으로
+          SRC="${{ inputs.src || 'main' }}"
           git worktree add -q "$RUNNER_TEMP/target" "origin/$SRC" && echo "시험할 소스: $SRC $(git -C "$RUNNER_TEMP/target" log -1 --format='%h %cd' --date=iso)"
           git worktree add -q "$RUNNER_TEMP/bad" "$KNOWN_BAD"
           mkdir -p "$RUNNER_TEMP/sp"
