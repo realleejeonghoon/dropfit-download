@@ -1,6 +1,6 @@
 {
  "og_v": "10",
- "zip_bytes": 4036932,
+ "zip_bytes": 4037093,
  "_설명": "정훈이 확정한 상태의 지문. 바꾸려면 확정 후 python3 brand/check.py --confirm",
  "files": {
   "index.html": "088e5b615249c48f23ef8d45bcf71f122b079bb21172cbe981ed00233ffca3d7",
@@ -9,7 +9,7 @@
   "logo.js": "c4f4203ffb1b0e4c288da5bdca5fec6a817ffea1590dc07726ec33b1dee23a42",
   "demo.js": "d56e740685fccd49d95e556fdf636b2486eb4d6b96e5f5f1b268c243b9b869d5",
   "README.md": "f3c770e4194487cafb18b2fdeae94d43de1796bf61f9d6e908523a36e6abb8f7",
-  "appcast.xml": "8fef72d9fae19f9fbf2038c56d2208d0212e5554c24dd6d94ef2ac9adb4a5e15",
+  "appcast.xml": "b04c40fe61096310cf435ff5e25d196c1e292b2b8f3f9462daab313b36b87f9c",
   "icon.png": "8a23dd454d7be841ef1efb9e35dec9a828d16cb743108069a503a40d5d9433a7",
   "assets/og.png": "8484a170f813121ee32a9c88b63af559d6b986ca1aa64e35b57929afc6ba3f93",
   "assets/icon-128.png": "a2a74e036cabb86236fff198f2b19eb60110a8faea43dd7ab892cdb5a01d8f9d",
@@ -17,7 +17,7 @@
   "assets/apple-touch-icon.png": "1564de6365edfe58896c68a4fd47f49d1b29557b84d8f1f11126daf82a598280",
   "assets/favicon-32.png": "010b3a764e71e4f0fe9a560a115458bf153ae9b1d8993f0be20459b06abc3532",
   "assets/favicon-96.png": "3ab026ef766541220ef457250d03a8d6eee12862a40f753355c210b341b3e275",
-  "Dropfit-macOS.zip": "236b9adcf200f5d26fb091ce4f0f373fb1fe3f7422aa819faee61a370aa0cc2b"
+  "Dropfit-macOS.zip": "9d2131ba95f68c300116b87a9ad7b8d82b16df72cd3e44b84b5cc7cdfb181ced"
  },
  "colors": {
   "index.html": [
