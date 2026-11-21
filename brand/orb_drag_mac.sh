@@ -92,10 +92,12 @@ close_intro() {
   local label="$1"
   intro_up || return 0
   shot "$OUT/$(echo "$label" | tr -c 'A-Za-z0-9가-힣' _)-intro.png"
+  local front; front="$(lsappinfo info -only name "$(lsappinfo front)" 2>/dev/null | sed 's/.*="\(.*\)"/\1/')"
   t 5 "$M" key escape
   # 인트로는 페이지가 0.6초, 창이 0.6초 흐려지며 닫힌다. 6초 안에 닫히지 않으면 실패
   local i; for i in $(seq 12); do sleep 0.5; intro_up || break; done
-  if intro_up; then put bad "$label: 인트로가 Esc로 6초 안에 닫히지 않음"; return 1; fi
+  # 맨 앞 앱이 Dropfit이 아니면 Esc가 다른 앱으로 간 것: 인트로가 키보드를 받지 못한 실제 결함 후보로 따로 적는다 (11/21 PR #114 macOS 26, 옮기기 뒤 다시 열린 첫 인트로)
+  if intro_up; then put bad "$label: 인트로가 Esc로 6초 안에 닫히지 않음 (Esc 보낼 때 맨 앞 앱: ${front:-알 수 없음}$([ "$front" != Dropfit ] && echo ' → 인트로가 앞에 오지 않아 키보드를 못 받음'))"; return 1; fi
   log "  · 인트로 떠 있음 → Esc로 닫힘 ($((i * 5 / 10)).$((i * 5 % 10))초)"
 }
 
