@@ -53,6 +53,7 @@ case "drag":
     for i in 1...30 {
         let t = Double(i) / 30
         post(.leftMouseDragged, CGPoint(x: x + dx * t, y: y + dy * t))
+        usleep(useconds_t(ProcessInfo.processInfo.environment["ORB_DRAG_GAP_US"].flatMap { UInt32($0) } ?? 8_000))   // 사람 손처럼 약 120Hz로 (예전엔 30번을 한꺼번에 보내 바쁜 순간 끝 몇 번이 처리되기 전에 손을 뗌, B-034)
     }
     usleep(120_000)
     post(.leftMouseUp, CGPoint(x: x + dx, y: y + dy))

@@ -1,0 +1,44 @@
+name: 끌어 옮기기 흔들림 반복 시험
+
+# B-034: '처음 설치, 12초 뒤 첫 끌기'가 가끔 어긋난다(빌드 45 PR #112 macOS 26 한 번, 다시 돌리면 통과).
+# 같은 칸만 N번 돌려 몇 번 중 몇 번 어긋나는지 잰다. 끌기 이벤트 간격 0(예전 방식)과 8ms(사람 손, 지금 방식)를 나란히 비교한다.
+# 손으로 부를 때만 돈다(매일 점검에는 넣지 않음). 어긋난 회차는 그 순간 창 목록·시스템 기록을 남긴다.
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: '반복 횟수'
+        default: '10'
+  pull_request:
+    paths:
+      - '.github/workflows/orb-repeat.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  mac:
+    name: 반복 ${{ matrix.os }} 간격 ${{ matrix.gap }}us
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+        gap: ['0', '8000']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: 반복
+        timeout-minutes: 25
+        env:
+          ORB_REPEAT_WAIT: ${{ inputs.n || '10' }}
+          ORB_DRAG_GAP_US: ${{ matrix.gap }}
+        run: |
+          cp Dropfit-macOS.zip "$RUNNER_TEMP/new.zip"
+          bash brand/orb_drag_mac.sh "$RUNNER_TEMP/new.zip" "$RUNNER_TEMP/new.zip" "$RUNNER_TEMP/orb"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: orb-repeat-${{ matrix.os }}-${{ matrix.gap }}
+          path: ${{ runner.temp }}/orb
+          retention-days: 14

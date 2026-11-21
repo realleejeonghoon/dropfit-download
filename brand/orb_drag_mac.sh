@@ -31,6 +31,7 @@ reset_all() {
   pkill -x Dropfit 2>/dev/null; pkill -x CoreServicesUIAgent 2>/dev/null; sleep 1; pkill -9 -x Dropfit 2>/dev/null
   rm -rf /Applications/Dropfit.app ~/Applications/Dropfit.app ~/Downloads/Dropfit
   defaults delete $DOM >/dev/null 2>&1
+  defaults write $DOM usage.enabled -bool false   # 점검 Mac은 사용자가 아니다: 사용 통계(F-013)를 꺼서 설치·체험 수에 섞이지 않게 한다 (2026-11-21 정훈 님)
 }
 
 unpack() {   # Safari처럼 다운로드 폴더에 풀고 격리 표시
@@ -113,6 +114,12 @@ drag_test() {
   local saved; saved="$(defaults read $DOM orb.center 2>/dev/null || echo 없음)"
   local after; after="$("$M" wins | grep '^Dropfit ' | grep -v " ${a[2]}x${a[3]}$" | wc -l | tr -d ' ')"
   local verdict=bad; [ $mx -eq $DX ] && [ $my -eq $DY ] && verdict=ok
+  # 어긋나면 원인을 남긴다: 그 순간 창 목록과 앱 시스템 기록(말풍선 닫힘·창 옮김과 겹쳤는지) (B-034)
+  if [ $verdict = bad ]; then
+    "$M" wins > "$OUT/$tag-wins-at-fail.txt" 2>&1
+    sudo -n log show --last 30s --style compact --info --debug --predicate 'process == "Dropfit"' > "$OUT/$tag-syslog-at-fail.txt" 2>&1
+    log "    어긋난 순간 창: $(grep '^Dropfit ' "$OUT/$tag-wins-at-fail.txt" | tr '\n' ';')"
+  fi
   put $verdict "$label: 이동 ($mx, $my)pt / 기대 ($DX, $DY) · 말풍선 등 다른 Dropfit 창 끌기 전 ${others}개→뒤 ${after}개 · 저장된 자리 $saved"
 }
 
@@ -175,7 +182,10 @@ scenario_update() {  # 공개 버전을 쓰던 Mac에 새 버전을 덮어씀 (�
 log "--- 시작 $(date +%T)"
 # 매일 점검(공개 버전 하나)에서는 같은 zip이므로 한 번만, 실패로 센다
 PAIRS=("${OV}|$OLD" "${NV}|$NEW"); cmp -s "$OLD" "$NEW" && { NV="공개 $(zver "$NEW")"; OV="같은 버전"; PAIRS=("${NV}|$NEW"); }
-if [ -n "${ORB_ONLY_FRESH:-}" ]; then
+if [ -n "${ORB_REPEAT_WAIT:-}" ]; then
+  # 흔들림 재현(B-034): 새 버전 '처음 설치, 12초 뒤 첫 끌기'만 N번. 한 번이라도 어긋나면 실패, 몇 번 중 몇 번인지 남긴다
+  for n in $(seq 1 "$ORB_REPEAT_WAIT"); do scenario_wait "$NV #$n" "$NEW"; done
+elif [ -n "${ORB_ONLY_FRESH:-}" ]; then
   # 반복 시험(다시 열기): 이 작업의 첫 장면으로 한 버전만 처음 설치. 시스템이 덜 데워진 첫 장면에서 실패가 잦았다
   if [ "$ORB_ONLY_FRESH" = old ]; then v="$OV"; z="$OLD"; else v="$NV"; z="$NEW"; fi
   scenario_fresh "$v" "$z"

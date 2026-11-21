@@ -28,6 +28,7 @@ log "macOS $(sw_vers -productVersion) · Dropfit $VER ${TAG}"
 reset_all() {
   pkill -x Dropfit 2>/dev/null; sleep 1; pkill -9 -x Dropfit 2>/dev/null
   rm -rf /Applications/Dropfit.app; defaults delete $DOM >/dev/null 2>&1
+  defaults write $DOM usage.enabled -bool false   # 점검 Mac은 사용자가 아니다: 사용 통계(F-013)를 꺼서 설치·체험 수에 섞이지 않게 한다 (2026-11-21 정훈 님)
   for s in $DOM.trial $DOM.license; do security delete-generic-password -s "$s" >/dev/null 2>&1; done
   rm -f ~/Library/Logs/DiagnosticReports/Dropfit* 2>/dev/null
 }
@@ -38,7 +39,6 @@ for st in "처음 설치:" "체험 중 3일째:3" "체험 끝:20"; do
   log ""; log "▸ $NAME"
   reset_all
   ditto --noextattr "$APP" /Applications/Dropfit.app
-  defaults write $DOM usage.enabled -bool NO   # 점검 Mac이 사용자 통계에 섞이지 않게
   if [ -n "$AGO" ]; then
     defaults write $DOM pro.trialStart -date "$(date -u -v-"${AGO}"d '+%Y-%m-%d %H:%M:%S +0000')"
     defaults write $DOM orb.onboarded -bool true   # 이미 쓰던 사용자: 첫 안내 없이 바로

@@ -180,6 +180,7 @@ def check_net_runtime(app_src, out):
     app = '/Applications/Dropfit.app'
     shutil.rmtree(app, ignore_errors=True); run('ditto', app_src, app)
     run('defaults', 'delete', 'app.dropfit.prototype')
+    run('defaults', 'write', 'app.dropfit.prototype', 'usage.enabled', '-bool', 'false')   # 점검 Mac은 사용자가 아니다: 사용 통계(F-013)를 꺼서 설치·체험 수에 섞이지 않게 한다 (2026-11-21 정훈 님)
     names = ('Dropfit', 'Autoupdat', 'Updater')   # lsof는 이름을 9자로 자른다
     seen, stop = {}, threading.Event()
     def sample():

@@ -20,7 +20,8 @@ curl -sSL --max-time 60 "$FEED" >"$OUT/appcast.xml"
 WANT_V=$(grep -o 'shortVersionString>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
 WANT_B=$(grep -o '<sparkle:version>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
 [ -n "$WANT_V" ] && put ok "공개 appcast 최신: ${WANT_V}(${WANT_B})" || put bad "공개 appcast에서 최신 버전을 읽지 못함"
-# 사용 통계를 켠 사용자가 읽는 중계 목록: 6분 안에 같은 최신 버전이 되어야 한다 (통계 표시 s=1 없이 읽어 세지 않음)
+# 사용 통계를 켠 사용자가 읽는 중계 목록. 중계는 GitHub 목록을 5분 기억하므로(worker.js cacheTtl 300) 공개 직후엔 옛 목록일 수 있다
+# (11/20 빌드 46 공개 47초 뒤 macOS 26만 '240초 안에 못 받음', 다시 돌리자 4초). 6분 안에 같은 최신 버전이 되어야 한다 (통계 표시 s=1 없이 읽어 세지 않음)
 RELAY_B=""; for i in $(seq 0 12); do
   RELAY_B=$(curl -sSL --max-time 20 "https://update.dropfit.kr/appcast.xml" 2>/dev/null | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2)
   [ "$RELAY_B" = "$WANT_B" ] && break; sleep 30
@@ -39,6 +40,9 @@ put ok "시작 버전: ${FROM_V}(${FROM_B}) 설치"
 
 # 사용자가 '자동으로 업데이트'를 켜 둔 상태 + 마지막 확인이 오래전 = 실행하자마자 확인
 defaults delete $DOM >/dev/null 2>&1
+# 점검 Mac은 사용자가 아니다: 사용 통계(F-013)를 꺼서 설치·체험 수에 섞이지 않게 한다 (2026-11-21 정훈 님)
+# 통계를 끄면 앱은 GitHub 목록을 직접 읽는다. 사용자가 거치는 중계 목록은 아래에서 따로 같은지 본다(s=1이 없는 요청은 세지 않음)
+defaults write $DOM usage.enabled -bool false
 defaults write $DOM SUEnableAutomaticChecks -bool YES
 defaults write $DOM SUAutomaticallyUpdate -bool YES
 defaults write $DOM SUHasLaunchedBefore -bool YES
@@ -47,10 +51,6 @@ defaults write $DOM SULastCheckTime -date '2020-01-01 00:00:00 +0000'
 # 새 시험 Mac은 무리가 무작위라 공개 첫날엔 6/7 확률로 '아직 받을 차례 아님'이 되어 시험이 헛실패한다(11/11).
 defaults write $DOM SUUpdateGroupIdentifier -int 7
 defaults write $DOM orb.onboarded -bool YES
-# 사용 통계 끔: 점검 Mac이 사용자 통계(DAU)에 섞이지 않게, 그리고 앱이 GitHub 목록을 바로 읽게 (2026-11-20)
-# 중계(update.dropfit.kr)는 GitHub 목록을 5분 기억해서(worker.js cacheTtl 300) 공개 직후에는 옛 목록을 줄 수 있다.
-# 11/20 빌드 46 공개 47초 뒤 macOS 26만 '240초 안에 못 받음' → 다시 돌리자 4초. 중계는 아래에서 따로 본다
-defaults write $DOM usage.enabled -bool NO
 
 "$APP/Contents/MacOS/Dropfit" >"$OUT/run1.txt" 2>&1 &
 PID=$!
@@ -64,6 +64,16 @@ for i in $(seq 1 240); do
 done
 sleep 5
 [ $READY = yes ] && put ok "실행 ${T}초 만에 새 버전을 받아 설치 준비" || put bad "240초 안에 새 버전을 받지 못함(캐시: $(ls ~/Library/Caches/$DOM 2>/dev/null | tr '\n' ' '))"
+# 받지 못했으면 원인을 남긴다: 그 순간 두 목록의 버전, 앱이 남긴 시스템 기록(Sparkle 요청·오류) (11/21 정훈 '흔들림 해결 필요')
+if [ $READY != yes ]; then
+  for u in "$FEED" https://update.dropfit.kr/appcast.xml; do
+    echo "$u → $(curl -sSL --max-time 20 "$u" | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2) · $(curl -sSI --max-time 20 "$u" | grep -i '^\(age\|cache-control\|last-modified\|cf-cache-status\|x-cache\):' | tr -d '\r' | tr '\n' ' ')"
+  done > "$OUT/feeds-at-fail.txt"
+  log show --last 6m --style compact --info --debug --predicate 'process == "Dropfit" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-at-fail.txt" 2>&1
+  defaults read $DOM > "$OUT/defaults-at-fail.txt" 2>&1
+  echo "--- 실패 순간 목록"; cat "$OUT/feeds-at-fail.txt"
+  echo "--- 시스템 기록 (Sparkle·네트워크 줄, 끝 25줄)"; grep -i "sparkle\|appcast\|feed\|nsurl\|error\|fail" "$OUT/syslog-at-fail.txt" | tail -25
+fi
 find ~/Library/Caches/$DOM -maxdepth 4 2>/dev/null | head -40 >"$OUT/cache.txt"
 
 # 사용자가 앱을 끄면 설치된다
