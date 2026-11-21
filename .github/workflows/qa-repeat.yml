@@ -60,15 +60,15 @@ jobs:
         run: |
           APP="$RUNNER_TEMP/Dropfit.app"; fails=0
           for i in $(seq 1 "$N"); do
-            defaults delete app.dropfit.prototype >/dev/null 2>&1
+            defaults delete app.dropfit.prototype >/dev/null 2>&1 || true   # 깨끗한 Mac엔 설정이 없어 1을 돌려준다(bash -e에서 단계가 바로 끝났음)
             R="$RUNNER_TEMP/qa-$i.txt"
-            perl -e 'alarm shift; exec @ARGV' 180 "$APP/Contents/MacOS/Dropfit" --qa "$R" >/dev/null 2>&1; code=$?
+            code=0; perl -e 'alarm shift; exec @ARGV' 180 "$APP/Contents/MacOS/Dropfit" --qa "$R" >/dev/null 2>&1 || code=$?
             open5=$(grep -o '메뉴가 펼쳐짐 ([0-9.]*초)' "$R" 2>/dev/null | head -1)
             bad=$(grep -c '✗' "$R" 2>/dev/null || echo ?)
             if [ $code = 0 ]; then r="✓"; else r="✗"; fails=$((fails+1)); fi
             line="$r ${i}회: 끝 코드 $code · ✗ ${bad}줄 · ${open5:-펼침 시간 없음}"
             echo "$line"; echo "- $line" >> "$GITHUB_STEP_SUMMARY"
-            [ $code = 0 ] || grep '✗' "$R" | head -5 | sed 's/^/    /'
+            [ $code = 0 ] || grep '✗' "$R" | head -5 | sed 's/^/    /' || true
           done
           echo "결과: ${N}회 중 실패 ${fails}회"; echo "**${N}회 중 실패 ${fails}회** · macOS $(sw_vers -productVersion)" >> "$GITHUB_STEP_SUMMARY"
           [ $fails = 0 ]
