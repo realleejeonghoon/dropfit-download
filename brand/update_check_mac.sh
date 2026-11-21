@@ -20,8 +20,13 @@ curl -sSL --max-time 60 "$FEED" >"$OUT/appcast.xml"
 WANT_V=$(grep -o 'shortVersionString>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
 WANT_B=$(grep -o '<sparkle:version>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
 [ -n "$WANT_V" ] && put ok "공개 appcast 최신: ${WANT_V}(${WANT_B})" || put bad "공개 appcast에서 최신 버전을 읽지 못함"
-RELAY_B=$(curl -sSL --max-time 60 https://update.dropfit.kr/appcast.xml | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2)
-[ -n "$RELAY_B" ] && [ "$RELAY_B" = "$WANT_B" ] && put ok "중계 목록(update.dropfit.kr)도 최신: ${RELAY_B}" || put bad "중계 목록 최신이 다름: ${RELAY_B:-읽지 못함}(GitHub ${WANT_B})"
+# 사용 통계를 켠 사용자가 읽는 중계 목록. 중계는 GitHub 목록을 5분 기억하므로(worker.js cacheTtl 300) 공개 직후엔 옛 목록일 수 있다
+# (11/20 빌드 46 공개 47초 뒤 macOS 26만 '240초 안에 못 받음', 다시 돌리자 4초). 6분 안에 같은 최신 버전이 되어야 한다 (통계 표시 s=1 없이 읽어 세지 않음)
+RELAY_B=""; for i in $(seq 0 12); do
+  RELAY_B=$(curl -sSL --max-time 20 "https://update.dropfit.kr/appcast.xml" 2>/dev/null | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2)
+  [ "$RELAY_B" = "$WANT_B" ] && break; sleep 30
+done
+[ "$RELAY_B" = "$WANT_B" ] && put ok "중계 목록(update.dropfit.kr)도 최신 ${WANT_B} ($((i * 30))초 뒤)" || put bad "중계 목록이 6분 지나도 ${RELAY_B:-읽지 못함} (기대 ${WANT_B})"
 
 # 바로 앞 버전 설치 (격리 표시 없이: Gatekeeper 창은 앱 점검이 따로 본다)
 pkill -x Dropfit 2>/dev/null; rm -rf "$APP"
@@ -59,6 +64,16 @@ for i in $(seq 1 240); do
 done
 sleep 5
 [ $READY = yes ] && put ok "실행 ${T}초 만에 새 버전을 받아 설치 준비" || put bad "240초 안에 새 버전을 받지 못함(캐시: $(ls ~/Library/Caches/$DOM 2>/dev/null | tr '\n' ' '))"
+# 받지 못했으면 원인을 남긴다: 그 순간 두 목록의 버전, 앱이 남긴 시스템 기록(Sparkle 요청·오류) (11/21 정훈 '흔들림 해결 필요')
+if [ $READY != yes ]; then
+  for u in "$FEED" https://update.dropfit.kr/appcast.xml; do
+    echo "$u → $(curl -sSL --max-time 20 "$u" | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2) · $(curl -sSI --max-time 20 "$u" | grep -i '^\(age\|cache-control\|last-modified\|cf-cache-status\|x-cache\):' | tr -d '\r' | tr '\n' ' ')"
+  done > "$OUT/feeds-at-fail.txt"
+  log show --last 6m --style compact --info --debug --predicate 'process == "Dropfit" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-at-fail.txt" 2>&1
+  defaults read $DOM > "$OUT/defaults-at-fail.txt" 2>&1
+  echo "--- 실패 순간 목록"; cat "$OUT/feeds-at-fail.txt"
+  echo "--- 시스템 기록 (Sparkle·네트워크 줄, 끝 25줄)"; grep -i "sparkle\|appcast\|feed\|nsurl\|error\|fail" "$OUT/syslog-at-fail.txt" | tail -25
+fi
 find ~/Library/Caches/$DOM -maxdepth 4 2>/dev/null | head -40 >"$OUT/cache.txt"
 
 # 사용자가 앱을 끄면 설치된다

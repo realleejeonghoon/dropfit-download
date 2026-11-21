@@ -1,0 +1,74 @@
+name: 화면 동작 점검 반복 시험
+
+# B-033: 점검 모드(--qa) '5. 클릭으로 고르기'가 빌드 39·43·46의 빌드 직후 첫 실행에서만 어긋났다(0.9초 시점에 아직 펼쳐지지 않음).
+# Dropfit 소스(기본 main)를 클라우드 Mac에서 컴파일해 공개 앱 묶음의 실행 파일만 바꿔 끼우고(임시 서명), --qa를 N번 돌린다.
+# 첫 회 = 새 빌드의 첫 실행. 회차마다 통과·실패와 '메뉴가 펼쳐짐 (x초)'를 남겨 첫 펼침이 느린지, 고침 뒤 흔들림이 사라졌는지 본다.
+# 손으로 부를 때만 돈다. 소스는 읽기 전용 배포 키로만 받고 결과 줄만 남긴다.
+on:
+  workflow_dispatch:
+    inputs:
+      src:
+        description: 'Dropfit 소스 가지'
+        default: main
+      n:
+        description: '반복 횟수'
+        default: '8'
+  pull_request:
+    paths:
+      - '.github/workflows/qa-repeat.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  mac:
+    name: --qa 반복 ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: 비공개 소스 받기 (읽기 전용 열쇠)
+        env:
+          KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
+          K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
+          printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$K/known"
+          export GIT_SSH_COMMAND="ssh -i $K/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$K/known -o StrictHostKeyChecking=yes"
+          git clone -q --depth 1 --branch "${{ inputs.src || 'main' }}" git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"
+          rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
+          git -C "$RUNNER_TEMP/src" log -1 --format='소스 %h %cd' --date=iso
+      - name: 컴파일해 공개 앱 묶음에 끼우기 (임시 서명)
+        run: |
+          set -e
+          ditto -x -k Dropfit-macOS.zip "$RUNNER_TEMP/z"
+          APP="$RUNNER_TEMP/Dropfit.app"; ditto "$RUNNER_TEMP/z/Dropfit/Dropfit.app" "$APP"
+          cd "$RUNNER_TEMP/src"
+          swiftc -O -parse-as-library -target "$(uname -m)-apple-macos14.0" -sdk "$(xcrun --show-sdk-path --sdk macosx)" \
+            -F "$APP/Contents/Frameworks" -framework Sparkle -Xlinker -rpath -Xlinker @executable_path/../Frameworks \
+            -o "$APP/Contents/MacOS/Dropfit" Dropfit/*.swift
+          codesign --force --deep -s - "$APP"
+          rm -rf "$RUNNER_TEMP/src"
+      - name: --qa 반복
+        env:
+          N: ${{ inputs.n || '8' }}
+        run: |
+          APP="$RUNNER_TEMP/Dropfit.app"; fails=0
+          for i in $(seq 1 "$N"); do
+            defaults delete app.dropfit.prototype >/dev/null 2>&1 || true   # 깨끗한 Mac엔 설정이 없어 1을 돌려준다(bash -e에서 단계가 바로 끝났음)
+            R="$RUNNER_TEMP/qa-$i.txt"
+            code=0; perl -e 'alarm shift; exec @ARGV' 180 "$APP/Contents/MacOS/Dropfit" --qa "$R" >/dev/null 2>&1 || code=$?
+            open5=$(grep -o '메뉴가 펼쳐짐 ([0-9.]*초)' "$R" 2>/dev/null | head -1)
+            bad=$(grep -c '✗' "$R" 2>/dev/null || true); bad=${bad:-?}
+            if [ $code = 0 ]; then r="✓"; else r="✗"; fails=$((fails+1)); fi
+            line="$r ${i}회: 끝 코드 $code · ✗ ${bad}줄 · ${open5:-펼침 시간 없음}"
+            echo "$line"; echo "- $line" >> "$GITHUB_STEP_SUMMARY"
+            [ $code = 0 ] || grep '✗' "$R" | head -5 | sed 's/^/    /' || true
+          done
+          echo "결과: ${N}회 중 실패 ${fails}회"; echo "**${N}회 중 실패 ${fails}회** · macOS $(sw_vers -productVersion)" >> "$GITHUB_STEP_SUMMARY"
+          [ $fails = 0 ]

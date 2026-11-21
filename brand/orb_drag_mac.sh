@@ -92,10 +92,12 @@ close_intro() {
   local label="$1"
   intro_up || return 0
   shot "$OUT/$(echo "$label" | tr -c 'A-Za-z0-9가-힣' _)-intro.png"
+  local front; front="$(lsappinfo info -only name "$(lsappinfo front)" 2>/dev/null | sed 's/.*="\(.*\)"/\1/')"
   t 5 "$M" key escape
   # 인트로는 페이지가 0.6초, 창이 0.6초 흐려지며 닫힌다. 6초 안에 닫히지 않으면 실패
   local i; for i in $(seq 12); do sleep 0.5; intro_up || break; done
-  if intro_up; then put bad "$label: 인트로가 Esc로 6초 안에 닫히지 않음"; return 1; fi
+  # 맨 앞 앱이 Dropfit이 아니면 Esc가 다른 앱으로 간 것: 인트로가 키보드를 받지 못한 실제 결함 후보로 따로 적는다 (11/21 PR #114 macOS 26, 옮기기 뒤 다시 열린 첫 인트로)
+  if intro_up; then put bad "$label: 인트로가 Esc로 6초 안에 닫히지 않음 (Esc 보낼 때 맨 앞 앱: ${front:-알 수 없음}$([ "$front" != Dropfit ] && echo ' → 인트로가 앞에 오지 않아 키보드를 못 받음'))"; return 1; fi
   log "  · 인트로 떠 있음 → Esc로 닫힘 ($((i * 5 / 10)).$((i * 5 % 10))초)"
 }
 
@@ -114,6 +116,12 @@ drag_test() {
   local saved; saved="$(defaults read $DOM orb.center 2>/dev/null || echo 없음)"
   local after; after="$("$M" wins | grep '^Dropfit ' | grep -v " ${a[2]}x${a[3]}$" | wc -l | tr -d ' ')"
   local verdict=bad; [ $mx -eq $DX ] && [ $my -eq $DY ] && verdict=ok
+  # 어긋나면 원인을 남긴다: 그 순간 창 목록과 앱 시스템 기록(말풍선 닫힘·창 옮김과 겹쳤는지) (B-034)
+  if [ $verdict = bad ]; then
+    "$M" wins > "$OUT/$tag-wins-at-fail.txt" 2>&1
+    sudo -n log show --last 30s --style compact --info --debug --predicate 'process == "Dropfit"' > "$OUT/$tag-syslog-at-fail.txt" 2>&1
+    log "    어긋난 순간 창: $(grep '^Dropfit ' "$OUT/$tag-wins-at-fail.txt" | tr '\n' ';')"
+  fi
   put $verdict "$label: 이동 ($mx, $my)pt / 기대 ($DX, $DY) · 말풍선 등 다른 Dropfit 창 끌기 전 ${others}개→뒤 ${after}개 · 저장된 자리 $saved"
 }
 
@@ -176,7 +184,10 @@ scenario_update() {  # 공개 버전을 쓰던 Mac에 새 버전을 덮어씀 (�
 log "--- 시작 $(date +%T)"
 # 매일 점검(공개 버전 하나)에서는 같은 zip이므로 한 번만, 실패로 센다
 PAIRS=("${OV}|$OLD" "${NV}|$NEW"); cmp -s "$OLD" "$NEW" && { NV="공개 $(zver "$NEW")"; OV="같은 버전"; PAIRS=("${NV}|$NEW"); }
-if [ -n "${ORB_ONLY_FRESH:-}" ]; then
+if [ -n "${ORB_REPEAT_WAIT:-}" ]; then
+  # 흔들림 재현(B-034): 새 버전 '처음 설치, 12초 뒤 첫 끌기'만 N번. 한 번이라도 어긋나면 실패, 몇 번 중 몇 번인지 남긴다
+  for n in $(seq 1 "$ORB_REPEAT_WAIT"); do scenario_wait "$NV #$n" "$NEW"; done
+elif [ -n "${ORB_ONLY_FRESH:-}" ]; then
   # 반복 시험(다시 열기): 이 작업의 첫 장면으로 한 버전만 처음 설치. 시스템이 덜 데워진 첫 장면에서 실패가 잦았다
   if [ "$ORB_ONLY_FRESH" = old ]; then v="$OV"; z="$OLD"; else v="$NV"; z="$NEW"; fi
   scenario_fresh "$v" "$z"
