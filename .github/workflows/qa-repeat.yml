@@ -64,7 +64,7 @@ jobs:
             R="$RUNNER_TEMP/qa-$i.txt"
             code=0; perl -e 'alarm shift; exec @ARGV' 180 "$APP/Contents/MacOS/Dropfit" --qa "$R" >/dev/null 2>&1 || code=$?
             open5=$(grep -o '메뉴가 펼쳐짐 ([0-9.]*초)' "$R" 2>/dev/null | head -1)
-            bad=$(grep -c '✗' "$R" 2>/dev/null || echo ?)
+            bad=$(grep -c '✗' "$R" 2>/dev/null || true); bad=${bad:-?}
             if [ $code = 0 ]; then r="✓"; else r="✗"; fails=$((fails+1)); fi
             line="$r ${i}회: 끝 코드 $code · ✗ ${bad}줄 · ${open5:-펼침 시간 없음}"
             echo "$line"; echo "- $line" >> "$GITHUB_STEP_SUMMARY"
