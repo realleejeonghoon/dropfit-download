@@ -104,8 +104,8 @@ jobs:
             for _ in $(seq 1 300); do kill -0 $P 2>/dev/null || break; sleep 1; done
             if kill -0 $P 2>/dev/null; then kill $P; echo "✗ 상태 $st: 300초 안에 끝나지 않음" | tee -a "$R"; code=1; continue; fi
             c=0; wait $P || c=$?
-            grep -E "^✗" "$out" | cut -c1-160
-            grep -E "^(✓|✗) 상태 '" "$out" | cut -c1-160
+            grep -E "^ *✗" "$out" | cut -c1-160
+            grep -E "^ *(✓|✗) 상태 '" "$out" | cut -c1-160
             [ $c = 0 ] && echo "✓ 상태 $st: $(tail -1 "$out" | cut -c1-80)" | tee -a "$R" || { echo "✗ 상태 $st: $(tail -1 "$out" | cut -c1-80)" | tee -a "$R"; code=1; }
           done
           ls ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -qi dropfit && { echo "✗ 상태별 화면 동작: 충돌 기록 있음" | tee -a "$R"; code=1; }
