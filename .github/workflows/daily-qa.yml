@@ -77,9 +77,15 @@ jobs:
     uses: ./.github/workflows/state-check.yml
     secrets: inherit
 
+  # 구입 버튼·가격·결제창·결제 알림 중계 (실제 결제 없음, 2026-11-21)
+  pay:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    uses: ./.github/workflows/pay-check.yml
+
   report:
     name: 시트에 기록
-    needs: [gate, brand, app, security, orb, update, update-old, engine, state]
+    needs: [gate, brand, app, security, orb, update, update-old, engine, state, pay]
     if: always() && needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:

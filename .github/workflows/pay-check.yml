@@ -1,0 +1,35 @@
+name: 결제 흐름 점검
+
+# 매일 9시 점검(daily-qa.yml)이 부름. 실제 결제는 하지 않는다 (2026-11-21 정훈 님 "업데이트 진행").
+# dropfit.kr 한국어·영어 판매 상태·구입 버튼·가격 칸, 구입 버튼과 같은 길로 Paddle 결제창이 열리고 금액이 보이는지,
+# 결제 알림 중계(Cloudflare Worker)가 응답하는지. 공개 페이지 값만 쓰고 비밀 값은 쓰지 않는다.
+on:
+  workflow_call:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/pay-check.yml'
+      - 'brand/pay_check.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  pay:
+    name: 결제 흐름
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 점검 도구 (playwright-core, 설치된 Chrome 사용)
+        run: cd "$RUNNER_TEMP" && npm init -y >/dev/null && npm i --no-audit --no-fund playwright-core@1.49.1 >/dev/null && cp "$GITHUB_WORKSPACE/brand/pay_check.mjs" .
+      - name: 결제 흐름 (결제 없음)
+        run: |
+          set -o pipefail
+          cd "$RUNNER_TEMP" && node pay_check.mjs | tee pay.txt
+      - name: 요약
+        if: always()
+        run: '{ echo "### 결제 흐름 (결제 없음)"; echo; sed "s/^/- /" "$RUNNER_TEMP/pay.txt" 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"'
