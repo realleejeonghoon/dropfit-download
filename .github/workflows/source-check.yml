@@ -90,6 +90,27 @@ jobs:
           [ $code = 0 ] && echo "✓ 화면 동작 $(tail -1 "$RUNNER_TEMP/ui.txt" | cut -c1-80)" | tee -a "$R" || echo "✗ 화면 동작 $(tail -1 "$RUNNER_TEMP/ui.txt" | cut -c1-80)" | tee -a "$R"
           exit $code
 
+      - name: 상태별 화면 동작 (체험 중·체험 끝·구입, 각 최대 300초)
+        if: always()
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          # 빌드 47부터: --qa-state로 그 상태의 Pro 판정을 메모리에만 만들어 변환·화면을 돈다(키체인·설정은 건드리지 않음)
+          grep -q 'qa-state' Dropfit/Pro.swift 2>/dev/null || { echo "· 상태별 화면 동작: 이 소스에는 --qa-state 없음" | tee -a "$R"; exit 0; }
+          code=0
+          for st in trial expired pro; do
+            out="$RUNNER_TEMP/ui-$st.txt"
+            build/Dropfit.app/Contents/MacOS/Dropfit --qa "$out" --qa-state $st > "$RUNNER_TEMP/qa-$st.txt" 2>&1 &
+            P=$!
+            for _ in $(seq 1 300); do kill -0 $P 2>/dev/null || break; sleep 1; done
+            if kill -0 $P 2>/dev/null; then kill $P; echo "✗ 상태 $st: 300초 안에 끝나지 않음" | tee -a "$R"; code=1; continue; fi
+            c=0; wait $P || c=$?
+            grep -E "^ *✗" "$out" | cut -c1-160
+            grep -E "^ *(✓|✗) 상태 '" "$out" | cut -c1-160
+            [ $c = 0 ] && echo "✓ 상태 $st: $(tail -1 "$out" | cut -c1-80)" | tee -a "$R" || { echo "✗ 상태 $st: $(tail -1 "$out" | cut -c1-80)" | tee -a "$R"; code=1; }
+          done
+          ls ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -qi dropfit && { echo "✗ 상태별 화면 동작: 충돌 기록 있음" | tee -a "$R"; code=1; }
+          exit $code
+
       - name: 변환 엔진
         if: always()
         working-directory: ${{ runner.temp }}/src
