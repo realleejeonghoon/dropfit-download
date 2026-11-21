@@ -37,6 +37,8 @@ else put bad "서명 인증서를 꺼내지 못함"; fi
 
 APP=/Applications/Dropfit.app
 rm -rf "$APP"; ditto "$APP_SRC" "$APP"
+# 점검 Mac은 사용자가 아니다: 사용 통계(F-013)를 꺼서 설치·체험 수에 섞이지 않게 한다 (2026-11-21 정훈 님)
+defaults write app.dropfit.prototype usage.enabled -bool false
 START=$(date +%s)
 "$APP/Contents/MacOS/Dropfit" >"$OUT/run.txt" 2>&1 &
 PID=$!; sleep 10

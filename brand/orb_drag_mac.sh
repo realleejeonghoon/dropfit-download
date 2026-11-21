@@ -31,6 +31,7 @@ reset_all() {
   pkill -x Dropfit 2>/dev/null; pkill -x CoreServicesUIAgent 2>/dev/null; sleep 1; pkill -9 -x Dropfit 2>/dev/null
   rm -rf /Applications/Dropfit.app ~/Applications/Dropfit.app ~/Downloads/Dropfit
   defaults delete $DOM >/dev/null 2>&1
+  defaults write $DOM usage.enabled -bool false   # 점검 Mac은 사용자가 아니다: 사용 통계(F-013)를 꺼서 설치·체험 수에 섞이지 않게 한다 (2026-11-21 정훈 님)
 }
 
 unpack() {   # Safari처럼 다운로드 폴더에 풀고 격리 표시

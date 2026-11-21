@@ -20,6 +20,8 @@ curl -sSL --max-time 60 "$FEED" >"$OUT/appcast.xml"
 WANT_V=$(grep -o 'shortVersionString>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
 WANT_B=$(grep -o '<sparkle:version>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
 [ -n "$WANT_V" ] && put ok "공개 appcast 최신: ${WANT_V}(${WANT_B})" || put bad "공개 appcast에서 최신 버전을 읽지 못함"
+RELAY_B=$(curl -sSL --max-time 60 https://update.dropfit.kr/appcast.xml | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2)
+[ -n "$RELAY_B" ] && [ "$RELAY_B" = "$WANT_B" ] && put ok "중계 목록(update.dropfit.kr)도 최신: ${RELAY_B}" || put bad "중계 목록 최신이 다름: ${RELAY_B:-읽지 못함}(GitHub ${WANT_B})"
 
 # 바로 앞 버전 설치 (격리 표시 없이: Gatekeeper 창은 앱 점검이 따로 본다)
 pkill -x Dropfit 2>/dev/null; rm -rf "$APP"
@@ -33,6 +35,9 @@ put ok "시작 버전: ${FROM_V}(${FROM_B}) 설치"
 
 # 사용자가 '자동으로 업데이트'를 켜 둔 상태 + 마지막 확인이 오래전 = 실행하자마자 확인
 defaults delete $DOM >/dev/null 2>&1
+# 점검 Mac은 사용자가 아니다: 사용 통계(F-013)를 꺼서 설치·체험 수에 섞이지 않게 한다 (2026-11-21 정훈 님)
+# 통계를 끄면 앱은 GitHub 목록을 직접 읽는다. 사용자가 거치는 중계 목록은 아래에서 따로 같은지 본다(s=1이 없는 요청은 세지 않음)
+defaults write $DOM usage.enabled -bool false
 defaults write $DOM SUEnableAutomaticChecks -bool YES
 defaults write $DOM SUAutomaticallyUpdate -bool YES
 defaults write $DOM SUHasLaunchedBefore -bool YES
