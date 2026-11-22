@@ -1,0 +1,29 @@
+name: 감시 살아 있음 확인
+
+# 정기 업무 감시(Claude 예약, 매일 10:23·22:23 KST)는 한 회차를 끝낼 때마다
+# 이 저장소 가지 claude/project-thread-opm44o 의 ops/heartbeat.txt 를 갱신한다.
+# 14시간 넘게 갱신이 없으면 이 점검이 실패하고, GitHub가 실패 메일을 보낸다(토큰·Mac 0).
+on:
+  schedule:
+    - cron: '7 3,15 * * *'   # 12:07·00:07 KST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deadman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 마지막 감시 회차 시각 확인
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          last=$(gh api "repos/${{ github.repository }}/commits?sha=claude/project-thread-opm44o&path=ops/heartbeat.txt&per_page=1" --jq '.[0].commit.committer.date')
+          age=$(( ( $(date -u +%s) - $(date -u -d "$last" +%s) ) / 3600 ))
+          echo "마지막 감시 회차: $last (UTC), ${age}시간 전"
+          if [ "$age" -ge 14 ]; then
+            echo "::error::정기 업무 감시가 ${age}시간째 돌지 않았습니다. 안정성·보안 스레드 감시 예약(trig_01PVnPjb5nnGwsdZxKr3KKRm)을 확인하십시오."
+            exit 1
+          fi
