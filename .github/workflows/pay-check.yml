@@ -25,9 +25,7 @@ jobs:
         with:
           node-version: '20'
       - name: 점검 도구 (playwright-core, 설치된 Chrome 사용)
-        run: cd "$RUNNER_TEMP" && npm init -y >/dev/null && npm i --no-audit --no-fund playwright-core@1.49.1 >/dev/null && cp "$GITHUB_WORKSPACE/brand/pay_check.mjs" "$GITHUB_WORKSPACE/brand/demo_live_check.mjs" .
-      - name: 시연 설정 장면 (일회 확인)
-        run: cd "$RUNNER_TEMP" && node demo_live_check.mjs
+        run: cd "$RUNNER_TEMP" && npm init -y >/dev/null && npm i --no-audit --no-fund playwright-core@1.49.1 >/dev/null && cp "$GITHUB_WORKSPACE/brand/pay_check.mjs" .
       - name: 결제 흐름 (결제 없음)
         run: |
           set -o pipefail
