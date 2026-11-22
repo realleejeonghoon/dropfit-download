@@ -1,0 +1,20 @@
+{
+ "설명": "dropfit-download 업무 규정(공개 파일·자동 업데이트·매일 점검). 관문(tools/관문.py)이 이 파일만 읽는다. 시안: https://claude.ai/artifact/JRzgvAYTZNrKp8JDqKTcc3",
+ "모드": "위험별",
+ "모드_설명": "막음 = 보호 파일 무단 변경·삭제, 검사 약화. 경고 = 영역 없음. 1차 점검은 기존 brand-check 등 워크플로가 PR마다 따로 돈다.",
+ "확정표시": "확정:",
+ "백업폴더": "backup/",
+ "검사약화_표시": ["continue-on-error","if: false","|| true","@skip","DROPFIT_SKIP"],
+ "영역": [
+  {"이름":"자동 업데이트·공개 파일","범위":["appcast.xml","appcast-now.xml","Dropfit-macOS.zip","updates/**"],
+   "보호":["appcast.xml","appcast-now.xml","Dropfit-macOS.zip","updates/**"],"1차":[],
+   "2차":"publish-push 관문 결과와 서명·공증 Accepted 대조","3차":"공개 7일: 업데이트 성공·충돌 0"},
+  {"이름":"다운로드 페이지","범위":["*.html","*.js","assets/**","fonts/**","icon.png","README.md"],
+   "보호":["icon.png"],"1차":[],
+   "2차":"dropfit.kr 문구·앱 소스와 대조","3차":"7일: 방문 대비 다운로드율"},
+  {"이름":"점검·운영","범위":["brand/**",".github/**","tools/**","규정.json","ops/**"],
+   "보호":["brand/ledger.json","brand/palette.json","brand/check.py","brand/security.json",".github/**","tools/관문.py","규정.json"],"1차":[],
+   "2차":"점검 결과 시트와 대조","3차":"정기 업무 누락 0"}
+ ],
+ "영역밖_무시":["backup/**"]
+}
