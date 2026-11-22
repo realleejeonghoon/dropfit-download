@@ -1,0 +1,47 @@
+name: 매일 AI·검색 측정
+
+# 매일 21:20 KST(GitHub 예약은 늦게 돌 수 있음), ChatGPT·Gemini·네이버 검색 API에 같은 질문을 던져
+# '07_AI관측' 22열 형식으로 기록한다. 결과는 seo-data 가지 data/seo/에 쌓이고(latest.tsv = 오늘분),
+# 집계 서버가 그 파일을 읽어 마케팅 시트 07_AI관측에 붙인다. main(공개 사이트)은 건드리지 않는다.
+# 키 원본은 정훈 님 Mac 키체인이고, 이 저장소 비밀 값은 dropfit-ops secret sync가 넣는 사본이다.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 12 * * *'   # 21:20 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seo-measure
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    name: AI 답변·네이버 순위 측정
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: 측정
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+        run: python3 tools/seo_measure.py "$RUNNER_TEMP/out.tsv"
+      - name: 기록 가지(seo-data)에 올리기
+        run: |
+          if [ ! -s "$RUNNER_TEMP/out.tsv" ]; then echo "측정 줄 없음(키가 아직 없음). 올리지 않음."; exit 0; fi
+          d=$(TZ=Asia/Seoul date +%F)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch -q origin seo-data; then git checkout -q -B seo-data FETCH_HEAD; else git checkout -q --orphan seo-data; git rm -rqf .; fi
+          mkdir -p data/seo
+          cp "$RUNNER_TEMP/out.tsv" "data/seo/07_AI관측-$d-22열.tsv"
+          cp "$RUNNER_TEMP/out.tsv" data/seo/latest.tsv
+          git add data/seo
+          git commit -qm "AI·검색 측정 $d"
+          git push -q origin seo-data
