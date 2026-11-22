@@ -1,7 +1,7 @@
 <p align="center"><img src="icon.png" width="160" alt="Dropfit"></p>
 
 <h1 align="center">Dropfit</h1>
-<p align="center">끌어다 놓으면, 끝.<br>Mac용 이미지·PDF 변환 앱</p>
+<p align="center">끌어다 놓으면, 끝.<br>드롭핏(Dropfit) · Mac용 이미지·PDF 변환 앱 · <a href="https://dropfit.kr">dropfit.kr</a></p>
 
 <p align="center">
   <a href="https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip"><b>⬇︎ Dropfit 다운로드</b></a>
@@ -26,3 +26,13 @@
 
 ## 피드백
 Dropfit을 우클릭한 다음 **피드백 보내기…**를 누르면 메일이 열립니다.
+
+---
+
+## English
+**Dropfit for Mac** is a drag-and-drop image and PDF converter for macOS 14 and later, made by Usul (Jeonghoon Lee) in Korea. Drop images, PDFs or whole folders onto Dropfit, pick a format (JPG, PNG, HEIC, TIFF, GIF, PDF), and the new file is saved next to the original. Files never leave your Mac.
+
+Not to be confused with the Dropfit fitness app or the DRAW FIT clothing brand.
+
+- Website: [dropfit.kr/en/](https://dropfit.kr/en/)
+- Download: [Dropfit-macOS.zip](https://github.com/realleejeonghoon/dropfit-download/raw/main/Dropfit-macOS.zip)
