@@ -1,0 +1,45 @@
+name: 매일 검색 노출 점검
+
+# 매일 09:07 KST, dropfit.kr를 검색·AI 로봇 눈으로 읽어 색인을 막는 오류를 잡는다.
+# (사이트맵 쪽 응답·noindex·canonical, robots.txt, JS 없는 로봇에게 보이는 판매 상태, 가이드 사이트맵 누락, llms.txt)
+# 하나라도 ✗이면 실패 → GitHub 실패 메일. 결과는 seo-data 가지 data/seo/site-health-날짜.tsv. 토큰·Mac 안 씀.
+on:
+  workflow_dispatch:
+  pull_request:
+  schedule:
+    - cron: '7 0 * * *'   # 09:07 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seo-data-write
+  cancel-in-progress: false
+
+jobs:
+  health:
+    name: 검색 노출 점검
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: realleejeonghoon/dropfit-site
+          path: site
+      - name: 점검
+        run: python3 tools/site_health.py --site site --out "$RUNNER_TEMP/health.tsv"
+      - name: 기록 가지(seo-data)에 올리기
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          [ -s "$RUNNER_TEMP/health.tsv" ] || exit 0
+          d=$(TZ=Asia/Seoul date +%F)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -rf site
+          if git fetch -q origin seo-data; then git checkout -q -B seo-data FETCH_HEAD; else git checkout -q --orphan seo-data; git rm -rqf .; fi
+          mkdir -p data/seo
+          cp "$RUNNER_TEMP/health.tsv" "data/seo/site-health-$d.tsv"
+          git add data/seo
+          git commit -qm "검색 노출 점검 $d" || exit 0
+          for i in 1 2 3; do git push -q origin seo-data && break; git pull -q --rebase origin seo-data; done
