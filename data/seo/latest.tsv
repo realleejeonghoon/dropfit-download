@@ -1,0 +1,38 @@
+2026-11-23 15:42	2026-11-23	Q001_CHATGPT_20261123T1542_1	Q001	CHATGPT	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q002_CHATGPT_20261123T1542_1	Q002	CHATGPT	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q003_CHATGPT_20261123T1542_1	Q003	CHATGPT	브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q004_CHATGPT_20261123T1542_1	Q004	CHATGPT	비브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q005_CHATGPT_20261123T1542_1	Q005	CHATGPT	브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q006_CHATGPT_20261123T1542_1	Q006	CHATGPT	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q007_CHATGPT_20261123T1542_1	Q007	CHATGPT	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q008_CHATGPT_20261123T1542_1	Q008	CHATGPT	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q009_CHATGPT_20261123T1542_1	Q009	CHATGPT	비브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q010_CHATGPT_20261123T1542_1	Q010	CHATGPT	비브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.c
+2026-11-23 15:42	2026-11-23	Q001_GEMINI_20261123T1542_1	Q001	GEMINI	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q002_GEMINI_20261123T1542_1	Q002	GEMINI	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q003_GEMINI_20261123T1542_1	Q003	GEMINI	브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q004_GEMINI_20261123T1542_1	Q004	GEMINI	비브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q005_GEMINI_20261123T1542_1	Q005	GEMINI	브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q006_GEMINI_20261123T1542_1	Q006	GEMINI	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q007_GEMINI_20261123T1542_1	Q007	GEMINI	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q008_GEMINI_20261123T1542_1	Q008	GEMINI	비브랜드	ko	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q009_GEMINI_20261123T1542_1	Q009	GEMINI	비브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	Q010_GEMINI_20261123T1542_1	Q010	GEMINI	비브랜드	en	KR	API-GHA	API	1	오류										RuntimeError('HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information
+2026-11-23 15:42	2026-11-23	P001_NAVER_BLOG_20261123T1542_1	P001	NAVER_BLOG	비브랜드	ko	KR	API-GHA	API	1	정상		1	1	44	상위 100개	https://blog.naver.com/miles_cch/224483459641			검색어: PDF 합치기	
+2026-11-23 15:42	2026-11-23	P002_NAVER_BLOG_20261123T1542_1	P002	NAVER_BLOG	비브랜드	ko	KR	API-GHA	API	1	정상		1	1	22	상위 100개	https://blog.naver.com/miles_cch/224483459641			검색어: 맥북 PDF 합치기	
+2026-11-23 15:42	2026-11-23	P003_NAVER_BLOG_20261123T1542_1	P003	NAVER_BLOG	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: 사진 용량 줄이기	
+2026-11-23 15:42	2026-11-23	P004_NAVER_BLOG_20261123T1542_1	P004	NAVER_BLOG	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: PDF 용량 줄이기	
+2026-11-23 15:42	2026-11-23	P005_NAVER_BLOG_20261123T1542_1	P005	NAVER_BLOG	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: 이미지 PDF 변환	
+2026-11-23 15:42	2026-11-23	P006_NAVER_BLOG_20261123T1542_1	P006	NAVER_BLOG	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: PDF JPG 변환	
+2026-11-23 15:42	2026-11-23	P007_NAVER_BLOG_20261123T1542_1	P007	NAVER_BLOG	비브랜드	ko	KR	API-GHA	API	1	정상		1	1	40	상위 100개	https://blog.naver.com/miles_cch/224480778290			검색어: 사진 업로드 용량 초과	
+2026-11-23 15:42	2026-11-23	N001_NAVER_BLOG_20261123T1542_1	N001	NAVER_BLOG	브랜드	ko	KR	API-GHA	API	1	정상		1	1	1	상위 100개	https://blog.naver.com/miles_cch/224485148143			검색어: 드롭핏	
+2026-11-23 15:42	2026-11-23	N002_NAVER_BLOG_20261123T1542_1	N002	NAVER_BLOG	브랜드	ko	KR	API-GHA	API	1	정상		1	1	1	상위 10개	https://blog.naver.com/miles_cch/224483459641			검색어: dropfit	
+2026-11-23 15:42	2026-11-23	P001_NAVER_WEB_20261123T1542_1	P001	NAVER_WEB	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: PDF 합치기	
+2026-11-23 15:42	2026-11-23	P002_NAVER_WEB_20261123T1542_1	P002	NAVER_WEB	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: 맥북 PDF 합치기	
+2026-11-23 15:42	2026-11-23	P003_NAVER_WEB_20261123T1542_1	P003	NAVER_WEB	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: 사진 용량 줄이기	
+2026-11-23 15:42	2026-11-23	P004_NAVER_WEB_20261123T1542_1	P004	NAVER_WEB	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: PDF 용량 줄이기	
+2026-11-23 15:42	2026-11-23	P005_NAVER_WEB_20261123T1542_1	P005	NAVER_WEB	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: 이미지 PDF 변환	
+2026-11-23 15:42	2026-11-23	P006_NAVER_WEB_20261123T1542_1	P006	NAVER_WEB	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: PDF JPG 변환	
+2026-11-23 15:42	2026-11-23	P007_NAVER_WEB_20261123T1542_1	P007	NAVER_WEB	비브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: 사진 업로드 용량 초과	
+2026-11-23 15:42	2026-11-23	N001_NAVER_WEB_20261123T1542_1	N001	NAVER_WEB	브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 100개				검색어: 드롭핏	
+2026-11-23 15:42	2026-11-23	N002_NAVER_WEB_20261123T1542_1	N002	NAVER_WEB	브랜드	ko	KR	API-GHA	API	1	정상		0	0		상위 65개				검색어: dropfit	
