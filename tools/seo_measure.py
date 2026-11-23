@@ -144,8 +144,9 @@ def gemini(q, lang):
 
 
 def naver(kind, q):
-    h = {"X-Naver-Client-Id": os.environ["NAVER_CLIENT_ID"], "X-Naver-Client-Secret": os.environ["NAVER_CLIENT_SECRET"]}
-    d = get(f"https://openapi.naver.com/v1/search/{kind}.json?" + urllib.parse.urlencode({"query": q, "display": 100}), h)
+    # 2026-09부터 검색 API는 NAVER API HUB(네이버 클라우드)로 옮겨 감. 개발자센터 키는 쓸 수 없음
+    h = {"X-NCP-APIGW-API-KEY-ID": os.environ["NAVER_CLIENT_ID"], "X-NCP-APIGW-API-KEY": os.environ["NAVER_CLIENT_SECRET"]}
+    d = get(f"https://naverapihub.apigw.ntruss.com/search/v1/{kind}?" + urllib.parse.urlencode({"query": q, "display": 100, "format": "json"}), h)
     items = d.get("items", [])
     for i, it in enumerate(items, 1):
         link = (it.get("link", "") + " " + it.get("bloggerlink", "")).lower()
