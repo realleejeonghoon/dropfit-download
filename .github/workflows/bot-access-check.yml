@@ -1,6 +1,8 @@
 name: AI 수집기 접근 시험(1회용)
 on:
-  workflow_dispatch:
+  push:
+    branches: [claude/project-thread-fsvq0j]
+    paths: ['.github/workflows/bot-access-check.yml']
 permissions:
   contents: read
 jobs:
