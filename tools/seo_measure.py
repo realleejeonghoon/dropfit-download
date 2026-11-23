@@ -66,7 +66,7 @@ def err_text(e):
     if hasattr(e, "code"):
         try:
             msg = json.loads(e.read().decode()).get("error", {})
-            msg = msg.get("message", msg) if isinstance(msg, dict) else msg
+            msg = " ".join(str(msg.get(k, "")) for k in ("message", "details")).strip() if isinstance(msg, dict) else msg
         except Exception:
             msg = ""
         return f"HTTP {e.code} {clean(msg, 120)}"
@@ -144,8 +144,9 @@ def gemini(q, lang):
 
 
 def naver(kind, q):
-    h = {"X-Naver-Client-Id": os.environ["NAVER_CLIENT_ID"], "X-Naver-Client-Secret": os.environ["NAVER_CLIENT_SECRET"]}
-    d = get(f"https://openapi.naver.com/v1/search/{kind}.json?" + urllib.parse.urlencode({"query": q, "display": 100}), h)
+    # 2026-09부터 검색 API는 NAVER API HUB(네이버 클라우드)로 옮겨 감. 개발자센터 키는 쓸 수 없음
+    h = {"X-NCP-APIGW-API-KEY-ID": os.environ["NAVER_CLIENT_ID"], "X-NCP-APIGW-API-KEY": os.environ["NAVER_CLIENT_SECRET"]}
+    d = get(f"https://naverapihub.apigw.ntruss.com/search/v1/{kind}?" + urllib.parse.urlencode({"query": q, "display": 100, "format": "json"}), h)
     items = d.get("items", [])
     for i, it in enumerate(items, 1):
         link = (it.get("link", "") + " " + it.get("bloggerlink", "")).lower()
@@ -186,6 +187,14 @@ def main(out):
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + ("\n" if lines else ""))
+    errs = {}
+    for l in lines:
+        c = l.split("\t")
+        if c[11] == "오류":
+            errs.setdefault(f"{c[4]}: {c[21]}", 0)
+            errs[f"{c[4]}: {c[21]}"] += 1
+    for k, n in errs.items():  # 오류 문구만(키 값은 err_text가 담지 않음)
+        print(f"오류 {n}건 · {k}")
     ok = sum("\t정상\t" in l for l in lines)
     mention = sum(l.split("\t")[13] == "1" for l in lines if "\t정상\t" in l)
     print(f"측정 {len(lines)}줄 · 정상 {ok} · 언급·노출 {mention} · 키 없어 건너뜀: {', '.join(skipped) or '없음'}")
