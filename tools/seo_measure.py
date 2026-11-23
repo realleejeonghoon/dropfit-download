@@ -66,7 +66,7 @@ def err_text(e):
     if hasattr(e, "code"):
         try:
             msg = json.loads(e.read().decode()).get("error", {})
-            msg = msg.get("message", msg) if isinstance(msg, dict) else msg
+            msg = " ".join(str(msg.get(k, "")) for k in ("message", "details")).strip() if isinstance(msg, dict) else msg
         except Exception:
             msg = ""
         return f"HTTP {e.code} {clean(msg, 120)}"
