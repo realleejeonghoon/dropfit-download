@@ -30,6 +30,13 @@ QUESTIONS = [
     ("Q008", "비브랜드", "ko", "업로드하지 않고 맥에서 이미지 용량 줄이는 방법"),
     ("Q009", "비브랜드", "en", "convert HEIC to JPG on Mac app"),
     ("Q010", "비브랜드", "en", "merge PDFs on Mac without uploading"),
+    # 11/23 강화: 사이트 가이드가 답하는 문제 질문(가이드마다 하나). AI가 우리 원문을 인용하는지 본다
+    ("Q011", "비브랜드", "ko", "맥에서 증명사진 용량 줄이는 방법"),
+    ("Q012", "비브랜드", "ko", "맥북에서 사진 여러 장 크기 한 번에 줄이기"),
+    ("Q013", "비브랜드", "ko", "맥에서 JPG 여러 장을 PDF 하나로 만들기"),
+    ("Q014", "비브랜드", "ko", "맥에서 PDF 용량 줄이는 방법"),
+    ("Q015", "비브랜드", "ko", "지원서 사진 업로드 용량 초과 해결"),
+    ("Q016", "비브랜드", "en", "how to reduce photo file size on Mac in bulk"),
 ]
 # 네이버: 문제 검색어 P001~P007(수동 측정과 같은 ID) + 브랜드 N001~N002
 NAVER_QUERIES = [
@@ -38,7 +45,11 @@ NAVER_QUERIES = [
     ("P005", "비브랜드", "이미지 PDF 변환"), ("P006", "비브랜드", "PDF JPG 변환"),
     ("P007", "비브랜드", "사진 업로드 용량 초과"),
     ("N001", "브랜드", "드롭핏"), ("N002", "브랜드", "dropfit"),
+    ("P008", "비브랜드", "증명사진 용량 줄이기"), ("P009", "비브랜드", "HEIC JPG 변환"),
+    ("P010", "비브랜드", "맥북 사진 용량 줄이기"),
 ]
+# 카페 글: 브랜드 언급(맥쓰사 등 커뮤니티에서 우리 이름이 나오는지). 순위가 아니라 언급 수를 센다
+CAFE_QUERIES = [("C001", "브랜드", "드롭핏"), ("C002", "브랜드", "dropfit 맥")]
 OWN_HOSTS = ("dropfit.kr", "realleejeonghoon.github.io", "blog.naver.com/miles_cch")
 BRANDS = ["ImageOptim", "Clop", "Permute", "Squoosh", "TinyPNG", "PDF Expert", "Smallpdf",
           "iLovePDF", "Zipic", "Smol", "Optimage", "XnConvert", "Adobe Acrobat", "PDFgear",
@@ -155,6 +166,16 @@ def naver(kind, q):
     return None, "", len(items)
 
 
+def naver_cafe(q):
+    h = {"X-NCP-APIGW-API-KEY-ID": os.environ["NAVER_CLIENT_ID"], "X-NCP-APIGW-API-KEY": os.environ["NAVER_CLIENT_SECRET"]}
+    d = get("https://naverapihub.apigw.ntruss.com/search/v1/cafearticle?" + urllib.parse.urlencode({"query": q, "display": 100, "sort": "date", "format": "json"}), h)
+    items = d.get("items", [])
+    hit = [it for it in items if re.search(r"dropfit|드롭핏", (it.get("title", "") + it.get("description", "")), re.I)
+           and not any(w in (it.get("title", "") + it.get("description", "")) for w in FITNESS_WORDS)]
+    cafes = list(dict.fromkeys(it.get("cafename", "") for it in hit if it.get("cafename")))
+    return len(hit), d.get("total", 0), [it.get("link", "") for it in hit[:3]], cafes
+
+
 def main(out):
     have = lambda *ks: all(os.environ.get(k) for k in ks)
     lines, skipped = [], []
@@ -182,6 +203,15 @@ def main(out):
                 except Exception as e:
                     lines.append(row(mid, plat, group, "ko", "오류", depth="", memo=err_text(e)))
                 time.sleep(0.2)
+        for mid, group, q in CAFE_QUERIES:
+            try:
+                n, total, links, cafes = naver_cafe(q)
+                lines.append(row(mid, "NAVER_CAFE", group, "ko", "정상", mention="1" if n else "0", cited="",
+                                 rank=str(n), own=links, depth=f"최근 100개 중 언급 {n}(전체 {total})",
+                                 evidence=f"검색어: {q}", memo=", ".join(cafes[:5])))
+            except Exception as e:
+                lines.append(row(mid, "NAVER_CAFE", group, "ko", "오류", depth="", memo=err_text(e)))
+            time.sleep(0.2)
     else:
         skipped.append("NAVER")
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
