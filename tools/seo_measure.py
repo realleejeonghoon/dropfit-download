@@ -186,6 +186,14 @@ def main(out):
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + ("\n" if lines else ""))
+    errs = {}
+    for l in lines:
+        c = l.split("\t")
+        if c[11] == "오류":
+            errs.setdefault(f"{c[4]}: {c[21]}", 0)
+            errs[f"{c[4]}: {c[21]}"] += 1
+    for k, n in errs.items():  # 오류 문구만(키 값은 err_text가 담지 않음)
+        print(f"오류 {n}건 · {k}")
     ok = sum("\t정상\t" in l for l in lines)
     mention = sum(l.split("\t")[13] == "1" for l in lines if "\t정상\t" in l)
     print(f"측정 {len(lines)}줄 · 정상 {ok} · 언급·노출 {mention} · 키 없어 건너뜀: {', '.join(skipped) or '없음'}")
