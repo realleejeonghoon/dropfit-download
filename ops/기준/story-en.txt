@@ -1,0 +1,26 @@
+Why I built this app
+Deadline almost up.
+
+I had to move an image I'd shot on my iPhone to my Mac and upload it, but the file wouldn't go through.
+
+The photo was HEIC. The place I was uploading to said it didn't support that format.
+
+So I found a converter site, uploaded the files one by one,
+converted them, and downloaded them all over again.
+
+That's when it hit me:
+
+"Isn't there a tool that just does this in one go?"
+
+So I built Dropfit myself.
+
+Drag and drop, and you're done.
+
+I think it'll help Mac users who, like me, can't stand hassle and busywork.
+
+I'd really appreciate your interest.
+
+Try it out, and leave any pain points or feedback in the comments. I'll improve it quickly.
+
+I'm Jeonghoon Lee, the developer.
+Thank you.
