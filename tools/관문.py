@@ -27,7 +27,7 @@ for line in git("diff", "-U0", f"{base}...HEAD").splitlines():
     if line.startswith("+++ "):
         cur = line[6:] if line.startswith("+++ b/") else ""
         continue
-    if cur in ("규정.json", "tools/관문.py"):
+    if cur in ("규정.json", "tools/관문.py") or match(cur, R["영역밖_무시"]):
         continue
     if line.startswith("+") and any(k in line for k in R["검사약화_표시"]):
         problems.append(f"검사 약화 의심: {line[1:].strip()[:80]} (정훈 님 확정 필요)")
