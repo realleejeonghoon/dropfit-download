@@ -13,13 +13,16 @@ OLD="$1"; NEW="$2"; SP="$3"; W="$4"; MODE="${5:-good}"
 PORT=8765; FEED="http://127.0.0.1:$PORT/appcast.xml"
 rm -rf "$W"; mkdir -p "$W/old" "$W/new" "$W/www"
 PB=/usr/libexec/PlistBuddy
-"$SP/bin/generate_keys" --account dropfit-ci-test >/dev/null 2>&1 || true
-PUB=$("$SP/bin/generate_keys" --account dropfit-ci-test -p)
+# 키가 없으면 만든다(-p는 있는 키의 공개 값만 출력)
+if ! PUB=$("$SP/bin/generate_keys" --account dropfit-ci-test -p 2>/dev/null) || [ -z "$PUB" ]; then
+  "$SP/bin/generate_keys" --account dropfit-ci-test >/dev/null 2>&1
+  PUB=$("$SP/bin/generate_keys" --account dropfit-ci-test -p)
+fi
 [ -n "$PUB" ] || { echo "✗ 시험 키를 만들지 못함"; exit 1; }
 patch_app() {  # 앱 → 시험 키·로컬 목록, 임시 서명
   $PB -c "Set :SUPublicEDKey $PUB" -c "Set :SUFeedURL $FEED" "$1/Contents/Info.plist"
   # 로컬 목록(http://127.0.0.1)을 읽게 시험 사본에만 로컬 통신 허용 (공개 앱은 https만 씀)
-  $PB -c "Add :NSAppTransportSecurity dict" "$1/Contents/Info.plist" 2>/dev/null || true
+  $PB -c "Print :NSAppTransportSecurity" "$1/Contents/Info.plist" >/dev/null 2>&1 || $PB -c "Add :NSAppTransportSecurity dict" "$1/Contents/Info.plist"
   $PB -c "Add :NSAppTransportSecurity:NSAllowsLocalNetworking bool true" "$1/Contents/Info.plist" 2>/dev/null \
     || $PB -c "Set :NSAppTransportSecurity:NSAllowsLocalNetworking true" "$1/Contents/Info.plist"
   codesign --force --deep -s - "$1" >/dev/null 2>&1
@@ -33,7 +36,7 @@ OB=$($PB -c 'Print :CFBundleVersion' "$OA/Contents/Info.plist")
 ditto "$NEW" "$W/new/Dropfit.app"; NA="$W/new/Dropfit.app"
 NB=$($PB -c 'Print :CFBundleVersion' "$NA/Contents/Info.plist"); NV=$($PB -c 'Print :CFBundleShortVersionString' "$NA/Contents/Info.plist")
 if [ "$NB" -le "$OB" ] 2>/dev/null; then
-  echo "· 소스 빌드 번호 $NB가 공개 $OB보다 크지 않아 시험 사본만 $((OB + 1))로 올림"; NB=$((OB + 1))
+  echo "· 소스 빌드 번호 ${NB}가 공개 ${OB}보다 크지 않아 시험 사본만 $((OB + 1))로 올림"; NB=$((OB + 1))
   $PB -c "Set :CFBundleVersion $NB" "$NA/Contents/Info.plist"
 fi
 patch_app "$NA"
@@ -51,8 +54,8 @@ cat > "$W/www/appcast.xml" <<XML
 <enclosure url="http://127.0.0.1:$PORT/Dropfit-new.zip" $SIG type="application/octet-stream"/></item>
 </channel></rss>
 XML
-pkill -f "http.server $PORT" 2>/dev/null || true
+if pgrep -f "http.server $PORT" >/dev/null; then pkill -f "http.server $PORT"; sleep 1; fi
 (cd "$W/www" && nohup python3 -m http.server $PORT --bind 127.0.0.1 >"$W/http.txt" 2>&1 &)
 for _ in $(seq 1 20); do curl -sf "$FEED" >/dev/null && break; sleep 0.5; done
 curl -sf "$FEED" >/dev/null || { echo "✗ 로컬 목록 서버가 뜨지 않음"; exit 1; }
-echo "준비: 공개 $OB → 소스 $NV($NB) · 목록 $FEED · 서명 $MODE"
+echo "준비: 공개 ${OB} → 소스 ${NV}(${NB}) · 목록 ${FEED} · 서명 ${MODE}"

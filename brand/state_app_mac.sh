@@ -49,6 +49,8 @@ skip=("pro.","usage.","SU","NSWindow","NSStatusItem","NSNavPanel","orb.center")
 for k in sorted(d):
     if not k.startswith(skip): print(k, "=", repr(d[k])[:120])'
 }
+has_item() { security find-generic-password -a dropfit -s "$DOM.$1" >/dev/null 2>&1; }   # 값은 읽지 않는다(허용 창 없음)
+quit_app() { osascript -e 'tell application "Dropfit" to quit' >/dev/null 2>&1; sleep 2; pkill -x Dropfit 2>/dev/null; sleep 1; }
 setup_state() {   # $1 = 상태 표시. 앱을 깔고 그 상태를 만든다
   case "$1" in
     06|06key)
@@ -56,19 +58,35 @@ setup_state() {   # $1 = 상태 표시. 앱을 깔고 그 상태를 만든다
       rm -rf "$OUT/o6"; mkdir -p "$OUT/o6"; ditto -x -k "$OLD06" "$OUT/o6"
       ditto --noextattr "$(find "$OUT/o6" -maxdepth 2 -name Dropfit.app -type d | head -1)" /Applications/Dropfit.app
       open /Applications/Dropfit.app; sleep 10
-      osascript -e 'tell application "Dropfit" to quit' >/dev/null 2>&1; sleep 2; pkill -x Dropfit 2>/dev/null; sleep 1
+      quit_app
       defaults read $DOM orb.onboarded >/dev/null 2>&1 || defaults write $DOM orb.onboarded -bool true   # 0.6에서 첫 안내를 지난 분
       defaults_snapshot > "$OUT/06-before.txt"
       rm -rf /Applications/Dropfit.app; ditto --noextattr "$APP" /Applications/Dropfit.app
       if [ "$1" = 06key ]; then
-        local key; key=$(mk_test_key) || { put ✗ "$NAME: 시험 키를 만들지 못함"; return 1; }
+        # 구입한 분이 메일의 '활성화' 버튼(dropfit://activate?key=…)을 누르는 길. 키체인 항목은 앱이 스스로 만든다
+        # (security 명령으로 넣은 항목은 다른 앱이 읽을 때 허용 창이 떠 앱이 멈춘다: 11/24 첫 실행에서 창 0개·체험 시작일 없음)
+        local key bad; key=$(mk_test_key) || { put ✗ "$NAME: 시험 키를 만들지 못함"; return 1; }
+        bad="${key%?????}AAAAA"   # 서명 끝을 바꾼 키: 저장되면 안 된다
         /usr/libexec/PlistBuddy -c "Set :DFLicensePublicKey $(grep -v -- ----- "$OUT/tk.pub" | tr -d '\n')" /Applications/Dropfit.app/Contents/Info.plist
         codesign --force --deep -s - /Applications/Dropfit.app >/dev/null 2>&1
-        security add-generic-password -a dropfit -s $DOM.license -w "$key" -A >/dev/null
+        open /Applications/Dropfit.app; sleep 8
+        open "dropfit://activate?key=$bad"; sleep 3
+        has_item license && put ✗ "$NAME: 서명이 틀린 키가 저장됨" || put ✓ "$NAME: 서명이 틀린 키는 저장하지 않음"
+        open "dropfit://activate?key=$key"; sleep 3
+        has_item license && put ✓ "$NAME: 메일 버튼의 키로 Pro 활성화(키체인에 저장)" || put ✗ "$NAME: 메일 버튼의 키가 저장되지 않음"
+        quit_app
       fi ;;
-    re3)   # 체험 3일째에 앱을 지우고 다시 받은 분: 설정은 없고 키체인의 체험 시작일만 남아 있다 → 첫 실행 인트로, 체험은 이어서
+    re3)   # 체험 3일째에 앱을 지우고 다시 받은 분: 설정은 없고 앱이 키체인에 남긴 체험 시작일만 있다 → 첫 실행 인트로, 체험은 이어서
+      ditto --noextattr "$APP" /Applications/Dropfit.app
       REEPOCH=$(( $(date +%s) - 3 * 86400 ))
-      security add-generic-password -a dropfit -s $DOM.trial -w "$REEPOCH" -A >/dev/null
+      defaults write $DOM pro.trialStart -date "$(date -u -r "$REEPOCH" '+%Y-%m-%d %H:%M:%S +0000')"
+      defaults write $DOM orb.onboarded -bool true
+      open /Applications/Dropfit.app
+      for _ in $(seq 1 30); do has_item trial && break; sleep 0.5; done
+      has_item trial || { put ✗ "$NAME: 앱이 키체인에 체험 시작일을 남기지 않음"; quit_app; return 1; }
+      quit_app
+      rm -rf /Applications/Dropfit.app; defaults delete $DOM >/dev/null 2>&1
+      defaults write $DOM usage.enabled -bool false
       ditto --noextattr "$APP" /Applications/Dropfit.app ;;
     "") ditto --noextattr "$APP" /Applications/Dropfit.app ;;
     *)
@@ -83,8 +101,8 @@ check_state() {
     06|06key)
       defaults read $DOM pro.trialStart >/dev/null 2>&1 && put ✓ "$NAME: 체험 시작일을 정해 둠" || put ✗ "$NAME: 체험 시작일이 없음"
       W=$(defaults read $DOM pro.welcomed 2>/dev/null || echo 0)
-      if [ "$1" = 06 ]; then [ "$W" = 1 ] && put ✓ "$NAME: 이미 쓰던 분께 체험 안내 한 번" || put ✗ "$NAME: 체험 안내가 뜨지 않음(pro.welcomed=$W)"
-      else [ "$W" != 1 ] && put ✓ "$NAME: 키가 있어 체험 안내 없이 Pro" || put ✗ "$NAME: 키가 있는데 체험 안내가 뜸(키를 못 읽음)"; fi
+      [ "$W" = 1 ] && put ✓ "$NAME: 이미 쓰던 분께 체험 안내 한 번" || put ✗ "$NAME: 체험 안내가 뜨지 않음(pro.welcomed=$W)"
+      [ "$1" = 06 ] || { has_item license && put ✓ "$NAME: 다시 열어도 Pro 키가 남아 있음" || put ✗ "$NAME: 다시 연 뒤 Pro 키가 사라짐"; }
       defaults_snapshot > "$OUT/06-after-$1.txt"
       LOST=$(comm -23 <(sort "$OUT/06-before.txt") <(sort "$OUT/06-after-$1.txt") | head -5 | tr '\n' ';')
       [ -z "$LOST" ] && put ✓ "$NAME: 0.6에서 정한 설정 $(wc -l < "$OUT/06-before.txt" | tr -d ' ')개 그대로" || put ✗ "$NAME: 0.6 설정이 바뀌거나 사라짐: $LOST" ;;
@@ -96,7 +114,7 @@ check_state() {
   return 0
 }
 
-# 상태: 이름 · 표시(숫자 = 체험 시작 며칠 전, 빈칸 = 처음 설치, 06 = 0.6에서 옴, 06key = 0.6에서 옴+Pro 키, re3 = 체험 중 다시 설치)
+# 상태: 이름 · 표시(숫자 = 체험 시작 며칠 전, 빈칸 = 처음 설치, 06 = 0.6에서 옴, 06key = 0.6에서 옴+메일 버튼으로 Pro 활성화, re3 = 체험 중 다시 설치)
 for st in "처음 설치:" "체험 중 3일째:3" "체험 끝:20" "0.6에서 옴:06" "0.6에서 옴 + Pro 키:06key" "체험 중 다시 설치(첫 실행):re3"; do
   NAME="${st%%:*}"; AGO="${st#*:}"
   log ""; log "▸ $NAME"

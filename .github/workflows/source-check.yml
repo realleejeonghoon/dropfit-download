@@ -164,6 +164,7 @@ jobs:
         timeout-minutes: 12
         run: |
           [ -d "$RUNNER_TEMP/src/build/Dropfit.app" ] || { echo "✗ 업데이트: 빌드가 없음" | tee -a "$R"; exit 1; }
+          set -o pipefail   # 준비가 실패하면 그 자리에서 멈춘다
           bash brand/update_local_prep.sh Dropfit-macOS.zip "$RUNNER_TEMP/src/build/Dropfit.app" "$RUNNER_TEMP/src/build/Sparkle" "$RUNNER_TEMP/upd" | tee "$RUNNER_TEMP/upd-prep.txt"
           code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml bash brand/update_check_mac.sh "$RUNNER_TEMP/upd/old.zip" "$RUNNER_TEMP/upd/out" > "$RUNNER_TEMP/upd.txt" 2>&1 || code=$?
           grep -E '^(✓|✗)' "$RUNNER_TEMP/upd.txt" | cut -c1-160
@@ -174,10 +175,11 @@ jobs:
         timeout-minutes: 12
         run: |
           [ -d "$RUNNER_TEMP/src/build/Dropfit.app" ] || exit 1
+          set -o pipefail   # 준비가 실패하면 그 자리에서 멈춘다
           bash brand/update_local_prep.sh Dropfit-macOS.zip "$RUNNER_TEMP/src/build/Dropfit.app" "$RUNNER_TEMP/src/build/Sparkle" "$RUNNER_TEMP/updbad" bad
           code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml bash brand/update_check_mac.sh "$RUNNER_TEMP/updbad/old.zip" "$RUNNER_TEMP/updbad/out" > "$RUNNER_TEMP/updbad.txt" 2>&1 || code=$?
           grep -E '^(✓|✗)' "$RUNNER_TEMP/updbad.txt" | cut -c1-160
-          if [ $code = 1 ] && grep -q '그대로' "$RUNNER_TEMP/updbad.txt"; then echo "✓ 업데이트 점검이 살아 있음: 서명이 틀린 새 빌드는 설치되지 않음" | tee -a "$R" || true
+          if [ $code = 1 ] && grep -q '그대로' "$RUNNER_TEMP/updbad.txt"; then echo "✓ 업데이트 점검이 살아 있음: 서명이 틀린 새 빌드는 설치되지 않음" | tee -a "$R"
           else echo "✗ 서명이 틀린 새 빌드가 설치됨(또는 점검이 다르게 끝남, 끝 코드 $code)" | tee -a "$R"; exit 1; fi
 
       # 빈칸 ②③: 0.6에서 온 사용자(설정·Pro 키)와 체험 중 다시 설치한 분의 첫 실행을 점검 모드 없이. 처음·체험 중·체험 끝도 같은 소스로

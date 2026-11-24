@@ -1,0 +1,103 @@
+name: 사용자 상태 점검
+
+# 11/20 빌드 39~42: 체험 중 사용자가 설정 창을 열면 다시 그리기가 끝없이 돌아 Mac이 멈췄다(CPU 58%).
+# 다른 화면 점검은 모두 점검 모드(--qa, Pro 고정)라 체험 시계를 지나지 않아 놓쳤다. 이 점검은 사용자 상태로 본다.
+#  1) 소스: 상태 7가지(처음·체험 중·마지막 날·체험 끝·시계 되돌림·Pro 키 둘)의 Pro·체험 판정과
+#     '화면이 읽는 값은 읽기만'(저장·키체인·다시 그리기 0번). 고치기 전 소스(빌드 42)에서 반드시 실패해야 점검이 산 것으로 본다.
+#  2) 공개 앱: 점검 모드 없이 처음 설치·체험 중·체험 끝으로 열어 CPU·메모리·설정 창 열림·체험 시각 저장·충돌을 잰다.
+#     빌드 42 공개 zip에서 반드시 실패해야 한다(11/20 첫 실행: 15·26 모두 설정 창 연 동안 CPU 55~66%로 재현).
+# 기준: Dropfit 저장소 docs/1-Required/QUALITY.md ⑦. 소스는 읽기 전용 배포 키(DROPFIT_SOURCE_KEY)로만 받고 결과 줄만 남긴다.
+on:
+  workflow_call:   # 매일 9시 점검(daily-qa.yml)이 부름
+    inputs:
+      src:
+        type: string
+        default: main
+  workflow_dispatch:
+    inputs:
+      src:
+        description: '시험할 Dropfit 소스 가지'
+        default: main
+  pull_request:
+    paths:
+      - 'Dropfit-macOS.zip'
+      - 'brand/state_*'
+      - '.github/workflows/state-check.yml'
+
+permissions:
+  contents: read
+
+env:
+  KNOWN_BAD: b395f63   # 빌드 42 소스: 체험 중 설정 창 멈춤이 있던 마지막 공개 소스
+  KNOWN_BAD_ZIP: 5c0bee7   # 빌드 42 공개 zip이 든 dropfit-download 커밋
+
+jobs:
+  mac:
+    name: 사용자 상태 ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 비공개 소스 받기 (읽기 전용 열쇠)
+        env:
+          KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
+          K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
+          printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$K/known"
+          export GIT_SSH_COMMAND="ssh -i $K/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$K/known -o StrictHostKeyChecking=yes"
+          git clone -q --no-checkout git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"
+          rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
+          cd "$RUNNER_TEMP/src"
+          # 점검 도구: main에 합쳐지기 전까지는 작업 가지에서
+          for b in main claude/project-thread-o5r9g7; do
+            if git cat-file -e "origin/$b:Support/tools/state-check/StateCheck.swift" 2>/dev/null; then
+              mkdir -p "$RUNNER_TEMP/tool"; for f in StateCheck.swift run.sh; do git show "origin/$b:Support/tools/state-check/$f" > "$RUNNER_TEMP/tool/$f"; done
+              echo "점검 도구: $b $(git rev-parse --short origin/$b)"; break
+            fi
+          done
+          test -f "$RUNNER_TEMP/tool/run.sh" || { echo "::error::소스에 사용자 상태 점검 도구가 없음"; exit 1; }
+          SRC="${{ inputs.src || 'main' }}"
+          git worktree add -q "$RUNNER_TEMP/target" "origin/$SRC" && echo "시험할 소스: $SRC $(git -C "$RUNNER_TEMP/target" log -1 --format='%h %cd' --date=iso)"
+          git worktree add -q "$RUNNER_TEMP/bad" "$KNOWN_BAD"
+          mkdir -p "$RUNNER_TEMP/sp"
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/sp.tar.xz" https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
+          for d in target bad; do mkdir -p "$RUNNER_TEMP/$d/build/Sparkle" && tar -xf "$RUNNER_TEMP/sp.tar.xz" -C "$RUNNER_TEMP/$d/build/Sparkle"; done
+      - name: 점검이 살아 있는지 (고치기 전 소스에서 실패해야 함)
+        run: |
+          set -o pipefail
+          code=0; bash "$RUNNER_TEMP/tool/run.sh" "$RUNNER_TEMP/bad" > "$RUNNER_TEMP/bad.txt" 2>&1 || code=$?
+          grep -E "▸|✗|결과" "$RUNNER_TEMP/bad.txt" | head -30
+          # if 문으로: 'A && echo || 실패'는 echo가 실패하면(11/20 macOS 26 'write error: Interrupted system call') 통과를 실패로 뒤집었다
+          if [ $code = 1 ]; then echo "✓ 고치기 전 소스(빌드 42)를 잡음" || true; else echo "::error::점검이 고치기 전 소스를 잡지 못함(끝 코드 $code) — 이 점검을 믿을 수 없음"; exit 1; fi
+      - name: 상태 판정·읽기만 (시험할 소스)
+        run: |
+          set -o pipefail
+          bash "$RUNNER_TEMP/tool/run.sh" "$RUNNER_TEMP/target" | tee "$RUNNER_TEMP/target.txt"
+      - name: 화면 코드 점검 (소스에 있으면)
+        working-directory: ${{ runner.temp }}/target
+        run: |
+          if [ -f tools/화면코드점검.py ]; then python3 tools/화면코드점검.py; else echo "· 이 소스에는 아직 tools/화면코드점검.py가 없음 (빌드 44부터)"; fi
+      - name: 공개 앱 실제 사용자 모드 (점검 모드 없이)
+        timeout-minutes: 10
+        run: bash brand/state_app_mac.sh Dropfit-macOS.zip "$RUNNER_TEMP/app" "(이번 zip)"
+      - name: 점검이 살아 있는지 - 빌드 42 공개 앱 (실패해야 함)
+        timeout-minutes: 10
+        run: |
+          git show "$KNOWN_BAD_ZIP:Dropfit-macOS.zip" > "$RUNNER_TEMP/b42.zip"
+          code=0; bash brand/state_app_mac.sh "$RUNNER_TEMP/b42.zip" "$RUNNER_TEMP/b42" "(고치기 전: 빌드 42)" > "$RUNNER_TEMP/b42.txt" 2>&1 || code=$?
+          grep -E "▸|✗|결과" "$RUNNER_TEMP/b42.txt" | head -20
+          if [ $code = 1 ]; then echo "✓ 고치기 전 공개 앱(빌드 42)을 잡음" || true; else echo "::error::공개 앱 점검이 빌드 42를 잡지 못함(끝 코드 $code) — 이 점검을 믿을 수 없음"; exit 1; fi
+      - name: 요약
+        if: always()
+        run: |
+          { echo "### 사용자 상태 · 소스 판정 · macOS $(sw_vers -productVersion)"; echo
+            grep -E '^(▸|  ✗|결과)' "$RUNNER_TEMP/target.txt" 2>/dev/null | sed 's/^/- /'; } >> "$GITHUB_STEP_SUMMARY"
+          rm -rf "$RUNNER_TEMP/src" "$RUNNER_TEMP/target" "$RUNNER_TEMP/bad" "$RUNNER_TEMP/tool"
