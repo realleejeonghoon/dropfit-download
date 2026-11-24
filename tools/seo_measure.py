@@ -37,6 +37,11 @@ QUESTIONS = [
     ("Q014", "비브랜드", "ko", "맥에서 PDF 용량 줄이는 방법"),
     ("Q015", "비브랜드", "ko", "지원서 사진 업로드 용량 초과 해결"),
     ("Q016", "비브랜드", "en", "how to reduce photo file size on Mac in bulk"),
+    # 11/24 일본 시장 기준선(dropfit.kr/ja/ 공개, 아시아 스레드 요청)
+    ("Q017", "비브랜드", "ja", "Mac HEIC JPG 変換 アプリ"),
+    ("Q018", "비브랜드", "ja", "Mac PDF 結合 無料 アプリ"),
+    ("Q019", "비브랜드", "ja", "Mac 画像 容量 小さく 一括"),
+    ("Q020", "비브랜드", "ja", "Mac 写真 形式 変換 おすすめ"),
 ]
 # 네이버: 문제 검색어 P001~P007(수동 측정과 같은 ID) + 브랜드 N001~N002
 NAVER_QUERIES = [
@@ -54,8 +59,8 @@ OWN_HOSTS = ("dropfit.kr", "realleejeonghoon.github.io", "blog.naver.com/miles_c
 BRANDS = ["ImageOptim", "Clop", "Permute", "Squoosh", "TinyPNG", "PDF Expert", "Smallpdf",
           "iLovePDF", "Zipic", "Smol", "Optimage", "XnConvert", "Adobe Acrobat", "PDFgear",
           "Image Size", "Retrobatch", "Photoscape", "미리보기", "Preview", "Tangerine", "Compressor"]
-PRODUCT_WORDS = ("이미지", "사진", "PDF", "변환", "용량", "image", "convert", "HEIC", "compress")
-FITNESS_WORDS = ("운동", "피트니스", "fitness", "workout", "헬스")
+PRODUCT_WORDS = ("이미지", "사진", "PDF", "변환", "용량", "image", "convert", "HEIC", "compress", "画像", "写真", "変換", "容量")
+FITNESS_WORDS = ("운동", "피트니스", "fitness", "workout", "헬스", "フィットネス", "筋トレ")
 
 
 def clean(s, n=300):
@@ -88,18 +93,23 @@ def judge(text, urls):
     """브랜드 언급: 'Dropfit/드롭핏'이 나오고 변환 앱 맥락이며 운동 앱 설명이 아닐 때 1."""
     t = text or ""
     own = [u for u in urls if any(h in u for h in OWN_HOSTS)]
-    named = re.search(r"dropfit|드롭핏", t, re.I)
+    named = re.search(r"dropfit|드롭핏|ドロップフィット", t, re.I)
     product = any(w.lower() in t.lower() for w in PRODUCT_WORDS)
     fitness_only = any(w.lower() in t.lower() for w in FITNESS_WORDS) and not own
     mention = 1 if own or (named and product and not fitness_only) else 0
     with_brands = [b for b in BRANDS if b.lower() in t.lower()]
     note = "운동 앱 등 동명 설명" if named and not mention else ""
-    return mention, (1 if own else 0), own, [u for u in urls if u not in own], with_brands, note
+    # 순위: 답에 나온 앱 이름 중 Dropfit이 몇 번째로 처음 나오는지(언급 없으면 빈칸)
+    rank = ""
+    if mention and named:
+        tl = t.lower()
+        rank = str(1 + sum(1 for b in with_brands if 0 <= tl.find(b.lower()) < named.start()))
+    return mention, (1 if own else 0), own, [u for u in urls if u not in own], with_brands, note, rank
 
 
 def row(mid, platform, group, lang, status, **k):
     rid = f"{mid}_{platform}_{STAMP}_1"
-    cells = [NOW.strftime("%Y-%m-%d %H:%M"), WEEK, rid, mid, platform, group, lang, "KR", PROFILE, ROUTE, "1",
+    cells = [NOW.strftime("%Y-%m-%d %H:%M"), WEEK, rid, mid, platform, group, lang, "JP" if lang == "ja" else "KR", PROFILE, ROUTE, "1",
              status, k.get("aio", ""), k.get("mention", ""), k.get("cited", ""), k.get("rank", ""),
              k.get("depth", "자동판정"), ", ".join(k.get("own", [])[:3]), ", ".join(k.get("ext", [])[:5]),
              ", ".join(k.get("brands", [])), clean(k.get("evidence", "")), clean(k.get("memo", ""), 160)]
@@ -186,8 +196,8 @@ def main(out):
         for mid, group, lang, q in QUESTIONS:
             try:
                 text, urls, used = fn(q, lang)
-                m, c, own, ext, br, note = judge(text, urls)
-                lines.append(row(mid, name, group, lang, "정상", mention=str(m), cited=str(c), own=own, ext=ext,
+                m, c, own, ext, br, note, rk = judge(text, urls)
+                lines.append(row(mid, name, group, lang, "정상", mention=str(m), cited=str(c), rank=rk, own=own, ext=ext,
                                  brands=br, evidence=text, memo=" · ".join(x for x in (used, note) if x)))
             except Exception as e:
                 lines.append(row(mid, name, group, lang, "오류", depth="", memo=err_text(e)))
