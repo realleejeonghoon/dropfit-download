@@ -16,6 +16,7 @@ on:
       - 'brand/state_app_mac.sh'
       - 'brand/update_local_prep.sh'
       - 'brand/update_check_mac.sh'
+      - 'brand/edsign.swift'
 
 permissions:
   contents: read

@@ -1,7 +1,7 @@
 #!/bin/bash
 # 공개 전 소스 빌드로 '이전 공개 빌드 → 새 빌드' 실제 업데이트를 시험할 준비 (깨끗한 Mac CI 전용, 11/24 QUALITY 7-2 빈칸 ①)
 #   bash brand/update_local_prep.sh 옛zip 새앱(.app) Sparkle폴더 작업폴더 [bad]
-# 실제 서명 키는 정훈 님 Mac 키체인에만 있으므로 쓰지 않는다. 이 Mac에서만 쓰는 시험 EdDSA 키를 만들어
+# 실제 서명 키는 정훈 님 Mac 키체인에만 있으므로 쓰지 않는다. 이 실행에서만 쓰는 시험 EdDSA 키를 파일로 만들어(edsign.swift, 키체인 안 씀)
 #  ① 옛 공개 앱과 새 앱의 공개 키 칸(SUPublicEDKey)·목록 주소(SUFeedURL)를 시험 키·이 Mac의 로컬 목록으로 바꾸고 임시 서명
 #  ② 새 앱 zip을 시험 키로 서명해 로컬 목록(appcast.xml)을 만들어 127.0.0.1에서 내준다.
 # 그 뒤 update_check_mac.sh가 사용자와 같은 길(자동 확인 → 받기 → 서명 확인 → 끌 때 설치 → 새 버전으로 열림)을 잰다.
@@ -13,11 +13,9 @@ OLD="$1"; NEW="$2"; SP="$3"; W="$4"; MODE="${5:-good}"
 PORT=8765; FEED="http://127.0.0.1:$PORT/appcast.xml"
 rm -rf "$W"; mkdir -p "$W/old" "$W/new" "$W/www"
 PB=/usr/libexec/PlistBuddy
-# 키가 없으면 만든다(-p는 있는 키의 공개 값만 출력)
-if ! PUB=$("$SP/bin/generate_keys" --account dropfit-ci-test -p 2>/dev/null) || [ -z "$PUB" ]; then
-  "$SP/bin/generate_keys" --account dropfit-ci-test >/dev/null 2>&1
-  PUB=$("$SP/bin/generate_keys" --account dropfit-ci-test -p)
-fi
+HERE="$(cd "$(dirname "$0")" && pwd)"
+swiftc -O "$HERE/edsign.swift" -o "$W/edsign" 2>"$W/edsign-build.txt" || { cat "$W/edsign-build.txt"; echo "✗ 시험 키 도구 컴파일 실패"; exit 1; }
+PUB=$("$W/edsign" key "$W/ed.key")
 [ -n "$PUB" ] || { echo "✗ 시험 키를 만들지 못함"; exit 1; }
 patch_app() {  # 앱 → 시험 키·로컬 목록, 임시 서명
   $PB -c "Set :SUPublicEDKey $PUB" -c "Set :SUFeedURL $FEED" "$1/Contents/Info.plist"
@@ -41,8 +39,9 @@ if [ "$NB" -le "$OB" ] 2>/dev/null; then
 fi
 patch_app "$NA"
 (cd "$W/new" && ditto -c -k --sequesterRsrc --keepParent Dropfit.app "$W/www/Dropfit-new.zip")
-SIG=$("$SP/bin/sign_update" --account dropfit-ci-test "$W/www/Dropfit-new.zip")   # sparkle:edSignature="…" length="…"
-if [ "$MODE" = bad ]; then SIG=$(echo "$SIG" | sed -E 's/edSignature="(.)(.)/edSignature="\2\1/'); fi
+SIG="sparkle:edSignature=\"$("$W/edsign" sign "$W/ed.key" "$W/www/Dropfit-new.zip")\" length=\"$(stat -f%z "$W/www/Dropfit-new.zip")\""
+# bad: 같은 키로 다른 파일(옛 zip)에 한 서명을 붙인다 → 형식은 맞고 내용이 틀린 서명
+[ "$MODE" = bad ] && SIG="sparkle:edSignature=\"$("$W/edsign" sign "$W/ed.key" "$W/old.zip")\" length=\"$(stat -f%z "$W/www/Dropfit-new.zip")\""
 cat > "$W/www/appcast.xml" <<XML
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
