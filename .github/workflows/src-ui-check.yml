@@ -1,0 +1,70 @@
+name: 화면 동작 점검 (Dropfit 소스)
+
+# 2026-11-24: 비공개 저장소(Dropfit)의 맥 점검이 11월 무료 몫을 다 써서 멈춤(사용량 CSV, 비공개 $12.13 > $12).
+# 같은 점검을 공개 저장소(무료)에서 돌린다. Dropfit 작업 가지에 앱 소스를 올린 스레드가
+# GitHub에서 이 점검을 ref=가지 이름으로 부른다(workflow_dispatch). 정훈 님 Mac·Claude 토큰을 쓰지 않는다(AGENTS ⑤).
+# 공개 저장소이므로 소스·빌드·보고서 파일은 올리지 않고, 결과 줄(✓/✗)만 요약에 남긴다(engine-check.yml과 같은 원칙).
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Dropfit 소스 가지 (예: claude/project-thread-xxxx)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  ui-check:
+    runs-on: macos-15-intel   # Dropfit ui-check.yml과 같은 이미지 (arm64 대기열 막힘 11/18, Intel 사용자 확인 겸함)
+    timeout-minutes: 30
+    steps:
+      - name: 비공개 소스 받기 (읽기 전용 열쇠)
+        env:
+          KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+          REF: ${{ github.event.inputs.ref }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
+          [[ "$REF" =~ ^[A-Za-z0-9._/-]{1,100}$ ]] || { echo "::error::가지 이름 형식이 아님"; exit 1; }
+          K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
+          printf '%s\n' "$KEY" > "$K/id"; chmod 600 "$K/id"
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$K/known"
+          export GIT_SSH_COMMAND="ssh -i $K/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$K/known -o StrictHostKeyChecking=yes"
+          git clone -q --no-checkout git@github.com:realleejeonghoon/Dropfit.git "$RUNNER_TEMP/src"
+          rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
+          cd "$RUNNER_TEMP/src"
+          git cat-file -e "origin/$REF:build.sh" 2>/dev/null || { echo "::error::그 가지가 없거나 build.sh가 없음"; exit 1; }
+          git checkout -q "origin/$REF"; echo "소스: $REF $(git rev-parse --short HEAD)"
+
+      - name: Sparkle 2.10.1 받기 (SHA-256 확인)
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          mkdir -p Support/Sparkle
+          curl -fsSL --retry 3 -o Support/Sparkle/Sparkle-2.10.1.tar.xz \
+            https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
+          echo "1a856d2a9edb8e628de88121d7be04cf0e2167f8641650b78fca00b14244cf27  Support/Sparkle/Sparkle-2.10.1.tar.xz" | shasum -a 256 -c -
+
+      - name: 빌드 (로컬 서명)
+        working-directory: ${{ runner.temp }}/src
+        run: rm -f Support/notary.conf && bash build.sh > "$RUNNER_TEMP/build.txt" 2>&1 || { tail -5 "$RUNNER_TEMP/build.txt" | grep -E 'error|오류' | sed 's|/.*/||'; exit 1; }
+
+      - name: 화면 동작 점검 (--qa 3회 반복, 회마다 최대 300초)
+        working-directory: ${{ runner.temp }}/src
+        run: |
+          sw_vers -productVersion
+          fail=0
+          for n in 1 2 3; do
+            build/Dropfit.app/Contents/MacOS/Dropfit --qa "$RUNNER_TEMP/ui-$n.txt" > "$RUNNER_TEMP/qa-run-$n.txt" 2>&1 &
+            P=$!
+            for _ in $(seq 1 300); do kill -0 $P 2>/dev/null || break; sleep 1; done
+            if kill -0 $P 2>/dev/null; then kill $P; echo "✗ 300초 안에 끝나지 않음" >> "$RUNNER_TEMP/ui-$n.txt"; fail=1; continue; fi
+            wait $P || fail=1
+            echo "$n회: $(tail -1 "$RUNNER_TEMP/ui-$n.txt")"
+          done
+          ls ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -i dropfit && { echo "✗ 충돌 기록 있음"; fail=1; } || echo "충돌 기록 0건"
+          exit $fail
+
+      - name: 요약 (결과 줄만)
+        if: always()
+        run: |
+          { echo "### 화면 동작 점검 · ${{ github.event.inputs.ref }}"; echo; grep -E '^(■|✓|✗|–)' "$RUNNER_TEMP/ui-1.txt" 2>/dev/null | sed 's/^/- /'; tail -1 "$RUNNER_TEMP/ui-1.txt" 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"

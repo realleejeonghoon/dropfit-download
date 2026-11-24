@@ -7,6 +7,11 @@ name: 엔진 점검
 on:
   workflow_call:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Dropfit 소스 가지(비우면 main). 작업 가지 점검은 Claude가 여기서 부른다(11/24, 비공개 저장소 유료 분 0으로)'
+        required: false
+        default: ''
   pull_request:
     paths:
       - '.github/workflows/engine-check.yml'
@@ -27,6 +32,7 @@ jobs:
       - name: 비공개 소스 받기 (읽기 전용 열쇠)
         env:
           KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
+          IN_REF: ${{ github.event.inputs.ref }}
         run: |
           [ -n "$KEY" ] || { echo "::error::DROPFIT_SOURCE_KEY 시크릿이 없음"; exit 1; }
           K="$RUNNER_TEMP/k"; mkdir -m 700 "$K"
@@ -37,7 +43,10 @@ jobs:
           rm -P "$K/id" 2>/dev/null || rm -f "$K/id"
           cd "$RUNNER_TEMP/src"
           # main에 엔진 점검이 합쳐지기 전까지는 작업 가지에서
-          for b in main claude/engine-check; do
+          REF="$IN_REF"
+          [[ -z "$REF" || "$REF" =~ ^[A-Za-z0-9._/-]{1,100}$ ]] || { echo "::error::가지 이름 형식이 아님"; exit 1; }
+          L="main claude/engine-check"; [ -n "$REF" ] && L="$REF"   # 가지를 정했으면 그 가지만(없으면 main으로 넘어가 거짓 통과하지 않게)
+          for b in $L; do
             if git cat-file -e "origin/$b:Support/tools/engine-check/run.sh" 2>/dev/null; then
               git checkout -q "origin/$b"; echo "소스: $b $(git rev-parse --short HEAD) · $(git log -1 --format=%cd --date=iso)"; break
             fi
