@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     env:
-      SRC_BRANCH: ${{ inputs.src || 'claude/project-thread-fb6oxn' }}
+      SRC_BRANCH: ${{ inputs.src || 'main' }}
     steps:
       - name: 비공개 소스 받기 (읽기 전용 열쇠)
         env:
