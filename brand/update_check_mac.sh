@@ -70,6 +70,11 @@ for i in $(seq 1 240); do
   sleep 1
 done
 sleep 5
+# 시험 목록이면 서버 기록으로 앱이 실제로 목록·zip을 읽었는지 본다(받지도 않고 '그대로'면 서명 점검이 헛통과)
+if [ $LOCAL = 1 ] && [ -n "${UPDATE_SERVER_LOG:-}" ]; then
+  grep -q 'GET /appcast.xml' "$UPDATE_SERVER_LOG" && put ok "앱이 시험 목록을 읽음" || put bad "앱이 시험 목록을 한 번도 읽지 않음(업데이트 확인이 시작되지 않음)"
+  grep -q 'GET /Dropfit-new.zip' "$UPDATE_SERVER_LOG" && put ok "앱이 새 zip을 받음" || put bad "앱이 새 zip을 받지 않음"
+fi
 [ $READY = yes ] && put ok "실행 ${T}초 만에 새 버전을 받아 설치 준비" || put bad "240초 안에 새 버전을 받지 못함(캐시: $(ls ~/Library/Caches/$DOM 2>/dev/null | tr '\n' ' '))"
 # 받지 못했으면 원인을 남긴다: 그 순간 두 목록의 버전, 앱이 남긴 시스템 기록(Sparkle 요청·오류) (11/21 정훈 '흔들림 해결 필요')
 if [ $READY != yes ]; then
@@ -80,6 +85,12 @@ if [ $READY != yes ]; then
   perl -e 'alarm shift; exec @ARGV' 90 log show --last 6m --style compact --info --debug --predicate 'process == "Dropfit" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-at-fail.txt" 2>&1
   defaults read $DOM > "$OUT/defaults-at-fail.txt" 2>&1
   echo "--- 실패 순간 목록"; cat "$OUT/feeds-at-fail.txt"
+  if [ $LOCAL = 1 ]; then
+    echo "--- 옛 앱 Info.plist 업데이트 키"; for key in SUFeedURL SUPublicEDKey SURequireSignedFeed SUEnableAutomaticChecks; do echo "$key=$(/usr/libexec/PlistBuddy -c "Print :$key" "$APP/Contents/Info.plist" 2>&1 | cut -c1-60)"; done
+    echo "--- 옛 앱 서명"; codesign -dv "$APP" 2>&1 | grep -E 'Signature|TeamIdentifier|flags|Format' | head -5
+    echo "--- 시험 서버 기록"; tail -8 "${UPDATE_SERVER_LOG:-/dev/null}" 2>/dev/null
+    echo "--- Dropfit 시스템 기록(거르지 않음, 끝 30줄)"; grep -v libMobileGestalt "$OUT/syslog-at-fail.txt" | tail -30 | cut -c1-220
+  fi
   echo "--- 시스템 기록 (Sparkle·네트워크 줄, 끝 25줄)"; grep -i "sparkle\|appcast\|feed\|nsurl\|error\|fail" "$OUT/syslog-at-fail.txt" | tail -25
 fi
 find ~/Library/Caches/$DOM -maxdepth 4 2>/dev/null | head -40 >"$OUT/cache.txt"
