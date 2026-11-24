@@ -20,9 +20,11 @@ PUB=$("$W/edsign" key "$W/ed.key")
 patch_app() {  # 앱 → 시험 키·로컬 목록, 임시 서명
   $PB -c "Set :SUPublicEDKey $PUB" -c "Set :SUFeedURL $FEED" "$1/Contents/Info.plist"
   # 로컬 목록(http://127.0.0.1)을 읽게 시험 사본에만 로컬 통신 허용 (공개 앱은 https만 씀)
-  $PB -c "Print :NSAppTransportSecurity" "$1/Contents/Info.plist" >/dev/null 2>&1 || $PB -c "Add :NSAppTransportSecurity dict" "$1/Contents/Info.plist"
-  $PB -c "Add :NSAppTransportSecurity:NSAllowsLocalNetworking bool true" "$1/Contents/Info.plist" 2>/dev/null \
-    || $PB -c "Set :NSAppTransportSecurity:NSAllowsLocalNetworking true" "$1/Contents/Info.plist"
+  # Sparkle은 https가 아닌 목록이면 그 주소가 ATS 예외(NSExceptionDomains)에 있는지 본다 [추정, 11/24 첫 실행 240초 안에 못 받음]
+  $PB -c "Delete :NSAppTransportSecurity" "$1/Contents/Info.plist" >/dev/null 2>&1 || :
+  $PB -c "Add :NSAppTransportSecurity dict" -c "Add :NSAppTransportSecurity:NSAllowsLocalNetworking bool true" \
+      -c "Add :NSAppTransportSecurity:NSExceptionDomains dict" -c "Add :NSAppTransportSecurity:NSExceptionDomains:127.0.0.1 dict" \
+      -c "Add :NSAppTransportSecurity:NSExceptionDomains:127.0.0.1:NSExceptionAllowsInsecureHTTPLoads bool true" "$1/Contents/Info.plist"
   codesign --force --deep -s - "$1" >/dev/null 2>&1
 }
 ditto -x -k "$OLD" "$W/old/x"

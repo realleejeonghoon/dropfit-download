@@ -73,7 +73,7 @@ if [ $READY != yes ]; then
   for u in "$FEED" https://update.dropfit.kr/appcast.xml; do
     echo "$u → $(curl -sSL --max-time 20 "$u" | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2) · $(curl -sSI --max-time 20 "$u" | grep -i '^\(age\|cache-control\|last-modified\|cf-cache-status\|x-cache\):' | tr -d '\r' | tr '\n' ' ')"
   done > "$OUT/feeds-at-fail.txt"
-  log show --last 6m --style compact --info --debug --predicate 'process == "Dropfit" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-at-fail.txt" 2>&1
+  perl -e 'alarm shift; exec @ARGV' 90 log show --last 6m --style compact --info --debug --predicate 'process == "Dropfit" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-at-fail.txt" 2>&1
   defaults read $DOM > "$OUT/defaults-at-fail.txt" 2>&1
   echo "--- 실패 순간 목록"; cat "$OUT/feeds-at-fail.txt"
   echo "--- 시스템 기록 (Sparkle·네트워크 줄, 끝 25줄)"; grep -i "sparkle\|appcast\|feed\|nsurl\|error\|fail" "$OUT/syslog-at-fail.txt" | tail -25
@@ -81,7 +81,7 @@ fi
 find ~/Library/Caches/$DOM -maxdepth 4 2>/dev/null | head -40 >"$OUT/cache.txt"
 
 # 사용자가 앱을 끄면 설치된다
-osascript -e 'tell application "Dropfit" to quit' >/dev/null 2>&1; sleep 3
+perl -e 'alarm shift; exec @ARGV' 20 osascript -e 'tell application "Dropfit" to quit' >/dev/null 2>&1; sleep 3
 kill -0 $PID 2>/dev/null && { kill $PID; sleep 2; }
 for i in $(seq 1 90); do [ "$(build "$APP")" = "$WANT_B" ] && break; sleep 1; done
 NOW_V=$(ver "$APP"); NOW_B=$(build "$APP")

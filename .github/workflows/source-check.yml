@@ -167,10 +167,10 @@ jobs:
           [ -d "$RUNNER_TEMP/src/build/Dropfit.app" ] || { echo "✗ 업데이트: 빌드가 없음" | tee -a "$R"; exit 1; }
           set -o pipefail   # 준비가 실패하면 그 자리에서 멈춘다
           bash brand/update_local_prep.sh Dropfit-macOS.zip "$RUNNER_TEMP/src/build/Dropfit.app" "$RUNNER_TEMP/src/build/Sparkle" "$RUNNER_TEMP/upd" | tee "$RUNNER_TEMP/upd-prep.txt"
-          code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml bash brand/update_check_mac.sh "$RUNNER_TEMP/upd/old.zip" "$RUNNER_TEMP/upd/out" > "$RUNNER_TEMP/upd.txt" 2>&1 || code=$?
+          code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml perl -e 'alarm shift; exec @ARGV' 600 bash brand/update_check_mac.sh "$RUNNER_TEMP/upd/old.zip" "$RUNNER_TEMP/upd/out" > "$RUNNER_TEMP/upd.txt" 2>&1 || code=$?
           grep -E '^(✓|✗)' "$RUNNER_TEMP/upd.txt" | cut -c1-160
           if [ $code = 0 ]; then echo "✓ 업데이트: $(tail -1 "$RUNNER_TEMP/upd-prep.txt" | sed "s/^준비: //")" | tee -a "$R"
-          else echo "✗ 업데이트: 공개 빌드에서 이 소스로 넘어가지 못함" | tee -a "$R"; grep -iE 'sparkle|error|fail' "$RUNNER_TEMP/upd.txt" | tail -25 | cut -c1-200; exit 1; fi
+          else echo "✗ 업데이트: 공개 빌드에서 이 소스로 넘어가지 못함" | tee -a "$R"; tail -45 "$RUNNER_TEMP/upd.txt" | cut -c1-220; exit 1; fi
       - name: 업데이트 점검이 살아 있는지 (서명이 틀린 목록은 설치되면 안 됨)
         if: always() && matrix.os == 'macos-15'
         timeout-minutes: 12
@@ -178,7 +178,7 @@ jobs:
           [ -d "$RUNNER_TEMP/src/build/Dropfit.app" ] || exit 1
           set -o pipefail   # 준비가 실패하면 그 자리에서 멈춘다
           bash brand/update_local_prep.sh Dropfit-macOS.zip "$RUNNER_TEMP/src/build/Dropfit.app" "$RUNNER_TEMP/src/build/Sparkle" "$RUNNER_TEMP/updbad" bad
-          code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml bash brand/update_check_mac.sh "$RUNNER_TEMP/updbad/old.zip" "$RUNNER_TEMP/updbad/out" > "$RUNNER_TEMP/updbad.txt" 2>&1 || code=$?
+          code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml perl -e 'alarm shift; exec @ARGV' 600 bash brand/update_check_mac.sh "$RUNNER_TEMP/updbad/old.zip" "$RUNNER_TEMP/updbad/out" > "$RUNNER_TEMP/updbad.txt" 2>&1 || code=$?
           grep -E '^(✓|✗)' "$RUNNER_TEMP/updbad.txt" | cut -c1-160
           if [ $code = 1 ] && grep -q '그대로' "$RUNNER_TEMP/updbad.txt"; then echo "✓ 업데이트 점검이 살아 있음: 서명이 틀린 새 빌드는 설치되지 않음" | tee -a "$R"
           else echo "✗ 서명이 틀린 새 빌드가 설치됨(또는 점검이 다르게 끝남, 끝 코드 $code)" | tee -a "$R"; exit 1; fi
