@@ -55,6 +55,10 @@ cat > "$W/www/appcast.xml" <<XML
 <enclosure url="http://127.0.0.1:$PORT/Dropfit-new.zip" $SIG type="application/octet-stream"/></item>
 </channel></rss>
 XML
+# 목록 자체 서명: 앱이 SURequireSignedFeed라 서명 없는 목록은 거부한다(11/24 실행 기록 "no EdDSA signature in the appcast").
+# 공개 appcast와 같은 꼴: 끝에 <!-- sparkle-signatures: … --> (서명 범위 = 그 앞 전부)
+FS=$("$W/edsign" sign "$W/ed.key" "$W/www/appcast.xml"); FL=$(stat -f%z "$W/www/appcast.xml")
+printf '<!-- sparkle-signatures:\nedSignature: %s\nlength: %s\n-->\n' "$FS" "$FL" >> "$W/www/appcast.xml"
 if pgrep -f "http.server $PORT" >/dev/null; then pkill -f "http.server $PORT"; sleep 1; fi
 (cd "$W/www" && nohup python3 -m http.server $PORT --bind 127.0.0.1 >"$W/http.txt" 2>&1 &)
 for _ in $(seq 1 20); do curl -sf "$FEED" >/dev/null && break; sleep 0.5; done
