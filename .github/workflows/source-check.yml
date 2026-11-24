@@ -13,6 +13,9 @@ on:
   pull_request:
     paths:
       - '.github/workflows/source-check.yml'
+      - 'brand/state_app_mac.sh'
+      - 'brand/update_local_prep.sh'
+      - 'brand/update_check_mac.sh'
 
 permissions:
   contents: read
@@ -29,11 +32,17 @@ jobs:
       matrix:
         os: [macos-15, macos-26, macos-15-intel]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 40
+    timeout-minutes: 60
     env:
       SRC_BRANCH: ${{ inputs.src || 'main' }}
       R: ${{ github.workspace }}/../result.txt
     steps:
+      # 이 저장소: 사용자 흐름 점검 스크립트(brand/*_mac.sh)와 지금 공개 zip, 0.6.12 zip(커밋 e9b0ce3)
+      - uses: actions/checkout@v4
+      - name: 0.6.12 공개 zip 꺼내기 (0.6에서 온 사용자 시험용)
+        run: |
+          git fetch -q --depth 1 origin e9b0ce3beffda49dd75d32daf10c061feba99c34
+          git show e9b0ce3beffda49dd75d32daf10c061feba99c34:Dropfit-macOS.zip > "$RUNNER_TEMP/o6.zip"
       - name: 비공개 소스 받기 (읽기 전용 열쇠)
         env:
           KEY: ${{ secrets.DROPFIT_SOURCE_KEY }}
@@ -148,6 +157,40 @@ jobs:
             else echo "✗ 설정 창 $st: $(tail -1 "$RUNNER_TEMP/sc-$st.txt" | cut -c1-120)" | tee -a "$R"; fail=1; fi
           done
           exit $fail
+
+      # 11/24 QUALITY 7-2 빈칸 ①: 사용자가 실제로 겪는 업데이트를 공개 전에. 지금 공개 zip을 깔고 이 소스 빌드로 자동 업데이트되는지
+      - name: 업데이트 (지금 공개 빌드 → 이 소스, 사용자와 같은 길)
+        if: always()
+        timeout-minutes: 12
+        run: |
+          [ -d "$RUNNER_TEMP/src/build/Dropfit.app" ] || { echo "✗ 업데이트: 빌드가 없음" | tee -a "$R"; exit 1; }
+          bash brand/update_local_prep.sh Dropfit-macOS.zip "$RUNNER_TEMP/src/build/Dropfit.app" "$RUNNER_TEMP/src/build/Sparkle" "$RUNNER_TEMP/upd" | tee "$RUNNER_TEMP/upd-prep.txt"
+          code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml bash brand/update_check_mac.sh "$RUNNER_TEMP/upd/old.zip" "$RUNNER_TEMP/upd/out" > "$RUNNER_TEMP/upd.txt" 2>&1 || code=$?
+          grep -E '^(✓|✗)' "$RUNNER_TEMP/upd.txt" | cut -c1-160
+          if [ $code = 0 ]; then echo "✓ 업데이트: $(tail -1 "$RUNNER_TEMP/upd-prep.txt" | sed "s/^준비: //")" | tee -a "$R"
+          else echo "✗ 업데이트: 공개 빌드에서 이 소스로 넘어가지 못함" | tee -a "$R"; grep -iE 'sparkle|error|fail' "$RUNNER_TEMP/upd.txt" | tail -25 | cut -c1-200; exit 1; fi
+      - name: 업데이트 점검이 살아 있는지 (서명이 틀린 목록은 설치되면 안 됨)
+        if: always() && matrix.os == 'macos-15'
+        timeout-minutes: 12
+        run: |
+          [ -d "$RUNNER_TEMP/src/build/Dropfit.app" ] || exit 1
+          bash brand/update_local_prep.sh Dropfit-macOS.zip "$RUNNER_TEMP/src/build/Dropfit.app" "$RUNNER_TEMP/src/build/Sparkle" "$RUNNER_TEMP/updbad" bad
+          code=0; UPDATE_FEED=http://127.0.0.1:8765/appcast.xml bash brand/update_check_mac.sh "$RUNNER_TEMP/updbad/old.zip" "$RUNNER_TEMP/updbad/out" > "$RUNNER_TEMP/updbad.txt" 2>&1 || code=$?
+          grep -E '^(✓|✗)' "$RUNNER_TEMP/updbad.txt" | cut -c1-160
+          if [ $code = 1 ] && grep -q '그대로' "$RUNNER_TEMP/updbad.txt"; then echo "✓ 업데이트 점검이 살아 있음: 서명이 틀린 새 빌드는 설치되지 않음" | tee -a "$R" || true
+          else echo "✗ 서명이 틀린 새 빌드가 설치됨(또는 점검이 다르게 끝남, 끝 코드 $code)" | tee -a "$R"; exit 1; fi
+
+      # 빈칸 ②③: 0.6에서 온 사용자(설정·Pro 키)와 체험 중 다시 설치한 분의 첫 실행을 점검 모드 없이. 처음·체험 중·체험 끝도 같은 소스로
+      - name: 사용자 흐름 (0.6에서 옴·Pro 키·체험 중 다시 설치, 점검 모드 없이)
+        if: always()
+        timeout-minutes: 15
+        run: |
+          [ -d "$RUNNER_TEMP/src/build/Dropfit.app" ] || { echo "✗ 사용자 흐름: 빌드가 없음" | tee -a "$R"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/z/Dropfit"; ditto "$RUNNER_TEMP/src/build/Dropfit.app" "$RUNNER_TEMP/z/Dropfit/Dropfit.app"
+          (cd "$RUNNER_TEMP/z" && ditto -c -k --keepParent Dropfit "$RUNNER_TEMP/src.zip")
+          code=0; OLD06_ZIP="$RUNNER_TEMP/o6.zip" bash brand/state_app_mac.sh "$RUNNER_TEMP/src.zip" "$RUNNER_TEMP/flow" "(이 소스)" > "$RUNNER_TEMP/flow.txt" 2>&1 || code=$?
+          grep -E '^(▸|✓|✗|결과)' "$RUNNER_TEMP/flow.txt" | cut -c1-160
+          [ $code = 0 ] && echo "✓ 사용자 흐름 6가지 상태" | tee -a "$R" || { echo "✗ 사용자 흐름: $(grep -c '^✗' "$RUNNER_TEMP/flow.txt")건" | tee -a "$R"; exit 1; }
 
       - name: 크기 (main과 비교, 알림만)
         if: always() && matrix.os == 'macos-15' && env.SRC_BRANCH != 'main'

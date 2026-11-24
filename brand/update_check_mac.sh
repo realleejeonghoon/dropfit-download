@@ -9,7 +9,9 @@ set -u
 OLD="$1"; OUT="$2"; mkdir -p "$OUT"
 DOM=app.dropfit.prototype
 APP=/Applications/Dropfit.app
-FEED=https://realleejeonghoon.github.io/dropfit-download/appcast.xml
+FEED=${UPDATE_FEED:-https://realleejeonghoon.github.io/dropfit-download/appcast.xml}
+# UPDATE_FEED를 주면 공개 전 소스 빌드를 시험한다(source-check: 시험 키로 서명한 로컬 목록, 임시 서명 앱). 그때는 중계·Gatekeeper 줄을 건너뛴다
+LOCAL=$([ -n "${UPDATE_FEED:-}" ] && echo 1 || echo 0)
 FAILS=0; LINES=()
 put() { if [ "$1" = ok ]; then LINES+=("✓ $2"); else LINES+=("✗ $2"); FAILS=$((FAILS+1)); fi; }
 ver() { /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$1/Contents/Info.plist" 2>/dev/null; }
@@ -19,14 +21,16 @@ build() { /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$1/Contents/Info.
 curl -sSL --max-time 60 "$FEED" >"$OUT/appcast.xml"
 WANT_V=$(grep -o 'shortVersionString>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
 WANT_B=$(grep -o '<sparkle:version>[^<]*' "$OUT/appcast.xml" | head -1 | cut -d'>' -f2)
-[ -n "$WANT_V" ] && put ok "공개 appcast 최신: ${WANT_V}(${WANT_B})" || put bad "공개 appcast에서 최신 버전을 읽지 못함"
+[ -n "$WANT_V" ] && put ok "$([ $LOCAL = 1 ] && echo "시험 목록(공개 전 소스)" || echo "공개 appcast") 최신: ${WANT_V}(${WANT_B})" || put bad "업데이트 목록에서 최신 버전을 읽지 못함"
 # 사용 통계를 켠 사용자가 읽는 중계 목록. 중계는 GitHub 목록을 5분 기억하므로(worker.js cacheTtl 300) 공개 직후엔 옛 목록일 수 있다
 # (11/20 빌드 46 공개 47초 뒤 macOS 26만 '240초 안에 못 받음', 다시 돌리자 4초). 6분 안에 같은 최신 버전이 되어야 한다 (통계 표시 s=1 없이 읽어 세지 않음)
+if [ $LOCAL = 0 ]; then
 RELAY_B=""; for i in $(seq 0 12); do
   RELAY_B=$(curl -sSL --max-time 20 "https://update.dropfit.kr/appcast.xml" 2>/dev/null | grep -o '<sparkle:version>[^<]*' | head -1 | cut -d'>' -f2)
   [ "$RELAY_B" = "$WANT_B" ] && break; sleep 30
 done
 [ "$RELAY_B" = "$WANT_B" ] && put ok "중계 목록(update.dropfit.kr)도 최신 ${WANT_B} ($((i * 30))초 뒤)" || put bad "중계 목록이 6분 지나도 ${RELAY_B:-읽지 못함} (기대 ${WANT_B})"
+fi
 
 # 바로 앞 버전 설치 (격리 표시 없이: Gatekeeper 창은 앱 점검이 따로 본다)
 pkill -x Dropfit 2>/dev/null; rm -rf "$APP"
@@ -86,7 +90,8 @@ NOW_V=$(ver "$APP"); NOW_B=$(build "$APP")
 # 바뀐 앱이 온전한지: 서명·공증, 실행
 codesign --verify --deep --strict "$APP" >"$OUT/codesign.txt" 2>&1 && put ok "업데이트된 앱 서명 검증 통과" || put bad "업데이트된 앱 서명 실패: $(tail -1 "$OUT/codesign.txt")"
 spctl --assess --type execute -vv "$APP" >"$OUT/spctl.txt" 2>&1
-grep -q accepted "$OUT/spctl.txt" && put ok "업데이트된 앱 Gatekeeper 허용" || put bad "업데이트된 앱 Gatekeeper: $(tr '\n' ' ' <"$OUT/spctl.txt")"
+# 임시 서명 앱(공개 전 소스)은 Gatekeeper 판정 대상이 아니다. 공개 zip은 매일 점검이 본다
+[ $LOCAL = 1 ] || { grep -q accepted "$OUT/spctl.txt" && put ok "업데이트된 앱 Gatekeeper 허용" || put bad "업데이트된 앱 Gatekeeper: $(tr '\n' ' ' <"$OUT/spctl.txt")"; }
 START=$(date +%s)
 "$APP/Contents/MacOS/Dropfit" >"$OUT/run2.txt" 2>&1 &
 P2=$!; sleep 10
