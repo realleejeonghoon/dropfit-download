@@ -39,7 +39,7 @@ jobs:
       matrix:
         os: [macos-15, macos-26]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,13 +86,15 @@ jobs:
         run: |
           if [ -f tools/화면코드점검.py ]; then python3 tools/화면코드점검.py; else echo "· 이 소스에는 아직 tools/화면코드점검.py가 없음 (빌드 44부터)"; fi
       - name: 공개 앱 실제 사용자 모드 (점검 모드 없이)
-        timeout-minutes: 10
-        run: bash brand/state_app_mac.sh Dropfit-macOS.zip "$RUNNER_TEMP/app" "(이번 zip)"
+        timeout-minutes: 14
+        run: |
+          git show e9b0ce3:Dropfit-macOS.zip > "$RUNNER_TEMP/o6.zip"   # 0.6.12: 0.6에서 온 사용자 시험용
+          OLD06_ZIP="$RUNNER_TEMP/o6.zip" bash brand/state_app_mac.sh Dropfit-macOS.zip "$RUNNER_TEMP/app" "(이번 zip)"
       - name: 점검이 살아 있는지 - 빌드 42 공개 앱 (실패해야 함)
-        timeout-minutes: 10
+        timeout-minutes: 14
         run: |
           git show "$KNOWN_BAD_ZIP:Dropfit-macOS.zip" > "$RUNNER_TEMP/b42.zip"
-          code=0; bash brand/state_app_mac.sh "$RUNNER_TEMP/b42.zip" "$RUNNER_TEMP/b42" "(고치기 전: 빌드 42)" > "$RUNNER_TEMP/b42.txt" 2>&1 || code=$?
+          code=0; OLD06_ZIP="$RUNNER_TEMP/o6.zip" bash brand/state_app_mac.sh "$RUNNER_TEMP/b42.zip" "$RUNNER_TEMP/b42" "(고치기 전: 빌드 42)" > "$RUNNER_TEMP/b42.txt" 2>&1 || code=$?
           grep -E "▸|✗|결과" "$RUNNER_TEMP/b42.txt" | head -20
           if [ $code = 1 ]; then echo "✓ 고치기 전 공개 앱(빌드 42)을 잡음" || true; else echo "::error::공개 앱 점검이 빌드 42를 잡지 못함(끝 코드 $code) — 이 점검을 믿을 수 없음"; exit 1; fi
       - name: 요약
