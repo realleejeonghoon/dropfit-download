@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     env:
-      SRC_BRANCH: ${{ inputs.src || 'main' }}
+      SRC_BRANCH: ${{ inputs.src || (github.event_name == 'pull_request' && 'claude/project-thread-fb6oxn') || 'main' }}   # PR에서는 점검 도구를 고친 작업 가지
     steps:
       - name: 비공개 소스 받기 (읽기 전용 열쇠)
         env:
@@ -73,6 +73,7 @@ jobs:
           exit $fail
 
       - name: 같은 장면 창 크기 대조 (한국어 기준)
+        if: always()
         run: |
           python3 - "$RUNNER_TEMP/shots" <<'PY'
           import os, struct, sys
@@ -97,6 +98,15 @@ jobs:
           print(f"결과: 장면 {len(names)}개 · 크기 다름·빠짐 {bad}건")
           sys.exit(1 if bad else 0)
           PY
+
+      - name: 화면 사진을 기록에 남기기 (작게 줄인 JPG, 아티팩트를 못 받는 곳에서 보기용)
+        if: always()
+        run: |
+          cd "$RUNNER_TEMP/shots" || exit 0
+          for f in */*.png; do
+            sips -s format jpeg -s formatOptions 70 -Z 900 "$f" --out "$RUNNER_TEMP/s.jpg" >/dev/null 2>&1 || continue
+            echo "IMG $f $(base64 -i "$RUNNER_TEMP/s.jpg" | tr -d '\n')"
+          done
 
       - name: 화면 사진 올리기 (언어별)
         if: always()
