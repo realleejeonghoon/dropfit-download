@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><!-- sparkle-sign-warning:
 IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
---><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+--><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dropfit="https://dropfit.kr/ns/appcast" version="2.0">
   <channel>
     <title>Dropfit</title>
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast-now.xml</link>
     <language>ko</language>
+    <item>
+      <title>Dropfit 1.0.1</title>
+      <sparkle:version>48</sparkle:version>
+      <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <pubDate>Tue, 24 Nov 2026 12:50:59 +0000</pubDate>
+      <sparkle:criticalUpdate sparkle:version="43"></sparkle:criticalUpdate>
+      <description><![CDATA[<ul><li>일본어를 지원합니다.</li><li>흐린 칸과 PDF 나누기에서 무엇을 할 수 있는지 바로 보입니다.</li><li>폴더째 바꾸면 새 폴더 이름에 정한 용량이 붙습니다.</li></ul>]]></description>
+      <dropfit:notesEn><![CDATA[<ul><li>Dropfit is now available in Japanese.</li><li>Dimmed slots and PDF splitting now show what you can do.</li><li>When you convert a folder, the new folder name includes the size you set.</li></ul>]]></dropfit:notesEn>
+      <dropfit:notesJa><![CDATA[<ul><li>日本語に対応しました。</li><li>薄いスロットとPDFの分割で、できることがすぐ分かります。</li><li>フォルダごと変換すると、新しいフォルダ名に決めた容量が付きます。</li></ul>]]></dropfit:notesJa>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0.1-48.zip" type="application/octet-stream" sparkle:edSignature="BEdKOgxY2VkPGo4NX0+z93FWWE76J2RLrrqMjzuXvjcEJ2cGYyTgnhsXw7+aRF0JHgevR+ihk/VobaUFPTLfBQ==" length="4156857"></enclosure>
+    </item>
     <item>
       <title>Dropfit 1.0</title>
       <sparkle:version>47</sparkle:version>
       <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       <pubDate>Sat, 21 Nov 2026 10:53:10 +0000</pubDate>
-      <sparkle:criticalUpdate sparkle:version="43"></sparkle:criticalUpdate>
       <description><![CDATA[<ul><li>Dropfit 1.0입니다. 처음 실행하면 14일 동안 Pro를 모두 사용할 수 있습니다.</li><li>Pro 프리셋: 칸마다 이름, 포맷, 용량, 저장 위치를 정해 둘 수 있습니다. 설정에서 칸을 누르면 그 칸 바로 아래에 펼쳐집니다.</li><li>Pro 자르기: 여러 이미지를 같은 비율로 한 번에 자릅니다.</li><li>스캔한 PDF도 5MB처럼 작은 용량에 맞춥니다. 글씨가 읽히는 선(110dpi)까지만 줄입니다.</li><li>설정 창이 펼쳐지고 접힐 때 목록과 창이 한 움직임으로 부드럽게 바뀝니다.</li><li>설정에 '사용 통계 보내기'가 생겼습니다. 기능과 오류의 횟수만 보내며, 파일과 개인정보는 보내지 않습니다. 끄면 모아 둔 숫자도 지웁니다.</li><li>변환, 폴더째 변환, PDF 합치기는 계속 무료로 사용할 수 있습니다.</li><li>Dropfit 오른쪽 클릭 메뉴 맨 위나 설정 창 맨 위의 'Pro 구입…'을 누르면 바로 구입할 수 있고, 구입 메일의 버튼을 누르면 Pro가 활성화됩니다.</li></ul>]]></description>
       <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-47.zip" type="application/octet-stream" sparkle:edSignature="aRsJu1GGNK2V8R2Qu3dJRr1Acoh1UDYWsX4Z3REuTYzhTB8Z1Tmq+Ju6VOnsc6xAAmODxED+sx05X/H265KrCA==" length="4050650"></enclosure>
     </item>
-    <item>
-      <title>Dropfit 1.0</title>
-      <sparkle:version>46</sparkle:version>
-      <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
-      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Fri, 20 Nov 2026 10:06:52 +0000</pubDate>
-      <description><![CDATA[<ul><li>Dropfit 1.0입니다. 처음 실행하면 14일 동안 Pro를 모두 사용할 수 있습니다.</li><li>Pro 프리셋: 칸마다 이름, 포맷, 용량, 저장 위치를 정해 둘 수 있습니다. 설정에서 칸을 누르면 그 칸 바로 아래에 펼쳐집니다.</li><li>Pro 자르기: 여러 이미지를 같은 비율로 한 번에 자릅니다.</li><li>스캔한 PDF도 5MB처럼 작은 용량에 맞춥니다. 글씨가 읽히는 선(110dpi)까지만 줄입니다.</li><li>설정 창이 펼쳐지고 접힐 때 목록과 창이 한 움직임으로 부드럽게 바뀝니다.</li><li>설정에 '사용 통계 보내기'가 생겼습니다. 기능과 오류의 횟수만 보내며, 파일과 개인정보는 보내지 않습니다. 끄면 모아 둔 숫자도 지웁니다.</li><li>변환, 폴더째 변환, PDF 합치기는 계속 무료로 사용할 수 있습니다.</li><li>Dropfit 오른쪽 클릭 메뉴 맨 위나 설정 창 맨 위의 'Pro 구입…'을 누르면 바로 구입할 수 있고, 구입 메일의 버튼을 누르면 Pro가 활성화됩니다.</li></ul>]]></description>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0-46.zip" type="application/octet-stream" sparkle:edSignature="8kNm9auO+TknLdcWEDg3SjDIgF7yjsiblsQ6BYTVz47A9XHhWT8QFfNV5Cxo/rfMv9vPRtC/5UMr/HREw0U+Dg==" length="4043300"></enclosure>
-    </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: G8v3y32U1fWPsYX844K4B+NncBOrphLiUPV/u+9Sks3iSqgTej/2Qjjgz04x0e0s+Of+qGH2awYEwAHT0UXRCw==
-length: 4091
+edSignature: bsAlexh17nLlztiitsAJqvFXjMlMnB0i7yDShzIvm8aYkInIZjWT3XRowZ7Rev896I5s1Cy54KLcwLtUzqLtCQ==
+length: 3824
 -->
