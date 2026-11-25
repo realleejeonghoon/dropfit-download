@@ -274,7 +274,11 @@ def rss(run):
                 b = r.read()
             if b[:2] == b"\x1f\x8b":
                 b = gzip.decompress(b)
-            root = ET.fromstring(b)
+            try:
+                root = ET.fromstring(b)
+            except ET.ParseError:  # 뽐뿌처럼 EUC-KR 피드: 한글 코드로 읽고 머리 선언을 뺀 뒤 다시
+                txt = b.decode("cp949", "replace")
+                root = ET.fromstring(re.sub(r"^<\?xml[^>]*\?>", "", txt.strip()).encode("utf-8"))
             st[0] += 1
         except Exception as e:
             st[3] = err(e); continue
