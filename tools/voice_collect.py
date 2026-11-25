@@ -55,6 +55,13 @@ PAIN = re.compile(
     r"안 ?(돼|되|올라|열려|열리)|어떻게|방법|못 ?(하|해|올)|불편|짜증|초과|넘어|제한|도와|급해|막혀|지원하지 않는"
     r"|can'?t|cannot|won'?t|how (do|can|to|would)|unable|too (large|big)|exceed|limit|annoying|frustrat|help|is there (a|any) way|struggl|keeps? failing|not supported|unsupported"
     r"|できない|できません|方法|どうやって|どうすれば|困|教えて|開けない|上限|超え|対応していない", re.I)
+# 지금 쓰는 대안(정훈 님 11/25 "기존 대안과 다르게 어떻게 깔끔하게 끝내는지"): 글에 나온 것만 적는다
+ALTS = [("미리보기", r"미리보기|preview\.app|\bpreview\b|プレビュー"), ("사진 앱", r"사진 앱|photos app|写真アプリ"),
+        ("단축어·자동화", r"단축어|shortcuts?|automator|ショートカット"), ("터미널·sips", r"\bsips\b|terminal|imagemagick|ffmpeg|ターミナル"),
+        ("iLovePDF", r"ilovepdf"), ("Smallpdf", r"smallpdf"), ("변환 사이트", r"변환 사이트|online converter|converter site|変換サイト|オンライン変換"),
+        ("Acrobat", r"acrobat|어크로뱃|アクロバット"), ("Photoshop", r"photoshop|포토샵|フォトショ"), ("ImageOptim", r"imageoptim"),
+        ("캡처", r"캡처|캡쳐|screenshot|スクショ")]
+ALTS = [(n, re.compile(r, re.I)) for n, r in ALTS]
 MAC = re.compile(r"\bmac|macbook|imac|macos|맥북|맥|아이맥|맥os|マック|マックブック", re.I)
 
 # ── 검색어(출처별). 영어 Stack Exchange·HN, 일본어 Qiita, Bluesky 3개 언어 ──
@@ -75,7 +82,7 @@ NAVER_QUERIES = [("P01", "HEIC JPG 변환"), ("P01", "아이폰 사진 HEIC 업�
                  ("P09", "사진 여러장 한번에 변환"), ("P11", "사진 여러장 한번에 자르기"),
                  ("P12", "증명사진 용량 줄이기"), ("P16", "메일 첨부 용량 초과")]
 
-HEAD = ["수집일", "출처", "언어", "문제", "검색어", "글 날짜", "제목", "원문 발췌", "링크", "고통 신호", "맥 언급"]
+HEAD = ["수집일", "출처", "언어", "문제", "검색어", "글 날짜", "제목", "원문 발췌", "링크", "고통 신호", "맥 언급", "쓰는 대안"]
 COUNT_HEAD = ["수집일", "언어", "문제", "출처", "새 글", "고통 신호 글", "맥 언급 글"]
 NAVER_HEAD = ["수집일", "문제", "종류", "검색어", "전체 글 수", "전날 대비"]
 STATUS_HEAD = ["수집일", "출처", "상태", "요청", "받은 글", "새 글", "메모"]
@@ -151,7 +158,8 @@ class Run:
             return 0
         self.new_keys.add(k)
         self.rows.append([TODAY, source, lang, p, query, date, mask(strip_html(title))[:160], excerpt(body or title),
-                          link, "1" if PAIN.search(text) else "0", "1" if MAC.search(text) else "0"])
+                          link, "1" if PAIN.search(text) else "0", "1" if MAC.search(text) else "0",
+                          ", ".join(n for n, rx in ALTS if rx.search(text))])
         return 1
 
     def note(self, source, ok, req, got, new, memo=""):
