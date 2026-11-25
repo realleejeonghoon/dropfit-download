@@ -10,9 +10,6 @@ on:
       src:
         description: '점검할 Dropfit 가지'
         default: main
-  pull_request:
-    paths:
-      - '.github/workflows/lang-shots.yml'
 
 permissions:
   contents: read
@@ -27,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     env:
-      SRC_BRANCH: ${{ inputs.src || (github.event_name == 'pull_request' && 'claude/project-thread-fb6oxn') || 'main' }}   # PR에서는 점검 도구를 고친 작업 가지
+      SRC_BRANCH: ${{ inputs.src || 'main' }}   # PR에서는 점검 도구를 고친 작업 가지
     steps:
       - name: 비공개 소스 받기 (읽기 전용 열쇠)
         env:
