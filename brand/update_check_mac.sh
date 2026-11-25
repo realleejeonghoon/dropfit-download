@@ -145,6 +145,15 @@ if [ $LOCAL = 1 ] && [ -n "${UPDATE_SERVER_LOG:-}" ]; then
   grep -q 'GET /appcast.xml' <<<"$AFTER2" && put ok "최신 앱이 시험 목록을 다시 읽음" || put bad "최신 앱이 시험 목록을 다시 읽지 않음(재업데이트 여부를 잴 수 없음)"
   grep -q 'GET /Dropfit-new.zip' <<<"$AFTER2" && put bad "최신 앱이 새 zip을 또 받음: 반복 업데이트" || put ok "최신 앱이 zip을 다시 받지 않음"
 fi
+# 다시 확인하지 않았으면 원인을 남긴다: 그 순간의 Sparkle 설정·설치 도우미 프로세스·앱 시스템 기록 (11/25 시험 목록에서만 확인 안 함)
+if [ $CHECKED != yes ]; then
+  echo "--- 최신 앱이 다시 확인하지 않은 순간"
+  echo "Sparkle 설정: $(defaults read $DOM 2>/dev/null | grep -E 'SU[A-Za-z]+' | tr -s ' \n' ' ' | cut -c1-400)"
+  echo "설치 도우미: $(pgrep -lf 'Autoupdate|Installer|sparkle' 2>/dev/null | cut -c1-120 | tr '\n' ';')"
+  echo "Info.plist: $(for key in SUFeedURL SUEnableAutomaticChecks SUScheduledCheckInterval; do printf '%s=%s ' "$key" "$(/usr/libexec/PlistBuddy -c "Print :$key" "$APP/Contents/Info.plist" 2>&1 | cut -c1-60)"; done)"
+  perl -e 'alarm shift; exec @ARGV' 60 log show --last 3m --style compact --info --debug --predicate 'process == "Dropfit" OR process CONTAINS "Autoupdate" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-recheck.txt" 2>&1
+  echo "--- 시스템 기록 (Sparkle·설치 줄, 끝 30줄)"; grep -v libMobileGestalt "$OUT/syslog-recheck.txt" | grep -i "sparkle\|update\|install\|appcast\|error" | tail -30 | cut -c1-220
+fi
 kill $P2 2>/dev/null
 CR=$(find ~/Library/Logs/DiagnosticReports /Library/Logs/DiagnosticReports -name 'Dropfit*' -newermt "@$START" 2>/dev/null | head -3)
 [ -z "$CR" ] && put ok "충돌 보고서 0개" || put bad "충돌 보고서: $CR"
