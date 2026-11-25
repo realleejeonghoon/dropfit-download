@@ -13,7 +13,8 @@
 - Reddit은 상업 이용에 서면 승인이 필요해(2025-11부터 새 클라이언트 승인제) 넣지 않는다.
 
 출처: Stack Exchange(Ask Different·Super User, 내용 CC BY-SA), Hacker News(Algolia 공개 API),
-      Qiita(공개 API, ja), 게시판 공개 RSS(MacRumors·하테나), 네이버 검색 API(숫자만, ko).
+      Qiita(공개 API, ja), 게시판 공개 RSS(MacRumors·GeekNews·하테나), App Store 리뷰(한·미·일, 경쟁 앱),
+      Mastodon 공개 태그(en·ja), Mac Power Users 포럼(Discourse 공개 검색), 네이버 검색 API(숫자만, ko).
       Bluesky 공개 검색은 클라우드에서 403이라 꺼 둠(VOICE_BLUESKY=1로 켬)
 
 사용: python3 tools/voice_collect.py <출력 폴더> [이전 기록 폴더]
@@ -265,6 +266,7 @@ def qiita(run):
 RSS = [
     ("MacRumors 포럼", "en", "https://forums.macrumors.com/forums/-/index.rss"),
     # 클리앙 맥당·뽐뿌 맥포럼: 공개 RSS가 없음(11/25 확인: 클리앙 /rss 400·피드 링크 없음, 뽐뿌 rss.php 빈 응답) → 넣지 않음
+    ("GeekNews", "ko", "https://news.hada.io/rss/news"),
     ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=HEIC&mode=rss"),
     ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=PDF%20%E7%B5%90%E5%90%88&mode=rss"),
     ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=PDF%20%E5%9C%A7%E7%B8%AE&mode=rss"),
@@ -312,6 +314,91 @@ def rss(run):
         run.note(label, "정상" if req else "오류", req, got, new, memo)
 
 
+# ── App Store 리뷰(한·미·일): 같은 문제를 푸는 Mac 앱에 사용자가 남긴 불만 = '기존 대안'의 말 ──
+# Apple 공식 iTunes Search API로 앱을 찾고, 공식 고객 리뷰 RSS(JSON)에서 최신 리뷰를 읽는다. 작성자 이름은 받지 않는다.
+APPSTORE_TERMS = {"kr": ["heic", "pdf 합치기", "이미지 변환", "사진 용량"], "us": ["heic converter", "pdf merge", "image converter", "image compressor"],
+                  "jp": ["heic", "pdf 結合", "画像 変換", "画像 圧縮"]}
+APPSTORE_LANG = {"kr": "ko", "us": "en", "jp": "ja"}
+
+
+def appstore(run):
+    for cc, terms in APPSTORE_TERMS.items():
+        req = got = new = 0; memo = ""; apps = {}
+        for term in terms:
+            try:
+                d = get_json("https://itunes.apple.com/search?" + urllib.parse.urlencode({"term": term, "country": cc, "entity": "macSoftware", "limit": 8})); req += 1
+                for a in d.get("results", []):
+                    if a.get("trackId") and a.get("bundleId") != "kr.dropfit.app":
+                        apps[a["trackId"]] = a.get("trackName", "")[:40]
+            except Exception as e:
+                memo = err(e)
+            time.sleep(0.4)
+        for aid, name in list(apps.items())[:20]:
+            try:
+                d = get_json(f"https://itunes.apple.com/{cc}/rss/customerreviews/page=1/id={aid}/sortby=mostrecent/json"); req += 1
+            except Exception as e:
+                memo = err(e); continue
+            entries = d.get("feed", {}).get("entry", [])
+            if isinstance(entries, dict):
+                entries = [entries]
+            for en in entries:
+                if "im:rating" not in en:
+                    continue  # 첫 항목은 앱 정보
+                got += 1
+                date = (en.get("updated", {}).get("label") or "")[:10]
+                if date and date < SINCE.strftime("%Y-%m-%d"):
+                    continue
+                rid = en.get("id", {}).get("label", "")
+                link = f"https://apps.apple.com/{cc}/app/id{aid}#review-{rid}"
+                new += run.add(f"App Store {cc}", APPSTORE_LANG[cc], f"{name} ★{en['im:rating'].get('label','')}", date,
+                               en.get("title", {}).get("label", ""), en.get("content", {}).get("label", ""), link)
+            time.sleep(0.4)
+        run.note(f"App Store {cc}", "정상" if req else "오류", req, got, new, memo or f"앱 {len(apps)}개")
+
+
+# ── Mastodon 공개 태그 타임라인(로그인 없이 읽는 공식 API) ──
+MASTODON = [("mastodon.social", "en", ["heic", "pdf", "webp", "macos"]), ("mstdn.jp", "ja", ["HEIC", "PDF", "Mac"])]
+
+
+def mastodon(run):
+    for host, lang, tags in MASTODON:
+        req = got = new = 0; memo = ""
+        for tag in tags:
+            try:
+                d = get_json(f"https://{host}/api/v1/timelines/tag/{urllib.parse.quote(tag)}?limit=40"); req += 1
+            except Exception as e:
+                memo = err(e); continue
+            for st in d if isinstance(d, list) else []:
+                got += 1
+                date = (st.get("created_at") or "")[:10]
+                if date and date < SINCE.strftime("%Y-%m-%d"):
+                    continue
+                new += run.add(f"Mastodon {host}", st.get("language") or lang, "#" + tag, date, "", st.get("content", ""), st.get("url") or st.get("uri", ""))
+            time.sleep(0.5)
+        run.note(f"Mastodon {host}", "정상" if req else "오류", req, got, new, memo)
+
+
+# ── Mac Power Users 포럼(Discourse 공개 검색 JSON): Mac으로 일하는 사람들의 작업 흐름 질문 ──
+MPU_QUERIES = ["heic", "merge pdf", "compress pdf", "batch convert images", "resize images", "webp"]
+
+
+def mpu(run):
+    req = got = new = 0; memo = ""
+    after = SINCE.strftime("%Y-%m-%d")
+    for q in MPU_QUERIES:
+        try:
+            d = get_json("https://talk.macpowerusers.com/search.json?" + urllib.parse.urlencode({"q": f"{q} after:{after} order:latest"})); req += 1
+        except Exception as e:
+            memo = err(e); break
+        topics = {t["id"]: t.get("title", "") for t in d.get("topics", [])}
+        for p in d.get("posts", []):
+            got += 1
+            link = f"https://talk.macpowerusers.com/t/{p.get('topic_id')}/{p.get('post_number', 1)}"
+            new += run.add("MPU 포럼", "en", q, (p.get("created_at") or "")[:10], topics.get(p.get("topic_id"), ""), p.get("blurb", ""), link)
+        time.sleep(1.0)
+    run.note("MPU 포럼", "정상" if req else "오류", req, got, new, memo)
+
+
 def naver_totals(prev_dir):
     """글 내용·링크는 저장하지 않고 전체 글 수만(약관 7.3③). 전날 대비 = 하루 새 글 추정."""
     cid, sec = os.environ.get("NAVER_CLIENT_ID"), os.environ.get("NAVER_CLIENT_SECRET")
@@ -352,7 +439,7 @@ def main(out, prev_dir=None):
     os.makedirs(out, exist_ok=True)
     run = Run(prev_dir)
     # Bluesky 공개 검색은 GitHub 클라우드에서 403(11/25 시험) → 로그인 키가 생길 때까지 끔
-    fns = [stackexchange, hackernews, qiita, rss] + ([bluesky] if os.environ.get("VOICE_BLUESKY") else [])
+    fns = [stackexchange, hackernews, qiita, rss, appstore, mastodon, mpu] + ([bluesky] if os.environ.get("VOICE_BLUESKY") else [])
     for fn in fns:
         try:
             fn(run)
