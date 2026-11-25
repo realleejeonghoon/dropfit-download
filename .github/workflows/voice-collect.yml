@@ -38,7 +38,10 @@ jobs:
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-        run: python3 tools/voice_collect.py "$RUNNER_TEMP/out" "$RUNNER_TEMP/prev"
+        run: |
+          # 첫 실행(이전 기록 없음)은 30일을 훑어 바탕을 만들고, 그 뒤로는 2일(중복은 seen으로 거름)
+          [ -s "$RUNNER_TEMP/prev/seen.txt" ] || export VOICE_DAYS=30
+          python3 tools/voice_collect.py "$RUNNER_TEMP/out" "$RUNNER_TEMP/prev"
       - name: 기록 가지(voice-data)에 올리기
         if: github.event_name != 'push'
         run: |

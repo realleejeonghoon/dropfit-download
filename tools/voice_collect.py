@@ -13,7 +13,8 @@
 - Reddit은 상업 이용에 서면 승인이 필요해(2025-11부터 새 클라이언트 승인제) 넣지 않는다.
 
 출처: Stack Exchange(Ask Different·Super User, 내용 CC BY-SA), Hacker News(Algolia 공개 API),
-      Bluesky(공개 검색 API, en·ja·ko), Qiita(공개 API, ja), 네이버 검색 API(숫자만, ko)
+      Qiita(공개 API, ja), 게시판 공개 RSS(MacRumors·클리앙·뽐뿌·하테나), 네이버 검색 API(숫자만, ko).
+      Bluesky 공개 검색은 클라우드에서 403이라 꺼 둠(VOICE_BLUESKY=1로 켬)
 
 사용: python3 tools/voice_collect.py <출력 폴더> [이전 기록 폴더]
 환경 변수: NAVER_CLIENT_ID, NAVER_CLIENT_SECRET(없으면 네이버 건너뜀), VOICE_DAYS(기본 2)
@@ -163,7 +164,8 @@ def err(e):
 
 
 def stackexchange(run):
-    since = int(SINCE.timestamp())
+    # 질문이 하루 몇 건뿐이라 최소 7일을 보고 중복은 seen으로 거름
+    since = int(min(SINCE, NOW - dt.timedelta(days=7)).timestamp())
     for site, label, need_mac in (("apple", "Ask Different", False), ("superuser", "Super User", True)):
         req = got = new = 0
         memo = ""
@@ -250,6 +252,54 @@ def qiita(run):
     run.note("Qiita", "정상" if req else "오류", req, got, new, memo)
 
 
+# 공개 RSS(게시판이 구독용으로 내놓은 피드). 최신 글 몇십 개만 오므로 매일 읽어 거른다.
+RSS = [
+    ("MacRumors 포럼", "en", "https://forums.macrumors.com/forums/-/index.rss"),
+    ("클리앙 맥당", "ko", "https://www.clien.net/service/board/cm_mac/rss"),
+    ("뽐뿌 맥포럼", "ko", "https://www.ppomppu.co.kr/rss.php?id=mac"),
+    ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=HEIC&mode=rss"),
+    ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=PDF%20%E7%B5%90%E5%90%88&mode=rss"),
+    ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=PDF%20%E5%9C%A7%E7%B8%AE&mode=rss"),
+]
+
+
+def rss(run):
+    import xml.etree.ElementTree as ET
+    stat = {}
+    for label, lang, url in RSS:
+        st = stat.setdefault(label, [0, 0, 0, ""])
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Encoding": "gzip"})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                b = r.read()
+            if b[:2] == b"\x1f\x8b":
+                b = gzip.decompress(b)
+            root = ET.fromstring(b)
+            st[0] += 1
+        except Exception as e:
+            st[3] = err(e); continue
+        items = root.findall(".//item") or root.findall(".//{http://purl.org/rss/1.0/}item") or root.findall(".//{http://www.w3.org/2005/Atom}entry")
+        for it in items:
+            def t(*names):
+                for n in names:
+                    for el in it.iter():
+                        if el.tag.split("}")[-1] == n and (el.text or el.get("href")):
+                            return el.text or el.get("href")
+                return ""
+            st[1] += 1
+            link = t("link") or ""
+            date = t("pubDate", "date", "published", "updated")
+            try:
+                from email.utils import parsedate_to_datetime
+                date = parsedate_to_datetime(date).astimezone(KST).strftime("%Y-%m-%d")
+            except Exception:
+                date = (date or "")[:10]
+            st[2] += run.add(label, lang, "피드", date, t("title"), t("description", "summary", "encoded"), link.strip())
+        time.sleep(0.5)
+    for label, (req, got, new, memo) in stat.items():
+        run.note(label, "정상" if req else "오류", req, got, new, memo)
+
+
 def naver_totals(prev_dir):
     """글 내용·링크는 저장하지 않고 전체 글 수만(약관 7.3③). 전날 대비 = 하루 새 글 추정."""
     cid, sec = os.environ.get("NAVER_CLIENT_ID"), os.environ.get("NAVER_CLIENT_SECRET")
@@ -265,7 +315,7 @@ def naver_totals(prev_dir):
     h = {"X-NCP-APIGW-API-KEY-ID": cid, "X-NCP-APIGW-API-KEY": sec}
     rows, req, memo = [], 0, ""
     for p, q in NAVER_QUERIES:
-        for kind in ("blog", "cafearticle", "kin"):
+        for kind in ("blog", "cafearticle"):  # kin(지식iN)은 API HUB 구독에 없음(11/25 시험 401)
             url = f"https://naverapihub.apigw.ntruss.com/search/v1/{kind}?" + urllib.parse.urlencode({"query": q, "display": 1, "format": "json"})
             try:
                 d = get_json(url, h); req += 1
@@ -289,7 +339,9 @@ def tsv(path, head, rows):
 def main(out, prev_dir=None):
     os.makedirs(out, exist_ok=True)
     run = Run(prev_dir)
-    for fn in (stackexchange, hackernews, bluesky, qiita):
+    # Bluesky 공개 검색은 GitHub 클라우드에서 403(11/25 시험) → 로그인 키가 생길 때까지 끔
+    fns = [stackexchange, hackernews, qiita, rss] + ([bluesky] if os.environ.get("VOICE_BLUESKY") else [])
+    for fn in fns:
         try:
             fn(run)
         except Exception as e:
