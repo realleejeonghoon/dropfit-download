@@ -31,8 +31,10 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/prev"
           if git fetch -q origin voice-data; then
-            git show FETCH_HEAD:data/voice/seen.txt > "$RUNNER_TEMP/prev/seen.txt" 2>/dev/null || true
-            git show FETCH_HEAD:data/voice/latest-naver.tsv > "$RUNNER_TEMP/prev/naver-latest.tsv" 2>/dev/null || true
+            for pair in "seen.txt:seen.txt" "latest-naver.tsv:naver-latest.tsv"; do
+              src=data/voice/${pair%%:*}
+              if git cat-file -e "FETCH_HEAD:$src"; then git show "FETCH_HEAD:$src" > "$RUNNER_TEMP/prev/${pair##*:}"; fi
+            done
           fi
       - name: 수집
         env:
