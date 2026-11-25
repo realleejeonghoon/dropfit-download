@@ -1,0 +1,56 @@
+name: 고객의 말 매일 수집
+
+# 매일 06:20 KST(GitHub 예약은 늦게 돌 수 있음). 드롭핏 고객 문제(P01~P18)를 겪는 사람의 글을
+# 공식 API에서만 모아 voice-data 가지 data/voice/에 날짜별로 쌓는다(latest-*.tsv = 오늘분).
+# 09:17 SEO·09:30 업로드 사이클이 latest 파일을 읽는다. main(공개 사이트)은 건드리지 않는다.
+# 글쓴이 정보는 받지 않고 발췌의 메일·전화·@아이디는 가린다. 네이버는 약관상 숫자만. 로그에는 숫자만 찍는다.
+# 작업 가지 push 때는 시험만 하고 올리지 않는다.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 21 * * *'   # 06:20 KST
+  push:
+    branches: ['claude/**']
+    paths: ['tools/voice_collect.py', '.github/workflows/voice-collect.yml']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: voice-collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    name: 고객의 말 수집
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: 이전 기록 받기(중복 거르기·네이버 전날 수)
+        run: |
+          mkdir -p "$RUNNER_TEMP/prev"
+          if git fetch -q origin voice-data; then
+            git show FETCH_HEAD:data/voice/seen.txt > "$RUNNER_TEMP/prev/seen.txt" 2>/dev/null || true
+            git show FETCH_HEAD:data/voice/latest-naver.tsv > "$RUNNER_TEMP/prev/naver-latest.tsv" 2>/dev/null || true
+          fi
+      - name: 수집
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: python3 tools/voice_collect.py "$RUNNER_TEMP/out" "$RUNNER_TEMP/prev"
+      - name: 기록 가지(voice-data)에 올리기
+        if: github.event_name != 'push'
+        run: |
+          d=$(TZ=Asia/Seoul date +%F)
+          o="$RUNNER_TEMP/out"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch -q origin voice-data; then git checkout -q -B voice-data FETCH_HEAD; else git checkout -q --orphan voice-data; git rm -rqf .; fi
+          mkdir -p data/voice/$d
+          cp "$o"/*-$d.tsv data/voice/$d/
+          for k in voice counts naver status; do cp "$o/$k-$d.tsv" "data/voice/latest-$k.tsv"; done
+          cp "$o/seen.txt" data/voice/seen.txt
+          git add data/voice
+          git commit -qm "고객의 말 $d" || { echo "바뀐 것 없음"; exit 0; }
+          git push -q origin voice-data
