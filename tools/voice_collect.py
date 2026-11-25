@@ -13,7 +13,7 @@
 - Reddit은 상업 이용에 서면 승인이 필요해(2025-11부터 새 클라이언트 승인제) 넣지 않는다.
 
 출처: Stack Exchange(Ask Different·Super User, 내용 CC BY-SA), Hacker News(Algolia 공개 API),
-      Qiita(공개 API, ja), 게시판 공개 RSS(MacRumors·클리앙·뽐뿌·하테나), 네이버 검색 API(숫자만, ko).
+      Qiita(공개 API, ja), 게시판 공개 RSS(MacRumors·하테나), 네이버 검색 API(숫자만, ko).
       Bluesky 공개 검색은 클라우드에서 403이라 꺼 둠(VOICE_BLUESKY=1로 켬)
 
 사용: python3 tools/voice_collect.py <출력 폴더> [이전 기록 폴더]
@@ -264,8 +264,7 @@ def qiita(run):
 # 공개 RSS(게시판이 구독용으로 내놓은 피드). 최신 글 몇십 개만 오므로 매일 읽어 거른다.
 RSS = [
     ("MacRumors 포럼", "en", "https://forums.macrumors.com/forums/-/index.rss"),
-    ("클리앙 맥당", "ko", "https://www.clien.net/service/board/cm_mac/rss"),
-    ("뽐뿌 맥포럼", "ko", "https://www.ppomppu.co.kr/rss.php?id=mac"),
+    # 클리앙 맥당·뽐뿌 맥포럼: 공개 RSS가 없음(11/25 확인: 클리앙 /rss 400·피드 링크 없음, 뽐뿌 rss.php 빈 응답) → 넣지 않음
     ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=HEIC&mode=rss"),
     ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=PDF%20%E7%B5%90%E5%90%88&mode=rss"),
     ("하테나 북마크", "ja", "https://b.hatena.ne.jp/search/text?q=PDF%20%E5%9C%A7%E7%B8%AE&mode=rss"),
