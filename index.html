@@ -46,7 +46,7 @@
   (function () { try { var f = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12);
     if (f) document.getElementById('go').href = 'https://dropfit.kr/?from=' + f; } catch (e) {} })();
   // 방문 수: 탭당 1번, 채널만 보낸다(F-013). 버전 표시는 같이 공개되는 zip·appcast와 같아야 한다(brand/check.py)
-  (function () { var VERSION = '1.0.2'; try { if (sessionStorage.getItem('dropfit-visit')) return; sessionStorage.setItem('dropfit-visit', '1');
+  (function () { var VERSION = '1.0.3'; try { if (sessionStorage.getItem('dropfit-visit')) return; sessionStorage.setItem('dropfit-visit', '1');
     var vb = new URLSearchParams({ event: 'visit', src: 'gh-notice' }), u = 'https://script.google.com/macros/s/AKfycbyh4PCaMhGnR2MqHC5dj_C-kFilK0iX2a5KKrZfWOj4YpLEo8kA7RvDTG0PzrZMUg72tQ/exec';
     if (!(navigator.sendBeacon && navigator.sendBeacon(u, vb))) fetch(u, { method: 'POST', mode: 'no-cors', body: vb, keepalive: true }); } catch (e) {} })();
 </script>
