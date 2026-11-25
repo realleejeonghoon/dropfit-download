@@ -16,7 +16,7 @@ So I built Dropfit myself.
 
 Drag and drop, and you're done.
 
-I think it'll help Mac users who, like me, can't stand hassle and busywork.
+Dropfit is a tool for creators who work on a Mac.
 
 I'd really appreciate your interest.
 
