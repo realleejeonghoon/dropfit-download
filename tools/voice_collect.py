@@ -33,11 +33,12 @@ UA = "dropfit-voice-research/1.0 (+https://dropfit.kr)"
 RULES = [
     ("P12", r"증명사진|여권 ?사진|passport photo|id photo|visa photo|証明写真|パスポート写真"),
     ("P15", r"\bsvg\b|\.ai (file|파일)|\bai file|illustrator file|일러스트(레이터)? 파일|\bpsd\b|イラレ|aiファイル"),
-    ("P14", r"오프라인|인터넷 (없|안 되|차단)|사내망|offline|no internet|air.?gapped|オフライン|ネット(なし|接続なし)"),
+    # 오프라인은 파일 작업 말과 가까이 있을 때만(보안 사고 토론 같은 다른 맥락 제외, 11/26)
+    ("P14", r"(오프라인|인터넷 (없|안 되|차단)|사내망|offline|no internet|air.?gapped|オフライン|ネット(なし|接続なし))[^.。]{0,60}(pdf|사진|이미지|변환|image|photo|convert|画像|写真|変換)|(pdf|사진|이미지|변환|image|photo|convert|画像|写真|変換)[^.。]{0,60}(오프라인|인터넷 (없|안 되|차단)|사내망|offline|no internet|air.?gapped|オフライン|ネット(なし|接続なし))"),
     ("P18", r"실습실|여러 대|lab mac|computer lab|classroom mac|every mac in|複数台|パソコン室"),
     ("P16", r"첨부.{0,8}(용량|초과|25 ?mb)|attachment.{0,20}(too (large|big)|limit|25 ?mb)|添付.{0,8}(容量|上限|25)"),
     ("P01", r"heic|heif"),
-    ("P08", r"webp"),
+    ("P08", r"\bwebp\b"),  # #WebPush 같은 해시태그 제외(11/26)
     ("P02", r"pdf.{0,12}(합치|합본|병합|하나로|묶)|(합치|병합).{0,6}pdf|(merge|combine|join).{0,15}pdfs?|pdfs?.{0,10}(merge|combin)|pdf.{0,6}(結合|まとめ|1つに|一つに)"),
     ("P04", r"pdf.{0,12}(용량|압축|줄이|크기|mb)|(compress|reduce|shrink).{0,15}pdf|pdf.{0,15}(too (large|big)|file size|smaller)|pdf.{0,6}(圧縮|容量|軽く|小さく)"),
     ("P05", r"pdf.{0,10}(jpg|jpeg|png|이미지로|사진으로)|pdf (to|into) (jpg|jpeg|png|image)|pdf.{0,6}(画像|jpg|jpeg|png)"),
@@ -139,6 +140,14 @@ def key(link):
     return hashlib.sha1(link.encode()).hexdigest()[:16]
 
 
+# 도구·서비스 홍보 글(가입 없이·무료·지금 써 보기·한 번 결제 등). 고객이 아니라 파는 쪽의 말이라 뺀다.
+AD = re.compile(r"no sign.?up|without (signing up|an account)|nothing (is )?uploaded|no uploads? to|no install|"
+                r"try it( free| now)?\s*:|start here\s*:|open the toolkit|one.?time (purchase|payment)|\$\d+(\.\d+)? one.?time|"
+                r"runs entirely in your browser|how [\w ]{1,30} can help|a practical use for|"
+                r"가입 ?없이|설치 ?없이|무료로 (사용|이용)하세요|지금 (바로 )?(사용|써) ?보세요|"
+                r"登録不要|インストール不要|無料で使える|今すぐ(試|使)", re.I)
+
+
 class Run:
     def __init__(self, prev_dir):
         self.rows, self.status = [], []
@@ -155,6 +164,8 @@ class Run:
             return 0
         # 주소 속 .ai·pdf 글자로 잘못 걸리지 않게 주소를 빼고 판정
         text = re.sub(r"https?://\S+|&#x2F;|\S+\.(ai|io|com|org|net)\b\S*", " ", strip_html(f"{title} {body}"))
+        if AD.search(text):  # 도구 홍보 글은 고객의 말이 아님(11/26 첫 예약분 12줄 중 7줄이 홍보)
+            return 0
         p = classify(text.lower())
         if not p:
             return 0
