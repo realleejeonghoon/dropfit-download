@@ -122,37 +122,36 @@ spctl --assess --type execute -vv "$APP" >"$OUT/spctl.txt" 2>&1
 # 받아 둔 것을 비우고 마지막 확인을 옛날로 돌려, 열자마자 다시 확인하게 한 뒤 90초 동안 새로 받는지 본다
 rm -rf ~/Library/Caches/$DOM/org.sparkle-project.Sparkle
 defaults write $DOM SULastCheckTime -date '2020-01-01 00:00:00 +0000'
-N1=$(wc -l <"${UPDATE_SERVER_LOG:-/dev/null}" 2>/dev/null | tr -d " "); N1=${N1:-0}
 START=$(date +%s)
 "$APP/Contents/MacOS/Dropfit" >"$OUT/run2.txt" 2>&1 &
 P2=$!; sleep 10
 kill -0 $P2 2>/dev/null && put ok "업데이트된 앱 실행 후 10초 동안 살아 있음" || put bad "업데이트된 앱이 10초 안에 종료됨"
-# 키가 아직 없으면 defaults read가 실패해 LC가 빈 값이 된다(set -u만, set -e 아님) = '아직 확인 안 함'으로 셈
-CHECKED=no; AGAIN=no; LC=""
-for i in $(seq 1 80); do
-  kill -0 $P2 2>/dev/null || break
-  LC=$(defaults read $DOM SULastCheckTime 2>/dev/null)
-  case "$LC" in 2020-*|"") ;; *) CHECKED=yes ;; esac
-  find ~/Library/Caches/$DOM/org.sparkle-project.Sparkle -type d -name 'Installation' 2>/dev/null | grep -q . && { AGAIN=yes; break; }
-  [ $CHECKED = yes ] && [ $i -ge 40 ] && break
-  sleep 1
-done
-[ $CHECKED = yes ] && put ok "최신 앱이 다시 업데이트를 확인함 (마지막 확인 $LC)" || put bad "최신 앱이 90초 안에 업데이트를 확인하지 않음 (재업데이트 여부를 잴 수 없음)"
-[ $AGAIN = no ] && put ok "최신 앱(${NOW_B})은 같은 업데이트를 다시 받지 않음" || put bad "최신 앱(${NOW_B})이 업데이트를 또 받음: 반복 업데이트"
-# 시험 목록이면 서버 기록으로 한 번 더: 목록은 읽되 zip은 다시 받지 않아야 한다
-if [ $LOCAL = 1 ] && [ -n "${UPDATE_SERVER_LOG:-}" ]; then
-  AFTER2=$(tail -n +$((N1+1)) "$UPDATE_SERVER_LOG")
-  grep -q 'GET /appcast.xml' <<<"$AFTER2" && put ok "최신 앱이 시험 목록을 다시 읽음" || put bad "최신 앱이 시험 목록을 다시 읽지 않음(재업데이트 여부를 잴 수 없음)"
-  grep -q 'GET /Dropfit-new.zip' <<<"$AFTER2" && put bad "최신 앱이 새 zip을 또 받음: 반복 업데이트" || put ok "최신 앱이 zip을 다시 받지 않음"
-fi
-# 다시 확인하지 않았으면 원인을 남긴다: 그 순간의 Sparkle 설정·설치 도우미 프로세스·앱 시스템 기록 (11/25 시험 목록에서만 확인 안 함)
-if [ $CHECKED != yes ]; then
-  echo "--- 최신 앱이 다시 확인하지 않은 순간"
-  echo "Sparkle 설정: $(defaults read $DOM 2>/dev/null | grep -E 'SU[A-Za-z]+' | tr -s ' \n' ' ' | cut -c1-400)"
-  echo "설치 도우미: $(pgrep -lf 'Autoupdate|Installer|sparkle' 2>/dev/null | cut -c1-120 | tr '\n' ';')"
-  echo "Info.plist: $(for key in SUFeedURL SUEnableAutomaticChecks SUScheduledCheckInterval; do printf '%s=%s ' "$key" "$(/usr/libexec/PlistBuddy -c "Print :$key" "$APP/Contents/Info.plist" 2>&1 | cut -c1-60)"; done)"
-  perl -e 'alarm shift; exec @ARGV' 60 log show --last 3m --style compact --info --debug --predicate 'process == "Dropfit" OR process CONTAINS "Autoupdate" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-recheck.txt" 2>&1
-  echo "--- 시스템 기록 (Sparkle·설치 줄, 끝 30줄)"; grep -v libMobileGestalt "$OUT/syslog-recheck.txt" | grep -i "sparkle\|update\|install\|appcast\|error" | tail -30 | cut -c1-220
+# 반복 업데이트는 공개 목록·실제 서명 길에서 잰다(매일 점검·PR의 자동 업데이트 점검, Mac 3종). 2026-11-25 정훈 님 결정.
+# 시험 목록(임시 서명) 길에서는 업데이트된 앱이 다시 확인을 시작하지 않아 잴 수 없었다(PR #129, 원인 미확인) → 이 길에서는 재지 않고 한 줄로 남긴다
+if [ $LOCAL = 1 ]; then
+  echo "· 시험 목록 길: 반복 업데이트는 공개 목록 점검(update-check)이 잼"
+else
+  # 키가 아직 없으면 defaults read가 실패해 LC가 빈 값이 된다(set -u만, set -e 아님) = '아직 확인 안 함'으로 셈
+  CHECKED=no; AGAIN=no; LC=""
+  for i in $(seq 1 80); do
+    kill -0 $P2 2>/dev/null || break
+    LC=$(defaults read $DOM SULastCheckTime 2>/dev/null)
+    case "$LC" in 2020-*|"") ;; *) CHECKED=yes ;; esac
+    find ~/Library/Caches/$DOM/org.sparkle-project.Sparkle -type d -name 'Installation' 2>/dev/null | grep -q . && { AGAIN=yes; break; }
+    [ $CHECKED = yes ] && [ $i -ge 40 ] && break
+    sleep 1
+  done
+  [ $CHECKED = yes ] && put ok "최신 앱이 다시 업데이트를 확인함 (마지막 확인 $LC)" || put bad "최신 앱이 90초 안에 업데이트를 확인하지 않음 (재업데이트 여부를 잴 수 없음)"
+  [ $AGAIN = no ] && put ok "최신 앱(${NOW_B})은 같은 업데이트를 다시 받지 않음" || put bad "최신 앱(${NOW_B})이 업데이트를 또 받음: 반복 업데이트"
+  # 다시 확인하지 않았으면 원인을 남긴다: 그 순간의 Sparkle 설정·설치 도우미 프로세스·앱 시스템 기록 (11/25 시험 목록에서만 확인 안 함)
+  if [ $CHECKED != yes ]; then
+    echo "--- 최신 앱이 다시 확인하지 않은 순간"
+    echo "Sparkle 설정: $(defaults read $DOM 2>/dev/null | grep -E 'SU[A-Za-z]+' | tr -s ' \n' ' ' | cut -c1-400)"
+    echo "설치 도우미: $(pgrep -lf 'Autoupdate|Installer|sparkle' 2>/dev/null | cut -c1-120 | tr '\n' ';')"
+    echo "Info.plist: $(for key in SUFeedURL SUEnableAutomaticChecks SUScheduledCheckInterval; do printf '%s=%s ' "$key" "$(/usr/libexec/PlistBuddy -c "Print :$key" "$APP/Contents/Info.plist" 2>&1 | cut -c1-60)"; done)"
+    perl -e 'alarm shift; exec @ARGV' 60 log show --last 3m --style compact --info --debug --predicate 'process == "Dropfit" OR process CONTAINS "Autoupdate" OR subsystem CONTAINS "sparkle"' > "$OUT/syslog-recheck.txt" 2>&1
+    echo "--- 시스템 기록 (Sparkle·설치 줄, 끝 30줄)"; grep -v libMobileGestalt "$OUT/syslog-recheck.txt" | grep -i "sparkle\|update\|install\|appcast\|error" | tail -30 | cut -c1-220
+  fi
 fi
 kill $P2 2>/dev/null
 CR=$(find ~/Library/Logs/DiagnosticReports /Library/Logs/DiagnosticReports -name 'Dropfit*' -newermt "@$START" 2>/dev/null | head -3)
