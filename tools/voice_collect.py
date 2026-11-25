@@ -31,7 +31,7 @@ UA = "dropfit-voice-research/1.0 (+https://dropfit.kr)"
 # ── 문제 분류 규칙: 위에서부터 먼저 걸리는 번호 하나. (번호, 정규식) 소문자 본문에 맞춤 ──
 RULES = [
     ("P12", r"증명사진|여권 ?사진|passport photo|id photo|visa photo|証明写真|パスポート写真"),
-    ("P15", r"\bsvg\b|\.ai\b|illustrator|일러스트 파일|\bpsd\b|イラレ"),
+    ("P15", r"\bsvg\b|\.ai (file|파일)|\bai file|illustrator file|일러스트(레이터)? 파일|\bpsd\b|イラレ|aiファイル"),
     ("P14", r"오프라인|인터넷 (없|안 되|차단)|사내망|offline|no internet|air.?gapped|オフライン|ネット(なし|接続なし)"),
     ("P18", r"실습실|여러 대|lab mac|computer lab|classroom mac|every mac in|複数台|パソコン室"),
     ("P16", r"첨부.{0,8}(용량|초과|25 ?mb)|attachment.{0,20}(too (large|big)|limit|25 ?mb)|添付.{0,8}(容量|上限|25)"),
@@ -54,9 +54,9 @@ RULES = [(p, re.compile(r, re.I)) for p, r in RULES]
 PAIN = re.compile(
     r"안 ?(돼|되|올라|열려|열리)|어떻게|방법|못 ?(하|해|올)|불편|짜증|초과|넘어|제한|도와|급해|막혀|지원하지 않는"
     r"|can'?t|cannot|won'?t|how (do|can|to|would)|unable|too (large|big)|exceed|limit|annoying|frustrat|help|is there (a|any) way|struggl|keeps? failing|not supported|unsupported"
-    r"|できない|できません|方法|どうやって|どうすれば|困|教えて|開けない|上限|超え|対応していない", re.I)
+    r"|できない|できません|どうやって|どうすれば|困って|困った|教えて|開けない|上限を超え|対応していない", re.I)
 # 지금 쓰는 대안(정훈 님 11/25 "기존 대안과 다르게 어떻게 깔끔하게 끝내는지"): 글에 나온 것만 적는다
-ALTS = [("미리보기", r"미리보기|preview\.app|\bpreview\b|プレビュー"), ("사진 앱", r"사진 앱|photos app|写真アプリ"),
+ALTS = [("미리보기", r"미리보기|preview\.app|preview app|(macos|apple|mac)'?s? preview|(open|export)\w* (it |them |\w+ )?(in|from|with) preview|プレビュー(アプリ|\.app|で開)"), ("사진 앱", r"사진 앱|photos app|写真アプリ"),
         ("단축어·자동화", r"단축어|shortcuts?|automator|ショートカット"), ("터미널·sips", r"\bsips\b|terminal|imagemagick|ffmpeg|ターミナル"),
         ("iLovePDF", r"ilovepdf"), ("Smallpdf", r"smallpdf"), ("변환 사이트", r"변환 사이트|online converter|converter site|変換サイト|オンライン変換"),
         ("Acrobat", r"acrobat|어크로뱃|アクロバット"), ("Photoshop", r"photoshop|포토샵|フォトショ"), ("ImageOptim", r"imageoptim"),
@@ -152,7 +152,8 @@ class Run:
         k = key(link)
         if k in self.seen or k in self.new_keys:
             return 0
-        text = f"{title} {body}"
+        # 주소 속 .ai·pdf 글자로 잘못 걸리지 않게 주소를 빼고 판정
+        text = re.sub(r"https?://\S+|&#x2F;|\S+\.(ai|io|com|org|net)\b\S*", " ", strip_html(f"{title} {body}"))
         p = classify(text.lower())
         if not p:
             return 0
