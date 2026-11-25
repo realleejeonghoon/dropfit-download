@@ -6,30 +6,30 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <link>https://realleejeonghoon.github.io/dropfit-download/appcast-now.xml</link>
     <language>ko</language>
     <item>
+      <title>Dropfit 1.0.3</title>
+      <sparkle:version>50</sparkle:version>
+      <sparkle:shortVersionString>1.0.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <pubDate>Wed, 25 Nov 2026 14:48:11 +0000</pubDate>
+      <sparkle:criticalUpdate sparkle:version="43"></sparkle:criticalUpdate>
+      <description><![CDATA[<ul><li>자르기 창과 알림이 모든 언어에서 같은 크기로 보이도록 다듬었습니다.</li></ul>]]></description>
+      <dropfit:notesEn><![CDATA[<ul><li>The crop window and alerts now keep the same size in every language.</li></ul>]]></dropfit:notesEn>
+      <dropfit:notesJa><![CDATA[<ul><li>切り抜きウインドウと通知が、どの言語でも同じ大きさで表示されるよう整えました。</li></ul>]]></dropfit:notesJa>
+      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0.3-50.zip" type="application/octet-stream" sparkle:edSignature="1h8GMpkWLHLg1frdTCSoqFyHPlFiqbShqs0xDCvVRPYDtThxaXSZE6tRVF4/XmuINpLSD+E4+iPL5oZe4Oj0DQ==" length="4162237"></enclosure>
+    </item>
+    <item>
       <title>Dropfit 1.0.2</title>
       <sparkle:version>49</sparkle:version>
       <sparkle:shortVersionString>1.0.2</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       <pubDate>Wed, 25 Nov 2026 08:17:13 +0000</pubDate>
-      <sparkle:criticalUpdate sparkle:version="43"></sparkle:criticalUpdate>
       <description><![CDATA[<ul><li>영어·일본어 화면에서 글자가 잘리거나 줄이 어색하게 꺾이던 곳을 바로잡았습니다.</li></ul>]]></description>
       <dropfit:notesEn><![CDATA[<ul><li>Fixed text that was cut off or wrapped awkwardly in English and Japanese.</li></ul>]]></dropfit:notesEn>
       <dropfit:notesJa><![CDATA[<ul><li>英語と日本語の画面で、文字が切れたり不自然に改行されたりする箇所を直しました。</li></ul>]]></dropfit:notesJa>
       <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0.2-49.zip" type="application/octet-stream" sparkle:edSignature="Uu9WLHGSnvWl0dczqo0UpmMTrIf3xwD8/a4VUxkUCwCwTN0JxoIUmrTNZFfgkJgaIeNW3GDr5kAVC7yrHZHmBQ==" length="4161549"></enclosure>
     </item>
-    <item>
-      <title>Dropfit 1.0.1</title>
-      <sparkle:version>48</sparkle:version>
-      <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
-      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <pubDate>Tue, 24 Nov 2026 12:50:59 +0000</pubDate>
-      <description><![CDATA[<ul><li>일본어를 지원합니다.</li><li>흐린 칸과 PDF 나누기에서 무엇을 할 수 있는지 바로 보입니다.</li><li>폴더째 바꾸면 새 폴더 이름에 정한 용량이 붙습니다.</li></ul>]]></description>
-      <dropfit:notesEn><![CDATA[<ul><li>Dropfit is now available in Japanese.</li><li>Dimmed slots and PDF splitting now show what you can do.</li><li>When you convert a folder, the new folder name includes the size you set.</li></ul>]]></dropfit:notesEn>
-      <dropfit:notesJa><![CDATA[<ul><li>日本語に対応しました。</li><li>薄いスロットとPDFの分割で、できることがすぐ分かります。</li><li>フォルダごと変換すると、新しいフォルダ名に決めた容量が付きます。</li></ul>]]></dropfit:notesJa>
-      <enclosure url="https://realleejeonghoon.github.io/dropfit-download/updates/Dropfit-1.0.1-48.zip" type="application/octet-stream" sparkle:edSignature="BEdKOgxY2VkPGo4NX0+z93FWWE76J2RLrrqMjzuXvjcEJ2cGYyTgnhsXw7+aRF0JHgevR+ihk/VobaUFPTLfBQ==" length="4156857"></enclosure>
-    </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: 76ciUPEJz7wCnm8hPwoG/bD81UQP0p+r6UXsCS28SX/QwIYa0MT9+3npWlRxwUbQoPe9beVzvORHL8tgq5Q2Bg==
-length: 3202
+edSignature: wlMUiq3WQxgshqgg2s9L6J3F8OAkeUs5WdUSVMaQegC9An+9nenQjynELbQJLJ1VOLwbl16dHNxoi1KnbXIBDA==
+length: 2871
 -->
