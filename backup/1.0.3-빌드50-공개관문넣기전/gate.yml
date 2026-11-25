@@ -1,0 +1,20 @@
+name: 관문
+
+# 경로 필터를 두지 않는다: 필수 검사가 생략되면 Pending으로 남아 정상 PR이 막힌다(리서치 11/22, GitHub 문서).
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: 규정 관문 (범위·보호·백업·검사 약화)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: python3 tools/관문.py origin/${{ github.base_ref }}
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}

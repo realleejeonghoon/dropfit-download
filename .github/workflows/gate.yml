@@ -18,3 +18,17 @@ jobs:
       - run: python3 tools/관문.py origin/${{ github.base_ref }}
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
+
+  release:
+    name: 공개 관문 (같은 버전 세 언어 크기 다름 0건)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: python3 tools/공개관문.py origin/${{ github.base_ref }}
+        env:
+          GH_TOKEN: ${{ github.token }}
