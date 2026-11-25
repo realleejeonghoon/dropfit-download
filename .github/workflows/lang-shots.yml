@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     env:
-      SRC_BRANCH: ${{ inputs.src || 'main' }}   # PR에서는 점검 도구를 고친 작업 가지
+      SRC_BRANCH: ${{ inputs.src || 'main' }}   # 부를 때 고른 가지, 기본 main
     steps:
       - name: 비공개 소스 받기 (읽기 전용 열쇠)
         env:
