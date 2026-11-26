@@ -1,0 +1,70 @@
+name: 고객의 말 매일 수집
+
+# 정각 실행: Apps Script가 06:00 KST에 workflow_dispatch로 부른다(시간표 v4, 11/25 20:48 정훈 확정, 안정성·보안 스레드).
+# 아래 GitHub 예약(06:20)은 예비다. 몇 시간 늦게 돌 수 있어, 같은 날 이미 쌓였으면 예약 쪽은 건너뛴다.
+# 드롭핏 고객 문제(P01~P18)를 겪는 사람의 글을 공식 API에서만 모아 voice-data 가지 data/voice/에 날짜별로 쌓는다(latest-*.tsv = 오늘분).
+# 09:20 SEO·09:30 업로드 사이클이 latest 파일을 읽는다. main(공개 사이트)은 건드리지 않는다.
+# 글쓴이 정보는 받지 않고 발췌의 메일·전화·@아이디는 가린다. 네이버는 약관상 숫자만. 로그에는 숫자만 찍는다.
+# 작업 가지 push 때는 시험만 하고 올리지 않는다.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 21 * * *'   # 06:20 KST
+  push:
+    branches: ['claude/**']
+    paths: ['tools/voice_collect.py', '.github/workflows/voice-collect.yml']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: voice-collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    name: 고객의 말 수집
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: 이전 기록 받기(중복 거르기·네이버 전날 수)
+        id: prev
+        run: |
+          d=$(TZ=Asia/Seoul date +%F)
+          r=true
+          mkdir -p "$RUNNER_TEMP/prev"
+          if git fetch -q origin voice-data; then
+            for pair in "seen.txt:seen.txt" "latest-naver.tsv:naver-latest.tsv"; do
+              src=data/voice/${pair%%:*}
+              if git cat-file -e "FETCH_HEAD:$src"; then git show "FETCH_HEAD:$src" > "$RUNNER_TEMP/prev/${pair##*:}"; fi
+            done
+            if [ "${{ github.event_name }}" = schedule ] && git cat-file -e "FETCH_HEAD:data/voice/$d"; then
+              echo "오늘($d) 이미 쌓여 예비 예약은 건너뜀"; r=false
+            fi
+          fi
+          echo "run=$r" >> "$GITHUB_OUTPUT"
+      - name: 수집
+        if: steps.prev.outputs.run == 'true'
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: |
+          # 첫 실행(이전 기록 없음)은 30일을 훑어 바탕을 만들고, 그 뒤로는 2일(중복은 seen으로 거름)
+          [ -s "$RUNNER_TEMP/prev/seen.txt" ] || export VOICE_DAYS=30
+          python3 tools/voice_collect.py "$RUNNER_TEMP/out" "$RUNNER_TEMP/prev"
+      - name: 기록 가지(voice-data)에 올리기
+        if: github.event_name != 'push' && steps.prev.outputs.run == 'true'
+        run: |
+          d=$(TZ=Asia/Seoul date +%F)
+          o="$RUNNER_TEMP/out"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch -q origin voice-data; then git checkout -q -B voice-data FETCH_HEAD; else git checkout -q --orphan voice-data; git rm -rqf .; fi
+          mkdir -p data/voice/$d
+          cp "$o"/*-$d.tsv data/voice/$d/
+          for k in voice counts naver status; do cp "$o/$k-$d.tsv" "data/voice/latest-$k.tsv"; done
+          cp "$o/seen.txt" data/voice/seen.txt
+          git add data/voice
+          git commit -qm "고객의 말 $d" || { echo "바뀐 것 없음"; exit 0; }
+          git push -q origin voice-data
