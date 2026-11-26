@@ -1,15 +1,13 @@
 name: 고객의 말 매일 수집
 
 # 정각 실행: Apps Script가 06:00 KST에 workflow_dispatch로 부른다(시간표 v4, 11/25 20:48 정훈 확정, 안정성·보안 스레드).
-# 아래 GitHub 예약(06:20)은 예비다. 몇 시간 늦게 돌 수 있어, 같은 날 이미 쌓였으면 예약 쪽은 건너뛴다.
+# GitHub 예약(06:20 예비)은 11/27 뺐다: 정각 호출이 11/26·11/27 연속 성공했고 예약은 6시간 넘게 늦게 돌았다.
 # 드롭핏 고객 문제(P01~P18)를 겪는 사람의 글을 공식 API에서만 모아 voice-data 가지 data/voice/에 날짜별로 쌓는다(latest-*.tsv = 오늘분).
 # 09:20 SEO·09:30 업로드 사이클이 latest 파일을 읽는다. main(공개 사이트)은 건드리지 않는다.
 # 글쓴이 정보는 받지 않고 발췌의 메일·전화·@아이디는 가린다. 네이버는 약관상 숫자만. 로그에는 숫자만 찍는다.
 # 작업 가지 push 때는 시험만 하고 올리지 않는다.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '20 21 * * *'   # 06:20 KST
   push:
     branches: ['claude/**']
     paths: ['tools/voice_collect.py', '.github/workflows/voice-collect.yml']
