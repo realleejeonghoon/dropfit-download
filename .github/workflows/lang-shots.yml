@@ -40,6 +40,9 @@ jobs:
           cd "$RUNNER_TEMP/src"
           git checkout -q "origin/$SRC_BRANCH" || { echo "::error::가지가 없음: $SRC_BRANCH"; exit 1; }
           echo "점검할 소스: $SRC_BRANCH $(git log -1 --format='%h') · macOS $(sw_vers -productVersion) $(uname -m)"
+          v=$(sed -n 's/.*CFBundleShortVersionString<\/key><string>\([^<]*\)<.*/\1/p' build.sh | head -1)
+          b=$(sed -n 's/.*CFBundleVersion<\/key><string>\([^<]*\)<.*/\1/p' build.sh | head -1)
+          echo "APP_VER=$v($b)" >> "$GITHUB_ENV"   # 공개 관문(tools/공개관문.py)이 결과 줄의 버전으로 이 점검을 찾는다
           mkdir -p Support/Sparkle
           curl -fsSL --retry 3 -o Support/Sparkle/Sparkle-2.10.1.tar.xz https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
           echo "1a856d2a9edb8e628de88121d7be04cf0e2167f8641650b78fca00b14244cf27  Support/Sparkle/Sparkle-2.10.1.tar.xz" | shasum -a 256 -c - >/dev/null
@@ -92,7 +95,7 @@ jobs:
                   s = size(p); row.append(f"{L} {s[0]}x{s[1]}")
                   if s != k: bad += 1
               print(("✓ " if all('없음' not in r for r in row) and len({r.split()[1] for r in row}) == 1 else "✗ ") + n + " · " + " · ".join(row))
-          print(f"결과: 장면 {len(names)}개 · 크기 다름·빠짐 {bad}건")
+          print(f"결과: 장면 {len(names)}개 · 크기 다름·빠짐 {bad}건 · 앱 {os.environ.get('APP_VER', '?')}")
           sys.exit(1 if bad else 0)
           PY
 

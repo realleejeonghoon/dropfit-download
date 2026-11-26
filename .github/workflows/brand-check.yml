@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  page_build:      # 공개 사이트가 새로 배포될 때마다 main과 같은지 대조
+  schedule:
+    - cron: '17 * * * *'   # 매시 17분: 병합 때 배포가 빠져도 한 시간 안에 잡는다(11/26 #134 사고, 7시간 1.0.2로 남음)
   workflow_call:   # 매일 9시 점검 묶음(daily-qa.yml)이 부름
 
 permissions:
